@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/violet_light"
+    android:paddingHorizontal="@dimen/large_padding">
+
+    <Button
+        android:id="@+id/button_skip_intro"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mid_margin"
+        android:text="@string/skip_intro_button"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="?colorPrimary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/button_next"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_skip_intro"
+        app:layout_constraintVertical_bias=".3">
+
+        <ImageView
+            android:id="@+id/image_view_yoga"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/onboarding_2_image_view_pill"
+            android:src="@drawable/pills" />
+
+        <TextView
+            android:id="@+id/text_view_title"
+            style="@style/CustomHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/large_margin"
+            android:text="@string/onboarding_2_text_view_title"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/text_view_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mid_margin"
+            android:text="@string/onboarding_2_text_view_subtitle"
+            android:textAlignment="center" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/button_next"
+        android:layout_width="88dp"
+        android:layout_height="88dp"
+        android:layout_marginBottom="@dimen/large_margin"
+        android:background="@drawable/primary_button_background"
+        android:contentDescription="@string/onboarding_1_image_view_next"
+        android:padding="@dimen/large_padding"
+        android:src="@drawable/right_arrow"
+        app:layout_constraintBottom_toTopOf="@id/page_indicator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/page_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="15dp"
+        android:layout_marginBottom="@dimen/mid_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
