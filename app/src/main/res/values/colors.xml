@@ -18,4 +18,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="deep_blue">#0F2851</color>
+    <color name="lilac_petals">#FAFAFF</color>
+    <color name="dark_grey">#898D9E</color>
+    <color name="light_grey">#E5E6EE</color>
 </resources>

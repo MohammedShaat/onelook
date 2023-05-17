@@ -21,21 +21,21 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/mid_margin"
+                android:layout_marginBottom="@dimen/m_margin"
                 android:contentDescription="@string/welcome_image_view_logo_content_description"
-                android:src="@drawable/brand_logo_big" />
+                android:src="@drawable/ic_brand_logo" />
 
             <TextView
                 style="@style/CustomHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/mid_margin"
+                android:layout_marginBottom="@dimen/m_margin"
                 android:text="@string/welcome_screen_title" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/mid_margin"
+                android:layout_marginBottom="@dimen/m_margin"
                 android:text="@string/welcome_screen_subtitle"
                 android:textAlignment="center" />
 
@@ -46,7 +46,7 @@
             style="@style/CustomPrimaryButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/large_margin"
+            android:layout_marginBottom="@dimen/xh_margin"
             android:text="@string/welcome_screen_primary_button_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

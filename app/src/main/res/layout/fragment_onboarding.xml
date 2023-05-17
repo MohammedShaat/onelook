@@ -12,7 +12,7 @@
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/mid_margin"
+        android:layout_marginTop="@dimen/m_margin"
         android:text="@string/skip_intro_button"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -23,7 +23,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="@dimen/m_margin"
         app:layout_constraintBottom_toTopOf="@id/button_next"
         app:layout_constraintTop_toBottomOf="@id/button_skip_intro">
 
@@ -37,43 +37,43 @@
                 android:id="@+id/image_view_pic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="@dimen/h_margin"
                 android:contentDescription="@string/onboarding_image_view_pic"
-                tools:src="@drawable/calm"
                 app:layout_constraintHeight_percent=".4"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/calm" />
 
             <TextView
                 android:id="@+id/text_view_title"
                 style="@style/CustomHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                tools:text="Keep calm and stay in control"
-                app:layout_constraintTop_toBottomOf="@id/image_view_pic" />
+                android:layout_marginTop="@dimen/h_margin"
+                app:layout_constraintTop_toBottomOf="@id/image_view_pic"
+                tools:text="Keep calm and stay in control" />
 
             <TextView
                 android:id="@+id/text_view_subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/mid_margin"
+                android:layout_marginTop="@dimen/m_margin"
                 android:layout_marginBottom="10dp"
-                tools:text="You can check your health with just one look."
                 android:textAlignment="center"
-                app:layout_constraintTop_toBottomOf="@id/text_view_title" />
+                app:layout_constraintTop_toBottomOf="@id/text_view_title"
+                tools:text="You can check your health with just one look." />
         </LinearLayout>
 
     </ScrollView>
 
-    <ImageView
+    <ImageButton
         android:id="@+id/button_next"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginBottom="50dp"
-        android:background="@drawable/primary_button_background"
+        android:background="@drawable/button_solid_background_primary_color"
         android:contentDescription="@string/onboarding_1_image_view_next"
-        android:padding="@dimen/mid_padding"
-        android:src="@drawable/right_arrow"
+        android:padding="@dimen/m_padding"
+        android:src="@drawable/ic_right_arrow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="W, 1:1"
         app:layout_constraintEnd_toEndOf="parent"
