@@ -22,7 +22,6 @@ class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
         binding.lifecycleOwner = this
 
         binding.buttonLetsStart.setOnClickListener {
-            Timber.i("Let's start: clicked")
             val action = WelcomeFragmentDirections.actionWelcomeFragmentToViewPagerFragment()
             findNavController().navigate(action)
         }

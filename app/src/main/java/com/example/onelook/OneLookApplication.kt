@@ -1,8 +1,10 @@
 package com.example.onelook
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
+@HiltAndroidApp
 class OneLookApplication : Application() {
 
     override fun onCreate() {
