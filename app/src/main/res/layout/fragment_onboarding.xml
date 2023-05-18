@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/violet_light"
-    android:paddingHorizontal="@dimen/large_padding">
+    android:paddingHorizontal="@dimen/h_padding">
 
     <Button
         android:id="@+id/button_skip_intro"
