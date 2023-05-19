@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_welcomeFragment_to_viewPagerFragment"
             app:destination="@id/viewPagerFragment" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
     </fragment>
     <fragment
         android:id="@+id/viewPagerFragment"
@@ -28,4 +31,9 @@
         android:name="com.example.onelook.ui.signup.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" />
+    <activity
+        android:id="@+id/splashScreenActivity"
+        android:name="com.example.onelook.SplashScreenActivity"
+        android:label="activity_splash_screen"
+        tools:layout="@layout/activity_splash_screen" />
 </navigation>
