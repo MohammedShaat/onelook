@@ -18,30 +18,22 @@ class ApplicationLaunchStateManager @Inject constructor(@ApplicationContext cont
 
     private val dataStore = context.createDataStore("application_launch_state_manager")
     private val applicationLaunchStateKey =
-        preferencesKey<String>("application_launch_state")
+        preferencesKey<Boolean>("application_launch_state")
 
-    private val applicationLaunchStateFlow = dataStore.data.catch { throwable ->
-        Timber.e(throwable)
-        emit(emptyPreferences())
-    }.map { preferences ->
-        val state = ApplicationLaunchState.valueOf(
-            preferences[applicationLaunchStateKey] ?: ApplicationLaunchState.FirstLaunch.name
-        )
-        state
-    }
-
-    suspend fun isFirstLaunched(): Boolean {
-        return applicationLaunchStateFlow.first() == ApplicationLaunchState.FirstLaunch
+    suspend fun isFinished(): Boolean {
+        val state = dataStore.data.catch { throwable ->
+            Timber.e(throwable)
+            emit(emptyPreferences())
+        }.map { preferences ->
+            preferences[applicationLaunchStateKey] ?: true
+        }.first()
+        return state
     }
 
     suspend fun updateApplicationLaunchState() {
         dataStore.edit { preferences ->
-            preferences[applicationLaunchStateKey] = ApplicationLaunchState.SubsequentLaunch.name
+            preferences[applicationLaunchStateKey] = false
         }
     }
 
-}
-
-enum class ApplicationLaunchState {
-    FirstLaunch, SubsequentLaunch
 }

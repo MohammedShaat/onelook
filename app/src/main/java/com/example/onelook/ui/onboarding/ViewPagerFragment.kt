@@ -2,6 +2,7 @@ package com.example.onelook.ui.onboarding
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2

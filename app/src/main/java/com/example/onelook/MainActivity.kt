@@ -1,37 +1,32 @@
 package com.example.onelook
 
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.onelook.data.ApplicationLaunchStateManager
+import com.example.onelook.ui.welcome.WelcomeFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
 
-    @Inject
-    lateinit var appLaunchStateManager: ApplicationLaunchStateManager
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         setupNavigation()
-
         supportActionBar?.hide()
 
-        //Check if the app is launch for the first time
-        lifecycleScope.launchWhenStarted {
-            val isFirstLaunch = appLaunchStateManager.isFirstLaunched()
-            if (!isFirstLaunch) {
-                navController.navigate(R.id.signUpFragment)
-            }
+        // Navigate to Sign Up screen if it's not first launch
+        val isFirstLaunch = intent.getBooleanExtra(IS_FIRST_LAUNCH_EXTRA_NAME, false)
+        if (!isFirstLaunch) {
+            val action = WelcomeFragmentDirections.actionWelcomeFragmentToSignUpFragment()
+            navController.navigate(action)
         }
     }
 
