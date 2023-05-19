@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">OneLook</string>
+    <string name="welcome_screen_title">Welcome to\n OneLook</string>
+    <string name="welcome_screen_subtitle">Just take a look and take action!</string>
+    <string name="welcome_screen_primary_button_text">Let\'s start</string>
+    <string name="skip_intro_button">Skip intro</string>
+    <string name="onboarding_image_view_pic">calm character</string>
+    <string name="welcome_image_view_logo_content_description">application logo</string>
+    <string name="onboarding_1_text_view_title">Keep calm and stay in control</string>
+    <string name="onboarding_1_text_view_subtitle">You can check your health with just one look.</string>
+    <string name="onboarding_1_image_view_next">Next Button</string>
+    <string name="onboarding_2_image_view_pill">Character takes a pill</string>
+    <string name="onboarding_2_text_view_title">Don’t miss a single pill, ever!</string>
+    <string name="onboarding_2_text_view_subtitle">Plan your supplementation in details.</string>
+    <string name="onboarding_3_text_view_title"><![CDATA[Exercise more & breathe better]]></string>
+    <string name="onboarding_3_text_view_subtitle">Learn, measure, set daily goals.</string>
+    <string name="sign_up_text_view_header">Create an account</string>
 </resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="mid_margin">20dp</dimen>
+    <dimen name="large_margin">40dp</dimen>
+    <dimen name="small_padding">12dp</dimen>
+    <dimen name="mid_padding">20dp</dimen>
+    <dimen name="large_padding">24dp</dimen>
+    <dimen name="mid_text_size">16sp</dimen>
+    <dimen name="large_text_size">20sp</dimen>
+    <dimen name="xlarge_text_size">30sp</dimen>
+    <dimen name="primary_button_height">56dp</dimen>
+    <dimen name="button_radius">20dp</dimen>
+    <dimen name="xlarge_margin">60dp</dimen>
+    <dimen name="indicator_view_dash_width">20dp</dimen>
+    <dimen name="slider_width">58dp</dimen>
+    <dimen name="slider_height">4dp</dimen>
+</resources>
