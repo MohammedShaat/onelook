@@ -1,15 +1,14 @@
 package com.example.onelook
 
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.onelook.data.ApplicationLaunchStateManager
 import com.example.onelook.ui.welcome.WelcomeFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
