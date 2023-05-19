@@ -1,10 +1,12 @@
-package com.example.onelook
+package com.example.onelook.ui.splashscreen
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.onelook.MainActivity
+import com.example.onelook.R
 import com.example.onelook.data.ApplicationLaunchStateManager
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
