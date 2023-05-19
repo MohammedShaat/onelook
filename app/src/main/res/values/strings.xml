@@ -15,4 +15,21 @@
     <string name="onboarding_3_text_view_title"><![CDATA[Exercise more & breathe better]]></string>
     <string name="onboarding_3_text_view_subtitle">Learn, measure, set daily goals.</string>
     <string name="sign_up_text_view_header">Create an account</string>
+    <string name="sign_up_text_view_name">Full Name</string>
+    <string name="sign_up_text_input_name">Enter your name</string>
+    <string name="sign_up_text_view_email">E-mail</string>
+    <string name="sign_up_text_input_email">Enter your e-mail</string>
+    <string name="sign_up_text_view_password">Password</string>
+    <string name="sign_up_text_input_password">Enter a password</string>
+    <string name="text_view_password_error_1">At least 8 characters</string>
+    <string name="text_view_password_error_2">Both uppercase and lowercase characters</string>
+    <string name="text_view_password_error_3">At least one number or symbol</string>
+    <string name="sign_up_privacy_policy">By continuing you accept our Privacy Policy and Term of Use</string>
+    <string name="sing_up_image_button_password_visibility">password visibility toggle</string>
+    <string name="sing_up_button_sign_up">Sign UP</string>
+    <string name="sign_up_text_view_divider_or">Or</string>
+    <string name="sign_up_image_button_google">sign up with Google</string>
+    <string name="sign_up_image_button_facebook">sign up with Facebook</string>
+    <string name="sign_up_text_view_already_have_an_account">Already have an account?</string>
+    <string name="sign_up_text_view_login">Login</string>
 </resources>

@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs.kotlin' version '2.5.3'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -59,4 +61,15 @@ dependencies {
 
     //View pager indicator
     implementation 'com.github.zhpanvip:viewpagerindicator:1.2.2'
+
+    //Dagger hilt
+    implementation "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-compiler:2.44"
+
+    //DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0-alpha02"
+}
+
+kapt {
+    correctErrorTypes true
 }

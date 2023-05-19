@@ -27,15 +27,27 @@
     </style>
 
     <style name="CustomPrimaryButton">
-        <item name="android:layout_marginBottom">@dimen/large_margin</item>
-        <item name="android:paddingTop">@dimen/small_padding</item>
-        <item name="android:paddingBottom">@dimen/small_padding</item>
-        <item name="android:paddingStart">@dimen/mid_padding</item>
-        <item name="android:paddingEnd">@dimen/mid_padding</item>
+        <item name="android:layout_marginBottom">@dimen/xh_margin</item>
+        <item name="android:paddingTop">@dimen/s_padding</item>
+        <item name="android:paddingBottom">@dimen/s_padding</item>
+        <item name="android:paddingStart">@dimen/m_padding</item>
+        <item name="android:paddingEnd">@dimen/m_padding</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:background">@drawable/primary_button_background</item>
-        <item name="android:drawableEnd">@drawable/right_arrow</item>
+        <item name="android:background">@drawable/button_solid_background_primary_color</item>
+        <item name="android:drawableEnd">@drawable/ic_right_arrow</item>
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="CustomTextInputTextView">
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:textColor">@color/dark_grey</item>
+    </style>
+
+    <style name="CustomTextInputEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/text_input_background</item>
+        <item name="android:drawablePadding">@dimen/s_margin</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:textColorHint">@color/dark_grey</item>
+    </style>
 </resources>
