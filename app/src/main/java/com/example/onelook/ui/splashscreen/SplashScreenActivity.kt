@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.onelook.GLOBAL_TAG
 import com.example.onelook.MainActivity
 import com.example.onelook.R
 import com.example.onelook.data.ApplicationLaunchStateManager
@@ -26,9 +27,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         //Check if the app is launched for the first time
         lifecycleScope.launchWhenStarted {
-            Timber.i("before read DataStore")
             val state = appLaunchStateManager.isFinished()
-            Timber.i("after read DataStore")
             navigateToMainActivity(state)
         }
     }

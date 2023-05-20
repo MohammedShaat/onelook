@@ -20,7 +20,7 @@ class ViewPagerFragment : Fragment(R.layout.fragment_view_pager) {
         super.onViewCreated(view, savedInstanceState)
 
         binding = DataBindingUtil.bind(view)!!
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         val fragments = listOf(
             Onboarding1Fragment(),

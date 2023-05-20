@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         // Navigate to Sign Up screen if it's not first launch
         val isFirstLaunch = intent.getBooleanExtra(IS_FIRST_LAUNCH_EXTRA_NAME, false)
-        if (!isFirstLaunch) {
+        if (!isFirstLaunch && savedInstanceState == null) {
             val action = WelcomeFragmentDirections.actionWelcomeFragmentToSignUpFragment()
             navController.navigate(action)
         }

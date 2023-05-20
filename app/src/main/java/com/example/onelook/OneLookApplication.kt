@@ -15,3 +15,5 @@ class OneLookApplication : Application() {
         }
     }
 }
+
+const val GLOBAL_TAG = "GlobalTag"
