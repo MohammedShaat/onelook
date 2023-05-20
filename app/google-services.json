@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "3643895289",
+    "project_id": "onelook-81bcd",
+    "storage_bucket": "onelook-81bcd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3643895289:android:78517ceacb0413bb136128",
+        "android_client_info": {
+          "package_name": "com.example.onelook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "3643895289-hoaivt7hnoteiqm5631agljr3j2fjvr0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.onelook",
+            "certificate_hash": "7645b3aafb4f3adf891a5cd3630f597dae78dd91"
+          }
+        },
+        {
+          "client_id": "3643895289-vj4j99mvqp7162uh3gldb3nr6kc9dvfs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDp9gaSc9dQ6LQIn-IgFg2vH5NzwhiUdB8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "3643895289-vj4j99mvqp7162uh3gldb3nr6kc9dvfs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

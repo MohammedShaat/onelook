@@ -21,4 +21,5 @@
     <color name="lilac_petals">#FAFAFF</color>
     <color name="dark_grey">#898D9E</color>
     <color name="light_grey">#E5E6EE</color>
+    <color name="alert">#ED4337</color>
 </resources>
