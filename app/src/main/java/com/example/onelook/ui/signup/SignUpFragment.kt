@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentSignUpBinding
 import com.example.onelook.util.onCollect
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,7 +36,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             sendInputsDataWhenChanged()
 
             buttonSignUp.setOnClickListener {
-                viewModel.onButtonSignUpClicked()
+                viewModel.onButtonSignUpWithEmailClicked()
             }
 
             imageButtonPasswordVisibility.setOnClickListener {
@@ -44,6 +45,10 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
             textViewLogin.setOnClickListener {
                 viewModel.onLoginClicked()
+            }
+
+            imageButtonGoogle.setOnClickListener {
+
             }
         }//Listeners
 
@@ -69,10 +74,18 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 }
             }
 
-            onCollect(singUpEvent) { message ->
-                when (message) {
+            isLoading.observe(viewLifecycleOwner) { isLoading ->
+                binding.apply {
+                    root.isClickable = !isLoading
+                    buttonSignUp.isEnabled = !isLoading
+                    progressBar.isVisible = isLoading
+                }
+            }
+
+            onCollect(singUpEvent) { event ->
+                when (event) {
                     is SignUpViewModel.SignUpEvent.EmptyFields -> {
-                        markErrorFields(message.fields)
+                        markErrorFields(event.fields)
                         binding.textViewPasswordErrorMessage.apply {
                             setText(R.string.empty_fields)
                             isVisible = true
@@ -86,6 +99,53 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     is SignUpViewModel.SignUpEvent.NavigateToLoginFragment -> {
                         navController.popBackStack()
                         navController.navigate(R.id.loginFragment)
+                    }
+
+                    is SignUpViewModel.SignUpEvent.WeakPasswordException -> {
+                        markErrorFields(listOf(SignUpViewModel.SignUpEvent.Fields.PASSWORD))
+                        binding.textViewPasswordErrorMessage.apply {
+                            text = event.reason
+                            isVisible = true
+                        }
+                    }//WeakPasswordException
+
+                    is SignUpViewModel.SignUpEvent.ExistingEmailException -> {
+                        markErrorFields(listOf(SignUpViewModel.SignUpEvent.Fields.EMAIL))
+                        binding.textViewPasswordErrorMessage.apply {
+                            setText(R.string.existing_email)
+                            isVisible = true
+                        }
+                    }//ExistingEmailException
+
+                    is SignUpViewModel.SignUpEvent.InvalidEmailException -> {
+                        markErrorFields(listOf(SignUpViewModel.SignUpEvent.Fields.EMAIL))
+                        binding.textViewPasswordErrorMessage.apply {
+                            setText(R.string.invalid_email)
+                            isVisible = true
+                        }
+                    }//InvalidEmailException
+
+                    is SignUpViewModel.SignUpEvent.NetworkException -> {
+                        Snackbar.make(
+                            view,
+                            R.string.no_internet_connection,
+                            Snackbar.LENGTH_INDEFINITE
+                        ).setAction("Try again") {
+                            viewModel.onButtonSignUpWithEmailClicked()
+                        }
+                            .show()
+                    }//NetworkException
+
+                    is SignUpViewModel.SignUpEvent.UnexpectedException -> {
+                        binding.textViewPasswordErrorMessage.apply {
+                            setText(R.string.unexpected_error)
+                            isVisible = true
+                        }
+                    }//UnexpectedException
+
+                    is SignUpViewModel.SignUpEvent.NavigateToHomeFragment -> {
+                        val action = SignUpFragmentDirections.actionSignUpFragmentToHomeFragment()
+                        navController.navigate(action)
                     }
                 }//when
             }

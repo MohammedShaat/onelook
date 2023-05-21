@@ -2,10 +2,18 @@ package com.example.onelook.ui.signup
 
 import androidx.lifecycle.*
 import com.example.onelook.data.ApplicationLaunchStateManager
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.UserProfileChangeRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,18 +34,79 @@ class SignUpViewModel @Inject constructor(
     private val _singUpEvent = MutableSharedFlow<SignUpEvent>()
     val singUpEvent = _singUpEvent.asSharedFlow()
 
+    private val auth = FirebaseAuth.getInstance()
+
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean>
+        get() = _isLoading
+
     // marks that the app has been launched in DataStore
     fun onSignUpVisited() = viewModelScope.launch {
         appLaunchStateManager.updateApplicationLaunchState()
     }
 
     // Creates a new user account
-    fun onButtonSignUpClicked() = viewModelScope.launch {
+    fun onButtonSignUpWithEmailClicked() = viewModelScope.launch {
         _singUpEvent.emit(SignUpEvent.HideErrors)
-        val emptyFields = inputsAreValid(name.value!!, email.value!!, password.value!!)
-        if (emptyFields.fields.isNotEmpty())
-            _singUpEvent.emit(emptyFields)
 
+        val name = name.value!!
+        val email = email.value!!
+        val password = password.value!!
+
+        val emptyFields = inputsAreValid(name, email, password)
+        if (emptyFields.fields.isNotEmpty()) {
+            _singUpEvent.emit(emptyFields)
+            return@launch
+        }
+
+        _isLoading.value = true
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful)
+                    userCreationWithEmailSucceeded(name)
+                else
+                    userCreationWithEmailFailed(task.exception)
+                _isLoading.value = false
+            }
+    }
+
+    private fun userCreationWithEmailSucceeded(name: String) {
+        Timber.i("user creation with email succeeded")
+        val user = auth.currentUser!!
+        val request = UserProfileChangeRequest.Builder()
+            .setDisplayName(name)
+            .build()
+        user.updateProfile(request).addOnCompleteListener { task ->
+            if (task.isSuccessful) viewModelScope.launch {
+                _singUpEvent.emit(SignUpEvent.NavigateToHomeFragment)
+            }
+        }
+    }
+
+    private fun userCreationWithEmailFailed(exception: Exception?) = viewModelScope.launch {
+        Timber.i("user creation with email failed")
+        when (exception) {
+            is FirebaseAuthWeakPasswordException -> {
+                Timber.i("PasswordWeak: $exception")
+                _singUpEvent.emit(SignUpEvent.WeakPasswordException(exception.reason))
+            }
+            is FirebaseAuthInvalidCredentialsException -> {
+                Timber.i("EmailInvalid: $exception")
+                _singUpEvent.emit(SignUpEvent.InvalidEmailException)
+            }
+            is FirebaseAuthUserCollisionException -> {
+                Timber.i("Existing account: $exception")
+                _singUpEvent.emit(SignUpEvent.ExistingEmailException)
+            }
+            is FirebaseNetworkException -> {
+                Timber.i("network error: $exception")
+                _singUpEvent.emit(SignUpEvent.NetworkException)
+            }
+            else -> {
+                Timber.i("user creation failed\n $exception\n\n")
+                _singUpEvent.emit(SignUpEvent.UnexpectedException)
+            }
+        }
     }
 
     // Returns EmptyFields contains list of fields or empty if there are no empty fields
@@ -72,6 +141,13 @@ class SignUpViewModel @Inject constructor(
         enum class Fields {
             NAME, EMAIL, PASSWORD
         }
-        object NavigateToLoginFragment: SignUpEvent()
+
+        object NavigateToLoginFragment : SignUpEvent()
+        data class WeakPasswordException(val reason: String?) : SignUpEvent()
+        object ExistingEmailException : SignUpEvent()
+        object InvalidEmailException : SignUpEvent()
+        object NetworkException : SignUpEvent()
+        object UnexpectedException : SignUpEvent()
+        object NavigateToHomeFragment : SignUpEvent()
     }
 }
