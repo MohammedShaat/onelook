@@ -33,4 +33,15 @@
     <string name="sign_up_text_view_already_have_an_account">Already have an account?</string>
     <string name="sign_up_text_view_login">Login</string>
     <string name="empty_fields">Please fill in all the required fields.</string>
+    <string name="login_text_view_header">Welcome back</string>
+    <string name="login_text_view_forgot_your_password">Forgot your password?</string>
+    <string name="password_reminder_1_text_view_header">Enter your e-mail</string>
+    <string name="password_reminder_1_text_view_explaination">You will receive a link to confirm the password change to the e-mail address provided</string>
+    <string name="login_button_login">Log in</string>
+    <string name="login_text_view_dont_have_an_account">Don’t have an account yet?</string>
+    <string name="login_text_view_sign_up">Sign up</string>
+    <string name="password_reminder_1_button_confirm_email">Confirm e-mail</string>
+    <string name="password_reminder_2_button_confirm_password">Confrim password</string>
+    <string name="password_reminder_2_text_view_header">Enter a new password</string>
+    <string name="password_reminder_1_text_view_message">Your password has\n been changed</string>
 </resources>

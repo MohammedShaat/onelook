@@ -1,14 +1,11 @@
 package com.example.onelook.ui.signup
 
-import android.text.InputType
 import androidx.lifecycle.*
-import com.example.onelook.GLOBAL_TAG
 import com.example.onelook.data.ApplicationLaunchStateManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,11 +23,8 @@ class SignUpViewModel @Inject constructor(
     val passwordVisibility: LiveData<Boolean>
         get() = _passwordVisibility
 
-    private val _inputsErrorMessageEvent = MutableSharedFlow<InputsErrorMessage>()
-    val inputsErrorMessageEvent = _inputsErrorMessageEvent.asSharedFlow()
-
-    private val _hideErrorsEvent = MutableSharedFlow<Boolean>()
-    val hideErrorsEvent = _hideErrorsEvent.asSharedFlow()
+    private val _singUpEvent = MutableSharedFlow<SignUpEvent>()
+    val singUpEvent = _singUpEvent.asSharedFlow()
 
     // marks that the app has been launched in DataStore
     fun onSignUpVisited() = viewModelScope.launch {
@@ -44,35 +38,37 @@ class SignUpViewModel @Inject constructor(
 
     // Creates a new user account
     fun onButtonSignUpClicked() = viewModelScope.launch {
-        _hideErrorsEvent.emit(true)
+        _singUpEvent.emit(SignUpEvent.HideErrors)
         val emptyFields = inputsAreValid(name.value!!, email.value!!, password.value!!)
         if (emptyFields.fields.isNotEmpty())
-            _inputsErrorMessageEvent.emit(emptyFields)
+            _singUpEvent.emit(emptyFields)
 
     }
 
-    //returns EmptyFields contains list of fields or empty if there are no empty fields
+    // Returns EmptyFields contains list of fields or empty if there are no empty fields
     private fun inputsAreValid(
         name: String,
         email: String,
         password: String
-    ): InputsErrorMessage.EmptyFields {
-        val fields = mutableListOf<InputsErrorMessage.Fields>()
+    ): SignUpEvent.EmptyFields {
+        val fields = mutableListOf<SignUpEvent.Fields>()
         if (name.isBlank())
-            fields.add(InputsErrorMessage.Fields.NAME)
+            fields.add(SignUpEvent.Fields.NAME)
         if (email.isBlank())
-            fields.add(InputsErrorMessage.Fields.EMAIL)
+            fields.add(SignUpEvent.Fields.EMAIL)
         if (password.isBlank())
-            fields.add(InputsErrorMessage.Fields.PASSWORD)
-        return InputsErrorMessage.EmptyFields(fields)
+            fields.add(SignUpEvent.Fields.PASSWORD)
+        return SignUpEvent.EmptyFields(fields)
     }
 
+    // Enables/disable password visibility
     fun onPasswordVisibilityClicked() {
         _passwordVisibility.value = !_passwordVisibility.value!!
     }
 
-    sealed class InputsErrorMessage {
-        data class EmptyFields(val fields: List<Fields>) : InputsErrorMessage()
+    sealed class SignUpEvent {
+        object HideErrors : SignUpEvent()
+        data class EmptyFields(val fields: List<Fields>) : SignUpEvent()
         enum class Fields {
             NAME, EMAIL, PASSWORD
         }

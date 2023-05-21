@@ -16,6 +16,13 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
 
+    // Just for testing
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.fragment_login)
+//        supportActionBar?.hide()
+//    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         // Navigate to Sign Up screen if it's not first launch
         val isFirstLaunch = intent.getBooleanExtra(IS_FIRST_LAUNCH_EXTRA_NAME, false)
         if (!isFirstLaunch && savedInstanceState == null) {
-            val action = WelcomeFragmentDirections.actionWelcomeFragmentToSignUpFragment()
+            val action = WelcomeFragmentDirections.actionWelcomeFragmentToLoginFragment()
             navController.navigate(action)
         }
     }

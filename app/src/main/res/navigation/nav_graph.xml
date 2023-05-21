@@ -14,8 +14,8 @@
             android:id="@+id/action_welcomeFragment_to_viewPagerFragment"
             app:destination="@id/viewPagerFragment" />
         <action
-            android:id="@+id/action_welcomeFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment"
+            android:id="@+id/action_welcomeFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
             app:popUpTo="@id/welcomeFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -34,10 +34,58 @@
         android:id="@+id/signUpFragment"
         android:name="com.example.onelook.ui.signup.SignUpFragment"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" />
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_signUpFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
     <activity
         android:id="@+id/splashScreenActivity"
-        android:name="com.example.onelook.SplashScreenActivity"
+        android:name="com.example.onelook.ui.splashscreen.SplashScreenActivity"
         android:label="activity_splash_screen"
         tools:layout="@layout/activity_splash_screen" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.onelook.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_passwordReminder1Fragment"
+            app:destination="@id/passwordReminder1Fragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/passwordReminder1Fragment"
+        android:name="com.example.onelook.ui.login.passwordreminder1.PasswordReminder1Fragment"
+        android:label="fragment_password_reminder_1"
+        tools:layout="@layout/fragment_password_reminder_1" >
+        <action
+            android:id="@+id/action_passwordReminder1Fragment_to_passwordReminder2Fragment"
+            app:destination="@id/passwordReminder2Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/passwordReminder2Fragment"
+        android:name="com.example.onelook.ui.login.passwordreminder2.PasswordReminder2Fragment"
+        android:label="fragment_password_reminder_2"
+        tools:layout="@layout/fragment_password_reminder_2" >
+        <action
+            android:id="@+id/action_passwordReminder2Fragment_to_passwordReminder3Fragment"
+            app:destination="@id/passwordReminder3Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/passwordReminder3Fragment"
+        android:name="com.example.onelook.ui.login.passwordreminder3.PasswordReminder3Fragment"
+        android:label="fragment_password_reminder_3"
+        tools:layout="@layout/fragment_password_reminder_3" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.onelook.ui.home.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
 </navigation>

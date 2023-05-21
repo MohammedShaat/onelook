@@ -1,4 +1,4 @@
-package com.example.onelook.ui.signup
+package com.example.onelook.ui.login
 
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
@@ -7,48 +7,44 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
-import com.example.onelook.databinding.FragmentSignUpBinding
+import com.example.onelook.databinding.FragmentLoginBinding
 import com.example.onelook.util.onCollect
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
-class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
+class LoginFragment : Fragment(R.layout.fragment_login) {
 
-    private lateinit var binding: FragmentSignUpBinding
-    private val viewModel: SignUpViewModel by viewModels()
+    private lateinit var binding: FragmentLoginBinding
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //Sets up binding
-        binding = FragmentSignUpBinding.bind(view)
-
-        viewModel.onSignUpVisited()
+        binding = FragmentLoginBinding.bind(view)
 
         // Listeners
         binding.apply {
             sendInputsDataWhenChanged()
 
-            buttonSignUp.setOnClickListener {
-                viewModel.onButtonSignUpClicked()
-            }
-
-            checkboxPrivacyPolicy.setOnCheckedChangeListener { _, isChecked ->
-                viewModel.onCheckBoxPrivacyPolicyChanged()
+            buttonLogin.setOnClickListener {
+                viewModel.onButtonLoginClicked()
             }
 
             imageButtonPasswordVisibility.setOnClickListener {
                 viewModel.onPasswordVisibilityClicked()
             }
-        }
+
+            textViewForgotYourPassword.setOnClickListener {
+                viewModel.onForgetPasswordClicked()
+            }
+
+            textViewSignUp.setOnClickListener {
+                viewModel.onSignUpClicked()
+            }
+        }//Listeners
 
         // Observers
         viewModel.apply {
-            buttonSignUpEnabled.observe(viewLifecycleOwner) { isEnabled ->
-                binding.buttonSignUp.isEnabled = isEnabled
-            }
-
             passwordVisibility.observe(viewLifecycleOwner) { isPasswordVisible ->
                 if (isPasswordVisible) {
                     binding.apply {
@@ -65,39 +61,44 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 }
             }
 
-            onCollect(singUpEvent) { message ->
+            onCollect(loginEvent) { message ->
                 when (message) {
-                    is SignUpViewModel.SignUpEvent.EmptyFields -> {
+                    is LoginViewModel.LoginEvent.EmptyFields -> {
                         markErrorFields(message.fields)
                         binding.textViewPasswordErrorMessage.apply {
                             setText(R.string.empty_fields)
                             isVisible = true
                         }
-                    }//EmptyFields event
+                    }//EmptyFields
 
-                    is SignUpViewModel.SignUpEvent.HideErrors -> {
+                    is LoginViewModel.LoginEvent.HideErrors -> {
                         hideErrors()
-                    }//HideErrors event
+                    }//HideErrors
+
+                    is LoginViewModel.LoginEvent.NavigateToPasswordReminder1Fragment -> {
+                        val action = LoginFragmentDirections.actionLoginFragmentToPasswordReminder1Fragment()
+                        findNavController().navigate(action)
+                    }//NavigateToPasswordReminder1Fragment
+
+                    is LoginViewModel.LoginEvent.NavigateToSignUpFragment -> {
+                        findNavController().navigate(R.id.signUpFragment)
+                    }//NavigateToSignUpFragment
                 }//when
 
             }
-        }//Listeners
+        }//Observers
     }//onViewCreated
 
     // Marks fields' labels that have error
-    private fun markErrorFields(fields: List<SignUpViewModel.SignUpEvent.Fields>) {
+    private fun markErrorFields(fields: List<LoginViewModel.LoginEvent.Fields>) {
         fields.forEach { field ->
             when (field) {
-                SignUpViewModel.SignUpEvent.Fields.NAME -> binding.textViewName.setTextColor(
+                LoginViewModel.LoginEvent.Fields.EMAIL -> binding.textViewEmail.setTextColor(
                     resources.getColor(R.color.alert)
                 )
-                SignUpViewModel.SignUpEvent.Fields.EMAIL -> binding.textViewEmail.setTextColor(
+                LoginViewModel.LoginEvent.Fields.PASSWORD -> binding.textViewPassword.setTextColor(
                     resources.getColor(R.color.alert)
                 )
-                SignUpViewModel.SignUpEvent.Fields.PASSWORD -> binding.textViewPassword.setTextColor(
-                    resources.getColor(R.color.alert)
-                )
-
             }
         }
     }
@@ -105,7 +106,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     // Sends fields' data when the user types
     private fun sendInputsDataWhenChanged() {
         binding.apply {
-            textInputName.addTextChangedListener { viewModel.name.value = it.toString() }
             textInputEmail.addTextChangedListener { viewModel.email.value = it.toString() }
             textInputPassword.addTextChangedListener { viewModel.password.value = it.toString() }
         }
@@ -114,7 +114,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     // Resets labels and hide error message
     private fun hideErrors() {
         binding.apply {
-            textViewName.setTextColor(resources.getColor(R.color.dark_grey))
             textViewEmail.setTextColor(resources.getColor(R.color.dark_grey))
             textViewPassword.setTextColor(resources.getColor(R.color.dark_grey))
             textViewPasswordErrorMessage.isVisible = false
