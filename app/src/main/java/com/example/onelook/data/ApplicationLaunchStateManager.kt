@@ -20,7 +20,7 @@ class ApplicationLaunchStateManager @Inject constructor(@ApplicationContext cont
     private val applicationLaunchStateKey =
         preferencesKey<Boolean>("application_launch_state")
 
-    suspend fun isFinished(): Boolean {
+    suspend fun isFirstLaunch(): Boolean {
         val state = dataStore.data.catch { throwable ->
             Timber.e(throwable)
             emit(emptyPreferences())

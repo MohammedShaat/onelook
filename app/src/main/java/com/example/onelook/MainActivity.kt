@@ -1,15 +1,11 @@
 package com.example.onelook
 
 import android.os.Bundle
-import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.onelook.ui.splashscreen.IS_FIRST_LAUNCH_EXTRA_NAME
-import com.example.onelook.ui.welcome.WelcomeFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -29,13 +25,6 @@ class MainActivity : AppCompatActivity() {
 
         setupNavigation()
         supportActionBar?.hide()
-
-        // Navigate to Sign Up screen if it's not first launch
-        val isFirstLaunch = intent.getBooleanExtra(IS_FIRST_LAUNCH_EXTRA_NAME, false)
-        if (!isFirstLaunch && savedInstanceState == null) {
-            val action = WelcomeFragmentDirections.actionWelcomeFragmentToLoginFragment()
-            navController.navigate(action)
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
