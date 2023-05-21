@@ -31,11 +31,6 @@ class SignUpViewModel @Inject constructor(
         appLaunchStateManager.updateApplicationLaunchState()
     }
 
-    // Enables or disables sign up button when checkbox is clicked
-    fun onCheckBoxPrivacyPolicyChanged() {
-        buttonSignUpEnabled.value = !buttonSignUpEnabled.value!!
-    }
-
     // Creates a new user account
     fun onButtonSignUpClicked() = viewModelScope.launch {
         _singUpEvent.emit(SignUpEvent.HideErrors)
@@ -66,11 +61,17 @@ class SignUpViewModel @Inject constructor(
         _passwordVisibility.value = !_passwordVisibility.value!!
     }
 
+    // Sends NavigateToLoginFragment event
+    fun onLoginClicked() = viewModelScope.launch {
+        _singUpEvent.emit(SignUpEvent.NavigateToLoginFragment)
+    }
+
     sealed class SignUpEvent {
         object HideErrors : SignUpEvent()
         data class EmptyFields(val fields: List<Fields>) : SignUpEvent()
         enum class Fields {
             NAME, EMAIL, PASSWORD
         }
+        object NavigateToLoginFragment: SignUpEvent()
     }
 }

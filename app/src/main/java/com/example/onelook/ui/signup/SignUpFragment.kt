@@ -7,6 +7,8 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentSignUpBinding
 import com.example.onelook.util.onCollect
@@ -17,12 +19,14 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
     private lateinit var binding: FragmentSignUpBinding
     private val viewModel: SignUpViewModel by viewModels()
+    private lateinit var navController: NavController
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //Sets up binding
+        // Setup
         binding = FragmentSignUpBinding.bind(view)
+        navController = findNavController()
 
         viewModel.onSignUpVisited()
 
@@ -34,14 +38,14 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 viewModel.onButtonSignUpClicked()
             }
 
-            checkboxPrivacyPolicy.setOnCheckedChangeListener { _, isChecked ->
-                viewModel.onCheckBoxPrivacyPolicyChanged()
-            }
-
             imageButtonPasswordVisibility.setOnClickListener {
                 viewModel.onPasswordVisibilityClicked()
             }
-        }
+
+            textViewLogin.setOnClickListener {
+                viewModel.onLoginClicked()
+            }
+        }//Listeners
 
         // Observers
         viewModel.apply {
@@ -78,10 +82,14 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     is SignUpViewModel.SignUpEvent.HideErrors -> {
                         hideErrors()
                     }//HideErrors event
-                }//when
 
+                    is SignUpViewModel.SignUpEvent.NavigateToLoginFragment -> {
+                        navController.popBackStack()
+                        navController.navigate(R.id.loginFragment)
+                    }
+                }//when
             }
-        }//Listeners
+        }//Observers
     }//onViewCreated
 
     // Marks fields' labels that have error
@@ -108,6 +116,9 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             textInputName.addTextChangedListener { viewModel.name.value = it.toString() }
             textInputEmail.addTextChangedListener { viewModel.email.value = it.toString() }
             textInputPassword.addTextChangedListener { viewModel.password.value = it.toString() }
+            checkboxPrivacyPolicy.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.buttonSignUpEnabled.value = isChecked
+            }
         }
     }
 
