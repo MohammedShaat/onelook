@@ -1,12 +1,15 @@
 package com.example.onelook.ui.signup
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.*
 import com.example.onelook.data.ApplicationLaunchStateManager
+import com.google.android.gms.auth.api.identity.SignInCredential
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -53,9 +56,9 @@ class SignUpViewModel @Inject constructor(
         val email = email.value!!
         val password = password.value!!
 
-        val emptyFields = inputsAreValid(name, email, password)
-        if (emptyFields.fields.isNotEmpty()) {
-            _singUpEvent.emit(emptyFields)
+        val emptyFields = inputsAreNotEmpty(name, email, password)
+        if (emptyFields.isNotEmpty()) {
+            _singUpEvent.emit(SignUpEvent.ShowEmptyFieldsMessage(emptyFields))
             return@launch
         }
 
@@ -63,66 +66,87 @@ class SignUpViewModel @Inject constructor(
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful)
-                    userCreationWithEmailSucceeded(name)
+                    creationWithEmailOrProviderSucceeded(name)
                 else
-                    userCreationWithEmailFailed(task.exception)
+                    creationWithEmailFailed(task.exception)
                 _isLoading.value = false
             }
     }
 
-    private fun userCreationWithEmailSucceeded(name: String) {
-        Timber.i("user creation with email succeeded")
+    private fun creationWithEmailOrProviderSucceeded(name: String?) {
+//        Timber.i("user creation with email succeeded")
         val user = auth.currentUser!!
         val request = UserProfileChangeRequest.Builder()
             .setDisplayName(name)
             .build()
-        user.updateProfile(request).addOnCompleteListener { task ->
-            if (task.isSuccessful) viewModelScope.launch {
+        user.updateProfile(request).addOnCompleteListener {
+            viewModelScope.launch {
                 _singUpEvent.emit(SignUpEvent.NavigateToHomeFragment)
             }
         }
     }
 
-    private fun userCreationWithEmailFailed(exception: Exception?) = viewModelScope.launch {
-        Timber.i("user creation with email failed")
+    private fun creationWithEmailFailed(exception: Exception?) = viewModelScope.launch {
         when (exception) {
             is FirebaseAuthWeakPasswordException -> {
                 Timber.i("PasswordWeak: $exception")
-                _singUpEvent.emit(SignUpEvent.WeakPasswordException(exception.reason))
+                _singUpEvent.emit(
+                    SignUpEvent.ShowCreationWithEmailFailedMessage(
+                        CreationWithEmailExceptions.WEAK_PASSWORD,
+                        fields = listOf(Fields.PASSWORD),
+                        message = exception.reason
+                    )
+                )
             }
             is FirebaseAuthInvalidCredentialsException -> {
                 Timber.i("EmailInvalid: $exception")
-                _singUpEvent.emit(SignUpEvent.InvalidEmailException)
+                _singUpEvent.emit(
+                    SignUpEvent.ShowCreationWithEmailFailedMessage(
+                        CreationWithEmailExceptions.INVALID_EMAIL
+                    )
+                )
             }
             is FirebaseAuthUserCollisionException -> {
                 Timber.i("Existing account: $exception")
-                _singUpEvent.emit(SignUpEvent.ExistingEmailException)
+                _singUpEvent.emit(
+                    SignUpEvent.ShowCreationWithEmailFailedMessage(
+                        CreationWithEmailExceptions.EXISTING_EMAIL
+                    )
+                )
             }
             is FirebaseNetworkException -> {
                 Timber.i("network error: $exception")
-                _singUpEvent.emit(SignUpEvent.NetworkException)
+                _singUpEvent.emit(
+                    SignUpEvent.ShowCreationWithEmailFailedMessage(
+                        CreationWithEmailExceptions.NETWORK_ISSUE
+                    )
+                )
             }
             else -> {
-                Timber.i("user creation failed\n $exception\n\n")
-                _singUpEvent.emit(SignUpEvent.UnexpectedException)
+                Timber.i("user creation failed\n $exception")
+                _singUpEvent.emit(
+                    SignUpEvent.ShowCreationWithEmailFailedMessage(
+                        CreationWithEmailExceptions.OTHER_EXCEPTIONS
+                    )
+                )
             }
         }
     }
 
     // Returns EmptyFields contains list of fields or empty if there are no empty fields
-    private fun inputsAreValid(
+    private fun inputsAreNotEmpty(
         name: String,
         email: String,
         password: String
-    ): SignUpEvent.EmptyFields {
-        val fields = mutableListOf<SignUpEvent.Fields>()
+    ): List<Fields> {
+        val fields = mutableListOf<Fields>()
         if (name.isBlank())
-            fields.add(SignUpEvent.Fields.NAME)
+            fields.add(Fields.NAME)
         if (email.isBlank())
-            fields.add(SignUpEvent.Fields.EMAIL)
+            fields.add(Fields.EMAIL)
         if (password.isBlank())
-            fields.add(SignUpEvent.Fields.PASSWORD)
-        return SignUpEvent.EmptyFields(fields)
+            fields.add(Fields.PASSWORD)
+        return fields
     }
 
     // Enables/disable password visibility
@@ -135,19 +159,75 @@ class SignUpViewModel @Inject constructor(
         _singUpEvent.emit(SignUpEvent.NavigateToLoginFragment)
     }
 
+    fun onButtonSignUpWithGoogleClicked() = viewModelScope.launch {
+        _singUpEvent.emit(SignUpEvent.SignUpWithGoogle)
+    }
+
+    fun onSignInCredentialReceived(credential: SignInCredential) {
+        val googleAuthCredential = GoogleAuthProvider.getCredential(credential.googleIdToken, null)
+        _isLoading.value = true
+        auth.signInWithCredential(googleAuthCredential).addOnCompleteListener { task ->
+            if (task.isSuccessful)
+                creationWithEmailOrProviderSucceeded(credential.displayName)
+            else
+                creationWithProviderFailed(task.exception)
+            _isLoading.value = false
+        }
+    }
+
+    private fun creationWithProviderFailed(exception: Exception?) = viewModelScope.launch {
+        when (exception) {
+            is FirebaseNetworkException -> {
+                Timber.i("network error: $exception")
+                _singUpEvent.emit(
+                    SignUpEvent.ShowCreationWithProviderFailedMessage(
+                        CreationWithProviderExceptions.NETWORK_ISSUE
+                    )
+                )
+            }
+            else -> {
+                Timber.i("user creation failed\n $exception")
+                _singUpEvent.emit(
+                    SignUpEvent.ShowCreationWithProviderFailedMessage(
+                        CreationWithProviderExceptions.OTHER_EXCEPTIONS
+                    )
+                )
+            }
+        }
+    }
+
+    fun onErrorOccurred(id: Int? = null) = viewModelScope.launch {
+        _singUpEvent.emit(SignUpEvent.ErrorOccurred(id))
+    }
+
     sealed class SignUpEvent {
         object HideErrors : SignUpEvent()
-        data class EmptyFields(val fields: List<Fields>) : SignUpEvent()
-        enum class Fields {
-            NAME, EMAIL, PASSWORD
-        }
+        data class ShowEmptyFieldsMessage(val fields: List<Fields>) : SignUpEvent()
+        data class ShowCreationWithEmailFailedMessage(
+            val exception: CreationWithEmailExceptions,
+            val fields: List<Fields> = emptyList(),
+            val message: String? = null,
+        ) : SignUpEvent()
+
+        data class ShowCreationWithProviderFailedMessage(
+            val exception: CreationWithProviderExceptions
+        ) : SignUpEvent()
 
         object NavigateToLoginFragment : SignUpEvent()
-        data class WeakPasswordException(val reason: String?) : SignUpEvent()
-        object ExistingEmailException : SignUpEvent()
-        object InvalidEmailException : SignUpEvent()
-        object NetworkException : SignUpEvent()
-        object UnexpectedException : SignUpEvent()
         object NavigateToHomeFragment : SignUpEvent()
+        object SignUpWithGoogle : SignUpEvent()
+        data class ErrorOccurred(@StringRes val id: Int? = null) : SignUpEvent()
+    }
+
+    enum class Fields {
+        NAME, EMAIL, PASSWORD
+    }
+
+    enum class CreationWithEmailExceptions {
+        WEAK_PASSWORD, EXISTING_EMAIL, INVALID_EMAIL, NETWORK_ISSUE, OTHER_EXCEPTIONS
+    }
+
+    enum class CreationWithProviderExceptions {
+        NETWORK_ISSUE, OTHER_EXCEPTIONS
     }
 }
