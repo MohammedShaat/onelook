@@ -16,7 +16,13 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentSignUpBinding
+import com.example.onelook.util.isInternetAvailable
 import com.example.onelook.util.onCollect
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
@@ -40,7 +46,9 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     @Named("sign_up")
     lateinit var signInRequest: BeginSignInRequest
 
-    private val signInActivityResult = setupSignInActivityResult()
+    private val googleSignInLauncher = setupGoogleSignInLauncher()
+
+    private val callbackManager = CallbackManager.Factory.create()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,11 +72,15 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             }
 
             textViewLogin.setOnClickListener {
-                viewModel.onLoginClicked()
+                viewModel.onButtonLoginClicked()
             }
 
             imageButtonGoogle.setOnClickListener {
                 viewModel.onButtonSignUpWithGoogleClicked()
+            }
+
+            imageButtonFacebook.setOnClickListener {
+                viewModel.onButtonSignUpWithFacebookClicked()
             }
         }//Listeners
 
@@ -97,13 +109,15 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
             isLoading.observe(viewLifecycleOwner) { isLoading ->
                 binding.apply {
-                    root.isClickable = !isLoading
-                    buttonSignUp.isEnabled = !isLoading && viewModel.buttonSignUpEnabled.value!!
                     progressBar.isVisible = isLoading
+                    buttonSignUp.isEnabled = !isLoading && viewModel.buttonSignUpEnabled.value!!
+                    imageButtonGoogle.isEnabled = !isLoading
+                    imageButtonGoogle.isEnabled = !isLoading
                 }
             }
 
             onCollect(singUpEvent) { event ->
+                hideErrors()
                 when (event) {
                     is SignUpViewModel.SignUpEvent.ShowEmptyFieldsMessage -> {
                         markErrorFields(event.fields)
@@ -112,10 +126,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                             isVisible = true
                         }
                     }//EmptyFields
-
-                    is SignUpViewModel.SignUpEvent.HideErrors -> {
-                        hideErrors()
-                    }//HideErrors
 
                     is SignUpViewModel.SignUpEvent.NavigateToLoginFragment -> {
                         navController.popBackStack()
@@ -137,7 +147,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                                 textViewPasswordErrorMessage.setText(R.string.existing_email)
                             }
                             SignUpViewModel.CreationWithEmailExceptions.NETWORK_ISSUE -> {
-                                textViewPasswordErrorMessage.setText(R.string.network_issue)
+                                textViewPasswordErrorMessage.setText(R.string.no_internet_connection)
                             }
                             SignUpViewModel.CreationWithEmailExceptions.OTHER_EXCEPTIONS -> {
                                 textViewPasswordErrorMessage.setText(R.string.unexpected_error_2)
@@ -150,14 +160,10 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                         navController.navigate(action)
                     }//NavigateToHomeFragment
 
-                    is SignUpViewModel.SignUpEvent.SignUpWithGoogle -> {
-                        signUpWithGoogle()
-                    }//SignUpWithGoogle
-
                     is SignUpViewModel.SignUpEvent.ErrorOccurred -> {
                         Snackbar.make(
                             requireView(),
-                            getString(event.id ?: R.string.unexpected_error),
+                            event.message ?: getString(R.string.unexpected_error),
                             Snackbar.LENGTH_LONG
                         ).show()
                     }//ErrorOccurred
@@ -166,12 +172,20 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                         Snackbar.make(
                             requireView(),
                             when (event.exception) {
-                                SignUpViewModel.CreationWithProviderExceptions.NETWORK_ISSUE -> R.string.network_issue
+                                SignUpViewModel.CreationWithProviderExceptions.NETWORK_ISSUE -> R.string.no_internet_connection
                                 SignUpViewModel.CreationWithProviderExceptions.OTHER_EXCEPTIONS -> R.string.unexpected_error
                             },
                             Snackbar.LENGTH_LONG
                         ).show()
-                    }//CreationWithProviderExceptions
+                    }//ShowCreationWithProviderFailedMessage
+
+                    is SignUpViewModel.SignUpEvent.SignUpWithGoogle -> {
+                        signUpWithGoogle()
+                    }//SignUpWithGoogle
+
+                    is SignUpViewModel.SignUpEvent.SignUpWithFacebook -> {
+                        signUpWithFacebook()
+                    }//SignUpWithFacebook
                 }//when
             }
         }//Observers
@@ -221,25 +235,25 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         signInClient.beginSignIn(signInRequest)
             .addOnSuccessListener { result ->
                 try {
-                    signInActivityResult.launch(
+                    googleSignInLauncher.launch(
                         IntentSenderRequest.Builder(result.pendingIntent).build()
                     )
                 } catch (e: SendIntentException) {
                     Timber.e("Couldn't start One Tap UI\n $e")
                 }
             }
-            .addOnFailureListener { e ->
-                if (e is ApiException && e.statusCode == 16) {
-                    Timber.e("No matching credentials found")
-                    viewModel.onErrorOccurred(R.string.no_google_accounts)
+            .addOnFailureListener() { e ->
+                Timber.e("Sign in request failed\n $e")
+                if (!isInternetAvailable()) {
+                    Timber.e("No internet connection")
+                    viewModel.onErrorOccurred(getString(R.string.no_internet_connection))
                 } else {
-                    Timber.e("Unexpected exception happened\n $e")
-                    viewModel.onErrorOccurred()
+                    viewModel.onErrorOccurred(e.localizedMessage)
                 }
             }
     }
 
-    private fun setupSignInActivityResult(): ActivityResultLauncher<IntentSenderRequest> {
+    private fun setupGoogleSignInLauncher(): ActivityResultLauncher<IntentSenderRequest> {
         return registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 try {
@@ -248,12 +262,47 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                         Timber.e("No token found\n")
                         viewModel.onErrorOccurred()
                     }//token == null
-                    viewModel.onSignInCredentialReceived(credential)
+                    viewModel.onGoogleTokenReceived(credential)
                 } catch (e: ApiException) {
                     Timber.e("No credential found\n $e")
-                    viewModel.onErrorOccurred()
+                    viewModel.onErrorOccurred(e.localizedMessage)
                 }//no credential
             }
         }
+    }
+
+    private fun signUpWithFacebook() {
+        val loginManager = LoginManager.getInstance()
+        loginManager.logInWithReadPermissions(
+            this,
+            callbackManager,
+            listOf("email", "public_profile")
+        )
+        loginManager.registerCallback(
+            callbackManager,
+            object : FacebookCallback<LoginResult> {
+                override fun onSuccess(result: LoginResult) {
+                    Timber.i("Facebook login succeeded")
+                    viewModel.onFacebookTokenReceived(result.accessToken)
+                }
+
+                override fun onCancel() {
+                    Timber.i("Facebook login canceled")
+                    if (!isInternetAvailable()) {
+                        Timber.e("No internet connection")
+                        viewModel.onErrorOccurred(getString(R.string.no_internet_connection))
+                    }
+                }
+
+                override fun onError(error: FacebookException) {
+                    Timber.e("Facebook login failed\n $error")
+                    if (!isInternetAvailable()) {
+                        Timber.e("No internet connection")
+                        viewModel.onErrorOccurred(getString(R.string.no_internet_connection))
+                    } else {
+                        viewModel.onErrorOccurred(error.localizedMessage)
+                    }
+                }
+            })
     }
 }

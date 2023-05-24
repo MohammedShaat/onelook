@@ -5,9 +5,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.data.ApplicationLaunchStateManager
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -17,9 +20,12 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
 
     @Inject
     lateinit var appLaunchStateManager: ApplicationLaunchStateManager
+    private lateinit var navController: NavController
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        navController = findNavController()
 
         //Check if the app is launched for the first time
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -29,13 +35,14 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
     }
 
     private fun navigate(isFirstLaunch: Boolean, savedInstanceState: Bundle?) {
-//        if (!isFirstLaunch && savedInstanceState == null) {
-        if (isFirstLaunch) {
-            val action = SplashScreenFragmentDirections.actionSplashScreenFragmentToWelcomeFragment()
-            findNavController().navigate(action)
-        } else {
-            val action = SplashScreenFragmentDirections.actionSplashScreenFragmentToLoginFragment()
-            findNavController().navigate(action)
+        val action = when {
+            isFirstLaunch ->
+                SplashScreenFragmentDirections.actionSplashScreenFragmentToWelcomeFragment()
+            FirebaseAuth.getInstance().currentUser == null ->
+                SplashScreenFragmentDirections.actionSplashScreenFragmentToLoginFragment()
+            else ->
+                SplashScreenFragmentDirections.actionSplashScreenFragmentToHomeFragment()
         }
+        navController.navigate(action)
     }
 }

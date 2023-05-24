@@ -77,6 +77,11 @@ dependencies {
     //Google Play services
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
 
+    //Facebook
+    implementation 'com.facebook.android:facebook-android-sdk:latest.release'
+
+    //Splash screen
+    implementation "androidx.core:core-splashscreen:1.0.1"
 }
 
 kapt {

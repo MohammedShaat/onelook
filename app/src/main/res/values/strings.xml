@@ -47,10 +47,13 @@
     <string name="existing_email">Email already in use. Please choose a different email or sign in with your existing account.</string>
     <string name="invalid_email">The email address is invalid or incorrectly formatted.</string>
     <string name="unexpected_error_2">An unexpected error occurred. Please try again later or contact support for assistance.</string>
-    <string name="network_issue">No internet connection. Please try again.</string>
+    <string name="no_internet_connection">Oops! It seems like you\'re not connected to the internet. Please check your network</string>
+    <string name="no_google_accounts">No Google accounts found on this device</string>
+    <string name="unexpected_error">Unexpected error occurred. Please try again</string>
 
     <!--  Keys - IDs  -->
     <string name="server_client_id">3643895289-vj4j99mvqp7162uh3gldb3nr6kc9dvfs.apps.googleusercontent.com</string>
-    <string name="no_google_accounts">No Google accounts found on this device</string>
-    <string name="unexpected_error">Unexpected error occurred. Please try again</string>
+    <string name="facebook_app_id">201144586141390</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">cf5e90e699c41c24edcfe2886f8ca65b</string>
 </resources>

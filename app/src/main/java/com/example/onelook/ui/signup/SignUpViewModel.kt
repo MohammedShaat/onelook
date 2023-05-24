@@ -1,22 +1,20 @@
 package com.example.onelook.ui.signup
 
-import androidx.annotation.StringRes
+import android.os.Bundle
 import androidx.lifecycle.*
 import com.example.onelook.data.ApplicationLaunchStateManager
+import com.facebook.AccessToken
+import com.facebook.GraphRequest
 import com.google.android.gms.auth.api.identity.SignInCredential
 import com.google.firebase.FirebaseNetworkException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.auth.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,10 +46,19 @@ class SignUpViewModel @Inject constructor(
         appLaunchStateManager.updateApplicationLaunchState()
     }
 
-    // Creates a new user account
-    fun onButtonSignUpWithEmailClicked() = viewModelScope.launch {
-        _singUpEvent.emit(SignUpEvent.HideErrors)
+    fun onErrorOccurred(message: String? = null) = viewModelScope.launch {
+        _singUpEvent.emit(SignUpEvent.ErrorOccurred(message))
+    }
 
+    fun onPasswordVisibilityClicked() {
+        _passwordVisibility.value = !_passwordVisibility.value!!
+    }
+
+    fun onButtonLoginClicked() = viewModelScope.launch {
+        _singUpEvent.emit(SignUpEvent.NavigateToLoginFragment)
+    }
+
+    fun onButtonSignUpWithEmailClicked() = viewModelScope.launch {
         val name = name.value!!
         val email = email.value!!
         val password = password.value!!
@@ -65,31 +72,27 @@ class SignUpViewModel @Inject constructor(
         _isLoading.value = true
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful)
+                if (task.isSuccessful) {
                     creationWithEmailOrProviderSucceeded(name)
-                else
+                } else {
+                    _isLoading.value = false
                     creationWithEmailFailed(task.exception)
-                _isLoading.value = false
+                }
             }
     }
 
-    private fun creationWithEmailOrProviderSucceeded(name: String?) {
-//        Timber.i("user creation with email succeeded")
-        val user = auth.currentUser!!
-        val request = UserProfileChangeRequest.Builder()
-            .setDisplayName(name)
-            .build()
-        user.updateProfile(request).addOnCompleteListener {
-            viewModelScope.launch {
-                _singUpEvent.emit(SignUpEvent.NavigateToHomeFragment)
-            }
-        }
+    fun onButtonSignUpWithGoogleClicked() = viewModelScope.launch {
+        _singUpEvent.emit(SignUpEvent.SignUpWithGoogle)
+    }
+
+    fun onButtonSignUpWithFacebookClicked() = viewModelScope.launch {
+        _singUpEvent.emit(SignUpEvent.SignUpWithFacebook)
     }
 
     private fun creationWithEmailFailed(exception: Exception?) = viewModelScope.launch {
         when (exception) {
             is FirebaseAuthWeakPasswordException -> {
-                Timber.i("PasswordWeak: $exception")
+                Timber.e("PasswordWeak: $exception")
                 _singUpEvent.emit(
                     SignUpEvent.ShowCreationWithEmailFailedMessage(
                         CreationWithEmailExceptions.WEAK_PASSWORD,
@@ -99,7 +102,7 @@ class SignUpViewModel @Inject constructor(
                 )
             }
             is FirebaseAuthInvalidCredentialsException -> {
-                Timber.i("EmailInvalid: $exception")
+                Timber.e("EmailInvalid: $exception")
                 _singUpEvent.emit(
                     SignUpEvent.ShowCreationWithEmailFailedMessage(
                         CreationWithEmailExceptions.INVALID_EMAIL
@@ -107,7 +110,7 @@ class SignUpViewModel @Inject constructor(
                 )
             }
             is FirebaseAuthUserCollisionException -> {
-                Timber.i("Existing account: $exception")
+                Timber.e("Existing account: $exception")
                 _singUpEvent.emit(
                     SignUpEvent.ShowCreationWithEmailFailedMessage(
                         CreationWithEmailExceptions.EXISTING_EMAIL
@@ -115,7 +118,7 @@ class SignUpViewModel @Inject constructor(
                 )
             }
             is FirebaseNetworkException -> {
-                Timber.i("network error: $exception")
+                Timber.e("network error: $exception")
                 _singUpEvent.emit(
                     SignUpEvent.ShowCreationWithEmailFailedMessage(
                         CreationWithEmailExceptions.NETWORK_ISSUE
@@ -123,7 +126,7 @@ class SignUpViewModel @Inject constructor(
                 )
             }
             else -> {
-                Timber.i("user creation failed\n $exception")
+                Timber.e("user creation failed\n $exception")
                 _singUpEvent.emit(
                     SignUpEvent.ShowCreationWithEmailFailedMessage(
                         CreationWithEmailExceptions.OTHER_EXCEPTIONS
@@ -133,7 +136,40 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    // Returns EmptyFields contains list of fields or empty if there are no empty fields
+    private fun creationWithProviderFailed(exception: Exception?) = viewModelScope.launch {
+        when (exception) {
+            is FirebaseNetworkException -> {
+                Timber.e("network error: $exception")
+                _singUpEvent.emit(
+                    SignUpEvent.ShowCreationWithProviderFailedMessage(
+                        CreationWithProviderExceptions.NETWORK_ISSUE
+                    )
+                )
+            }
+            else -> {
+                Timber.e("user creation failed\n $exception")
+                _singUpEvent.emit(
+                    SignUpEvent.ShowCreationWithProviderFailedMessage(
+                        CreationWithProviderExceptions.OTHER_EXCEPTIONS
+                    )
+                )
+            }
+        }
+    }
+
+    private fun creationWithEmailOrProviderSucceeded(name: String?) {
+        val user = auth.currentUser!!
+        val request = UserProfileChangeRequest.Builder()
+            .setDisplayName(name)
+            .build()
+        user.updateProfile(request).addOnCompleteListener {
+            viewModelScope.launch {
+                _isLoading.value = false
+                _singUpEvent.emit(SignUpEvent.NavigateToHomeFragment)
+            }
+        }
+    }
+
     private fun inputsAreNotEmpty(
         name: String,
         email: String,
@@ -149,59 +185,50 @@ class SignUpViewModel @Inject constructor(
         return fields
     }
 
-    // Enables/disable password visibility
-    fun onPasswordVisibilityClicked() {
-        _passwordVisibility.value = !_passwordVisibility.value!!
-    }
-
-    // Sends NavigateToLoginFragment event
-    fun onLoginClicked() = viewModelScope.launch {
-        _singUpEvent.emit(SignUpEvent.NavigateToLoginFragment)
-    }
-
-    fun onButtonSignUpWithGoogleClicked() = viewModelScope.launch {
-        _singUpEvent.emit(SignUpEvent.SignUpWithGoogle)
-    }
-
-    fun onSignInCredentialReceived(credential: SignInCredential) {
+    fun onGoogleTokenReceived(credential: SignInCredential) {
         val googleAuthCredential = GoogleAuthProvider.getCredential(credential.googleIdToken, null)
         _isLoading.value = true
         auth.signInWithCredential(googleAuthCredential).addOnCompleteListener { task ->
-            if (task.isSuccessful)
+            if (task.isSuccessful) {
                 creationWithEmailOrProviderSucceeded(credential.displayName)
-            else
+            } else {
                 creationWithProviderFailed(task.exception)
-            _isLoading.value = false
-        }
-    }
-
-    private fun creationWithProviderFailed(exception: Exception?) = viewModelScope.launch {
-        when (exception) {
-            is FirebaseNetworkException -> {
-                Timber.i("network error: $exception")
-                _singUpEvent.emit(
-                    SignUpEvent.ShowCreationWithProviderFailedMessage(
-                        CreationWithProviderExceptions.NETWORK_ISSUE
-                    )
-                )
-            }
-            else -> {
-                Timber.i("user creation failed\n $exception")
-                _singUpEvent.emit(
-                    SignUpEvent.ShowCreationWithProviderFailedMessage(
-                        CreationWithProviderExceptions.OTHER_EXCEPTIONS
-                    )
-                )
+                _isLoading.value = false
             }
         }
     }
 
-    fun onErrorOccurred(id: Int? = null) = viewModelScope.launch {
-        _singUpEvent.emit(SignUpEvent.ErrorOccurred(id))
+    fun onFacebookTokenReceived(accessToken: AccessToken) {
+        _isLoading.value = true
+        val facebookCredential = FacebookAuthProvider.getCredential(accessToken.token)
+        auth.signInWithCredential(facebookCredential).addOnCompleteListener { task ->
+            if (task.isSuccessful) viewModelScope.launch {
+                val name = getUserNameFromFacebook(accessToken)
+                creationWithEmailOrProviderSucceeded(name)
+            } else {
+                creationWithProviderFailed(task.exception)
+                _isLoading.value = false
+            }
+        }
+    }
+
+    private suspend fun getUserNameFromFacebook(accessToken: AccessToken?): String? {
+        return withContext(Dispatchers.IO) {
+            var name: String? = null
+
+            val request = GraphRequest.newMeRequest(accessToken) { jsonObj, _ ->
+                name = jsonObj?.getString("name")
+            }
+            val parameters = Bundle()
+            parameters.putString("fields", "name")
+            request.parameters = parameters
+            request.executeAndWait()
+
+            name
+        }
     }
 
     sealed class SignUpEvent {
-        object HideErrors : SignUpEvent()
         data class ShowEmptyFieldsMessage(val fields: List<Fields>) : SignUpEvent()
         data class ShowCreationWithEmailFailedMessage(
             val exception: CreationWithEmailExceptions,
@@ -216,7 +243,8 @@ class SignUpViewModel @Inject constructor(
         object NavigateToLoginFragment : SignUpEvent()
         object NavigateToHomeFragment : SignUpEvent()
         object SignUpWithGoogle : SignUpEvent()
-        data class ErrorOccurred(@StringRes val id: Int? = null) : SignUpEvent()
+        object SignUpWithFacebook : SignUpEvent()
+        data class ErrorOccurred(val message: String? = null) : SignUpEvent()
     }
 
     enum class Fields {
