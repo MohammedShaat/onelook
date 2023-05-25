@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.signup.SignUpFragment">
+    tools:context=".ui.signup.SignUpFragment"
+    tools:theme="@style/Theme.OneLook">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -107,12 +108,12 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/text_view_password_error_message"
+            android:id="@+id/text_view_error_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/m_margin"
             android:drawablePadding="@dimen/s_padding"
-            android:text="@string/text_view_password_error_1"
+            android:text="@string/text_view_error"
             android:textColor="@color/alert"
             android:visibility="gone"
             app:drawableStartCompat="@drawable/ic_error"
@@ -125,7 +126,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/m_margin"
-            app:layout_constraintTop_toBottomOf="@id/text_view_password_error_message" />
+            app:layout_constraintTop_toBottomOf="@id/text_view_error_message" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/checkbox_privacy_policy"

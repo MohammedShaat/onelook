@@ -21,7 +21,7 @@
     <string name="sign_up_text_input_email">Enter your e-mail</string>
     <string name="sign_up_text_view_password">Password</string>
     <string name="sign_up_text_input_password">Enter a password</string>
-    <string name="text_view_password_error_1">At least 8 characters</string>
+    <string name="text_view_error">At least 8 characters</string>
     <string name="text_view_password_error_2">Both uppercase and lowercase characters</string>
     <string name="text_view_password_error_3">At least one number or symbol</string>
     <string name="sign_up_privacy_policy">By continuing you accept our Privacy Policy and Term of Use</string>
@@ -56,4 +56,8 @@
     <string name="facebook_app_id">201144586141390</string>
     <string name="fb_login_protocol_scheme">fb1234</string>
     <string name="facebook_client_token">cf5e90e699c41c24edcfe2886f8ca65b</string>
+    <string name="not_exist_email">The email address provided does not exist in our records. Please ensure that you have entered the correct email or consider signing up for an account.</string>
+    <string name="wrong_password">The password entered is incorrect. Please double-check your password or reset it by clicking on \'Forgot your password?\'.</string>
+    <string name="too_many_requests">Access to your account has been temporarily blocked due to excessive failed login attempts. Please wait for some time.</string>
+    <string name="no_registered_accounts">No registered accounts found. Please sign up first.</string>
 </resources>

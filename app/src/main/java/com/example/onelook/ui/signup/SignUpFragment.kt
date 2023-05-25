@@ -1,6 +1,7 @@
 package com.example.onelook.ui.signup
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.IntentSender.SendIntentException
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
@@ -121,7 +122,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 when (event) {
                     is SignUpViewModel.SignUpEvent.ShowEmptyFieldsMessage -> {
                         markErrorFields(event.fields)
-                        binding.textViewPasswordErrorMessage.apply {
+                        binding.textViewErrorMessage.apply {
                             setText(R.string.empty_fields)
                             isVisible = true
                         }
@@ -134,23 +135,24 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
                     is SignUpViewModel.SignUpEvent.ShowCreationWithEmailFailedMessage -> {
                         markErrorFields(event.fields)
-                        val textViewPasswordErrorMessage = binding.textViewPasswordErrorMessage
-                        textViewPasswordErrorMessage.isVisible = true
+                        val textViewErrorMessage = binding.textViewErrorMessage
+                        textViewErrorMessage.isVisible = true
                         when (event.exception) {
                             SignUpViewModel.CreationWithEmailExceptions.WEAK_PASSWORD -> {
-                                textViewPasswordErrorMessage.text = event.message
+                                textViewErrorMessage.text = event.message
                             }
                             SignUpViewModel.CreationWithEmailExceptions.INVALID_EMAIL -> {
-                                textViewPasswordErrorMessage.setText(R.string.invalid_email)
+                                textViewErrorMessage.setText(R.string.invalid_email)
                             }
                             SignUpViewModel.CreationWithEmailExceptions.EXISTING_EMAIL -> {
-                                textViewPasswordErrorMessage.setText(R.string.existing_email)
+                                textViewErrorMessage.setText(R.string.existing_email)
                             }
                             SignUpViewModel.CreationWithEmailExceptions.NETWORK_ISSUE -> {
-                                textViewPasswordErrorMessage.setText(R.string.no_internet_connection)
+                                textViewErrorMessage.setText(R.string.no_internet_connection)
                             }
                             SignUpViewModel.CreationWithEmailExceptions.OTHER_EXCEPTIONS -> {
-                                textViewPasswordErrorMessage.setText(R.string.unexpected_error_2)
+                                textViewErrorMessage.text =
+                                    event.message ?: getString(R.string.unexpected_error_2)
                             }
                         }
                     }//ShowCreationWithEmailFailed
@@ -169,14 +171,13 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     }//ErrorOccurred
 
                     is SignUpViewModel.SignUpEvent.ShowCreationWithProviderFailedMessage -> {
-                        Snackbar.make(
-                            requireView(),
-                            when (event.exception) {
-                                SignUpViewModel.CreationWithProviderExceptions.NETWORK_ISSUE -> R.string.no_internet_connection
-                                SignUpViewModel.CreationWithProviderExceptions.OTHER_EXCEPTIONS -> R.string.unexpected_error
-                            },
-                            Snackbar.LENGTH_LONG
-                        ).show()
+                        val msg = when (event.exception) {
+                            SignUpViewModel.CreationWithProviderExceptions.NETWORK_ISSUE ->
+                                getString(R.string.no_internet_connection)
+                            SignUpViewModel.CreationWithProviderExceptions.OTHER_EXCEPTIONS ->
+                                event.message ?: getString(R.string.unexpected_error)
+                        }
+                        Snackbar.make(requireView(), msg, Snackbar.LENGTH_LONG).show()
                     }//ShowCreationWithProviderFailedMessage
 
                     is SignUpViewModel.SignUpEvent.SignUpWithGoogle -> {
@@ -227,7 +228,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             textViewName.setTextColor(resources.getColor(R.color.dark_grey))
             textViewEmail.setTextColor(resources.getColor(R.color.dark_grey))
             textViewPassword.setTextColor(resources.getColor(R.color.dark_grey))
-            textViewPasswordErrorMessage.isVisible = false
+            textViewErrorMessage.isVisible = false
         }
     }
 
@@ -238,8 +239,9 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     googleSignInLauncher.launch(
                         IntentSenderRequest.Builder(result.pendingIntent).build()
                     )
-                } catch (e: SendIntentException) {
+                } catch (e: ActivityNotFoundException) {
                     Timber.e("Couldn't start One Tap UI\n $e")
+                    viewModel.onErrorOccurred()
                 }
             }
             .addOnFailureListener() { e ->

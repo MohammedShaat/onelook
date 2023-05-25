@@ -16,12 +16,15 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var appLaunchStateManager: ApplicationLaunchStateManager
+
+    @Inject
+    lateinit var auth: FirebaseAuth
+
     private lateinit var navController: NavController
     var keepSplashScreen = true
     private var isFirstLaunch = true
-
-    @Inject
-    lateinit var appLaunchStateManager: ApplicationLaunchStateManager
 
     // Just for testing
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +70,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigate() {
-        val destination = when (FirebaseAuth.getInstance().currentUser) {
+        val destination = when (auth.currentUser) {
             null -> R.id.loginFragment
             else -> R.id.homeFragment
         }

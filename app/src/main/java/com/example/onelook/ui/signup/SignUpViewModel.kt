@@ -20,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val state: SavedStateHandle,
-    private val appLaunchStateManager: ApplicationLaunchStateManager
+    private val appLaunchStateManager: ApplicationLaunchStateManager,
+    val auth: FirebaseAuth
 ) : ViewModel() {
 
     val name = state.getLiveData("name", "")
@@ -34,8 +35,6 @@ class SignUpViewModel @Inject constructor(
 
     private val _singUpEvent = MutableSharedFlow<SignUpEvent>()
     val singUpEvent = _singUpEvent.asSharedFlow()
-
-    private val auth = FirebaseAuth.getInstance()
 
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean>
@@ -129,7 +128,8 @@ class SignUpViewModel @Inject constructor(
                 Timber.e("user creation failed\n $exception")
                 _singUpEvent.emit(
                     SignUpEvent.ShowCreationWithEmailFailedMessage(
-                        CreationWithEmailExceptions.OTHER_EXCEPTIONS
+                        CreationWithEmailExceptions.OTHER_EXCEPTIONS,
+                        message = exception?.localizedMessage
                     )
                 )
             }
@@ -142,7 +142,8 @@ class SignUpViewModel @Inject constructor(
                 Timber.e("network error: $exception")
                 _singUpEvent.emit(
                     SignUpEvent.ShowCreationWithProviderFailedMessage(
-                        CreationWithProviderExceptions.NETWORK_ISSUE
+                        CreationWithProviderExceptions.NETWORK_ISSUE,
+                        exception.localizedMessage
                     )
                 )
             }
@@ -150,24 +151,35 @@ class SignUpViewModel @Inject constructor(
                 Timber.e("user creation failed\n $exception")
                 _singUpEvent.emit(
                     SignUpEvent.ShowCreationWithProviderFailedMessage(
-                        CreationWithProviderExceptions.OTHER_EXCEPTIONS
+                        CreationWithProviderExceptions.OTHER_EXCEPTIONS,
+                        message = exception?.localizedMessage
                     )
                 )
             }
         }
     }
 
-    private fun creationWithEmailOrProviderSucceeded(name: String?) {
+    private fun creationWithEmailOrProviderSucceeded(name: String?, email: String? = null) {
         val user = auth.currentUser!!
         val request = UserProfileChangeRequest.Builder()
             .setDisplayName(name)
             .build()
+
         user.updateProfile(request).addOnCompleteListener {
-            viewModelScope.launch {
-                _isLoading.value = false
-                _singUpEvent.emit(SignUpEvent.NavigateToHomeFragment)
+            if (email != null) {
+                user.updateEmail(email).addOnCompleteListener {
+                    viewModelScope.launch {
+                        _isLoading.value = false
+                        _singUpEvent.emit(SignUpEvent.NavigateToHomeFragment)
+                    }
+                }//updateEmail
+            } else {
+                viewModelScope.launch {
+                    _isLoading.value = false
+                    _singUpEvent.emit(SignUpEvent.NavigateToHomeFragment)
+                }
             }
-        }
+        }//updateProfile
     }
 
     private fun inputsAreNotEmpty(
@@ -203,8 +215,8 @@ class SignUpViewModel @Inject constructor(
         val facebookCredential = FacebookAuthProvider.getCredential(accessToken.token)
         auth.signInWithCredential(facebookCredential).addOnCompleteListener { task ->
             if (task.isSuccessful) viewModelScope.launch {
-                val name = getUserNameFromFacebook(accessToken)
-                creationWithEmailOrProviderSucceeded(name)
+                val data = getUserNameAndEmailFromFacebook(accessToken)
+                creationWithEmailOrProviderSucceeded(data.first, data.second)
             } else {
                 creationWithProviderFailed(task.exception)
                 _isLoading.value = false
@@ -212,19 +224,23 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getUserNameFromFacebook(accessToken: AccessToken?): String? {
+    private suspend fun getUserNameAndEmailFromFacebook(accessToken: AccessToken?): Pair<String?, String?> {
         return withContext(Dispatchers.IO) {
             var name: String? = null
+            var email: String? = null
 
             val request = GraphRequest.newMeRequest(accessToken) { jsonObj, _ ->
                 name = jsonObj?.getString("name")
+                email =
+                    if (jsonObj?.has("email") == true) jsonObj.getString("email")
+                    else null
+                Timber.i("request: name: $name, email: $email")
             }
             val parameters = Bundle()
-            parameters.putString("fields", "name")
+            parameters.putString("fields", "email,name")
             request.parameters = parameters
             request.executeAndWait()
-
-            name
+            Pair(name, email)
         }
     }
 
@@ -237,7 +253,8 @@ class SignUpViewModel @Inject constructor(
         ) : SignUpEvent()
 
         data class ShowCreationWithProviderFailedMessage(
-            val exception: CreationWithProviderExceptions
+            val exception: CreationWithProviderExceptions,
+            val message: String? = null
         ) : SignUpEvent()
 
         object NavigateToLoginFragment : SignUpEvent()

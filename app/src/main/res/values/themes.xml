@@ -43,6 +43,7 @@
         <item name="android:background">@drawable/button_solid_background_primary_color</item>
         <item name="android:drawableEnd">@drawable/ic_right_arrow</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?colorOnPrimary</item>
     </style>
 
     <style name="CustomTextInputTextView">

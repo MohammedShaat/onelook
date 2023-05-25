@@ -5,6 +5,7 @@ import com.example.onelook.R
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,5 +39,27 @@ object AppModule {
                     .build()
             )
             .build()
+    }
+
+    @Provides
+    @Singleton
+    @Named("login")
+    fun provideSignInRequestWithFilter(@ApplicationContext context: Context): BeginSignInRequest {
+        return BeginSignInRequest.Builder()
+            .setAutoSelectEnabled(true)
+            .setGoogleIdTokenRequestOptions(
+                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                    .setSupported(true)
+                    .setServerClientId(context.getString(R.string.server_client_id))
+                    .setFilterByAuthorizedAccounts(true)
+                    .build()
+            )
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
     }
 }
