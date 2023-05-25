@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.example.onelook.MainActivity
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentLoginBinding
 import com.example.onelook.util.onCollect
@@ -93,6 +94,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
         }//Observers
     }//onViewCreated
+
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as MainActivity).hideSplashScreen()
+    }
 
     // Marks fields' labels that have error
     private fun markErrorFields(fields: List<LoginViewModel.LoginEvent.Fields>) {

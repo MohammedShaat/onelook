@@ -12,5 +12,16 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+
+        <!-- Text style-->
+        <item name="android:fontFamily">@font/noto_sans</item>
+        <item name="android:textSize">@dimen/mid_text_size</item>
+    </style>
+
+    <style name="Theme.OneLook.SplashScreen" parent="Theme.SplashScreen">
+        <!-- Splash Screen -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_brand_logo_splash_screen</item>
+        <item name="windowSplashScreenBackground">@color/black</item>
+        <item name="postSplashScreenTheme">@style/Theme.OneLook</item>
     </style>
 </resources>
