@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">OneLook</string>
+    
+    <!--  Keys - IDs  -->
+    <string name="server_client_id">3643895289-vj4j99mvqp7162uh3gldb3nr6kc9dvfs.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">201144586141390</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">cf5e90e699c41c24edcfe2886f8ca65b</string>
+    
+    <!--  Values  -->
     <string name="welcome_screen_title">Welcome to\n OneLook</string>
     <string name="welcome_screen_subtitle">Just take a look and take action!</string>
     <string name="welcome_screen_primary_button_text">Let\'s start</string>
@@ -50,14 +58,11 @@
     <string name="no_internet_connection">Oops! It seems like you\'re not connected to the internet. Please check your network</string>
     <string name="no_google_accounts">No Google accounts found on this device</string>
     <string name="unexpected_error">Unexpected error occurred. Please try again</string>
-
-    <!--  Keys - IDs  -->
-    <string name="server_client_id">3643895289-vj4j99mvqp7162uh3gldb3nr6kc9dvfs.apps.googleusercontent.com</string>
-    <string name="facebook_app_id">201144586141390</string>
-    <string name="fb_login_protocol_scheme">fb1234</string>
-    <string name="facebook_client_token">cf5e90e699c41c24edcfe2886f8ca65b</string>
     <string name="not_exist_email">The email address provided does not exist in our records. Please ensure that you have entered the correct email or consider signing up for an account.</string>
     <string name="wrong_password">The password entered is incorrect. Please double-check your password or reset it by clicking on \'Forgot your password?\'.</string>
     <string name="too_many_requests">Access to your account has been temporarily blocked due to excessive failed login attempts. Please wait for some time.</string>
     <string name="no_registered_accounts">No registered accounts found. Please sign up first.</string>
+    <string name="empty_email_field">Please fill in the email field.</string>
+    <string name="not_exist_email_reset_password">The email address provided does not exist in our records. Please ensure that you have entered the correct email.</string>
+    <string name="sent_password_reset_email">Sent a password reset email to \'%s\'</string>
 </resources>

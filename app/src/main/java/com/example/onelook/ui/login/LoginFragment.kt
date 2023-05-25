@@ -11,12 +11,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.MainActivity
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentLoginBinding
+import com.example.onelook.util.Constants
 import com.example.onelook.util.isInternetAvailable
 import com.example.onelook.util.onCollect
 import com.facebook.CallbackManager
@@ -191,6 +193,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
             }
         }//Observers
+
+        setFragmentResultListener(Constants.PASSWORD_REST_EMAIL_REQ) { _, bundle ->
+            val receivedEmail = bundle.getString("email") ?: return@setFragmentResultListener
+            Snackbar.make(
+                view,
+                getString(R.string.sent_password_reset_email, receivedEmail),
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
     }//onViewCreated
 
     override fun onResume() {
