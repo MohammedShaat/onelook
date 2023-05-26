@@ -1,30 +1,25 @@
-package com.example.onelook
+package com.example.onelook.ui.mainactivity
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.onelook.data.ApplicationLaunchStateManager
-import com.google.firebase.auth.FirebaseAuth
+import com.example.onelook.GLOBAL_TAG
+import com.example.onelook.R
+import com.example.onelook.util.onCollect
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var appLaunchStateManager: ApplicationLaunchStateManager
-
-    @Inject
-    lateinit var auth: FirebaseAuth
+    private val viewModel: MainActivityViewModel by viewModels()
 
     private lateinit var navController: NavController
     var keepSplashScreen = true
-    private var isFirstLaunch = true
 
     // Just for testing
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val checkAppLaunchStateAndSigningFlow = viewModel.onCheckAppLaunchStateAndSigning()
         installSplashScreen().apply {
             setKeepOnScreenCondition {
                 keepSplashScreen
@@ -46,7 +42,28 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
         setupNavigation()
 
-        checkAppLaunchStateAndMaybeNavigate()
+        // Observers
+        viewModel.apply {
+
+            onCollect(isChecking) { isChecking ->
+                keepSplashScreen = isChecking
+            }
+
+            onCollect(checkAppLaunchStateAndSigningFlow) { event ->
+                when (event) {
+                    is MainActivityViewModel.MainActivityEvent.NavigateToLoginFragment -> {
+                        Timber.tag(GLOBAL_TAG).i("NavigateToLoginFragment")
+                        navController.popBackStack()
+                        navController.navigate(R.id.loginFragment)
+                    }
+                    is MainActivityViewModel.MainActivityEvent.NavigateToHomeFragment -> {
+                        Timber.tag(GLOBAL_TAG).i("NavigateToHomeFragment")
+                        navController.popBackStack()
+                        navController.navigate(R.id.homeFragment)
+                    }
+                }
+            }
+        }//Observers
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -58,23 +75,6 @@ class MainActivity : AppCompatActivity() {
                 as NavHostFragment
         navController = navHostFragment.navController
         setupActionBarWithNavController(navController)
-    }
-
-    private fun checkAppLaunchStateAndMaybeNavigate() = lifecycleScope.launchWhenStarted {
-        val state = appLaunchStateManager.isFirstLaunch()
-        isFirstLaunch = state
-        if (!isFirstLaunch)
-            navigate()
-        else
-            hideSplashScreen()
-    }
-
-    private fun navigate() {
-        val destination = when (auth.currentUser) {
-            null -> R.id.loginFragment
-            else -> R.id.homeFragment
-        }
-        navController.navigate(destination)
     }
 
     fun hideSplashScreen() {

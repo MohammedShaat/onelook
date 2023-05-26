@@ -15,7 +15,8 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.example.onelook.MainActivity
+import com.example.onelook.GLOBAL_TAG
+import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentLoginBinding
 import com.example.onelook.util.Constants
@@ -206,6 +207,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     override fun onResume() {
         super.onResume()
+        Timber.tag(GLOBAL_TAG).i("LoginFragment onResume()")
         (requireActivity() as MainActivity).hideSplashScreen()
     }
 

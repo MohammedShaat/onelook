@@ -1,20 +1,29 @@
 package com.example.onelook.util
 
 import android.content.Context
-import android.content.pm.Capability
 import android.net.ConnectivityManager
-import android.net.ConnectivityManager.NetworkCallback
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Build.VERSION_CODES
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import com.facebook.gamingservices.cloudgaming.internal.SDKConstants
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 fun <T> Fragment.onCollect(flow: Flow<T>, block: (value: T) -> Unit) {
     viewLifecycleOwner.lifecycleScope.launchWhenStarted {
         flow.collect(block)
+    }
+}
+
+fun <T> AppCompatActivity.onCollect(flow: Flow<T>, block: (value: T) -> Unit) {
+    lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            flow.collect(block)
+        }
     }
 }
 

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.onelook.MainActivity
+import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentHomeBinding
 import com.google.firebase.auth.FirebaseAuth
