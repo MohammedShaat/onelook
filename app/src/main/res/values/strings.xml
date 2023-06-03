@@ -67,4 +67,10 @@
     <string name="sent_password_reset_email">Sent a password reset email to \'%s\'</string>
     <string name="account_not_registered_yet">This account not registered yet. Please sign up first</string>
     <string name="account_already_registered">This account is already registered. Please sign in instead.</string>
+    <string name="home_text_view_greeting">Hi %s!</string>
+    <string name="home_text_view_to_do_lit">To-do list</string>
+    <string name="home_button_add_task">Add task</string>
+    <string name="home_image_button_add_task">Add task</string>
+    <string name="item_activity_task_image_view_activity_icon">Image represents the activity</string>
+    <string name="home_button_continue_exercise">Continue exercise</string>
 </resources>

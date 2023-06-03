@@ -4,30 +4,89 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/lilac_petals"
     android:paddingHorizontal="@dimen/h_padding"
-    tools:context=".ui.home.HomeFragment">
-
+    tools:context=".ui.home.HomeFragment"
+    tools:theme="@style/Theme.OneLook">
 
     <TextView
-        android:id="@+id/text_view_title"
+        android:id="@+id/text_view_greeting"
+        style="@style/CustomHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/m_margin"
+        android:text="@string/home_text_view_greeting"
+        android:textAlignment="textStart"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Hi Madison!" />
+
+    <TextView
+        android:id="@+id/text_view_to_do_list_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Home Screen"
-        android:textSize="40sp"
-        android:textColor="@color/black"
+        android:layout_marginTop="@dimen/xh_margin"
+        android:text="@string/home_text_view_to_do_lit"
+        android:textColor="?colorOnSurface"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_view_greeting" />
+
+    <TextView
+        android:id="@+id/text_view_add_task"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/home_image_button_add_task"
+        android:src="@drawable/ic_add"
+        android:text="@string/home_image_button_add_task"
+        android:textColor="?colorPrimary"
+        android:textSize="@dimen/mid_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/text_view_to_do_list_title"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageButton
+        android:id="@+id/image_button_add_task"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/s_margin"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/home_image_button_add_task"
+        android:src="@drawable/ic_add"
+        android:textColor="?colorPrimary"
+        android:textSize="@dimen/s_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/text_view_add_task"
+        app:layout_constraintEnd_toStartOf="@+id/text_view_add_task"
+        app:layout_constraintTop_toTopOf="@+id/text_view_add_task"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_tasks"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/text_view_to_do_list_title"
+        tools:layout_editor_absoluteX="24dp"
+        tools:listitem="@layout/item_activity_task"
+        tools:visibility="invisible" />
 
-    <TextView
-        android:id="@+id/text_view_subtitle"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Welcome"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_view_title" />
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/text_view_to_do_list_title"
+        tools:layout_editor_absoluteX="24dp">
+
+        <include layout="@layout/item_activity_task" />
+        <include layout="@layout/item_activity_task" />
+        <include layout="@layout/item_activity_task" />
+        <include layout="@layout/item_activity_task" />
+        <include layout="@layout/item_activity_task" />
+        <include layout="@layout/item_activity_task" />
+        <include layout="@layout/item_activity_task" />
+        <include layout="@layout/item_activity_task" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

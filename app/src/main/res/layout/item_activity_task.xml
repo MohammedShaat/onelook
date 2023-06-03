@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="110dp"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/item_task_background"
+    android:padding="16dp"
+    tools:theme="@style/Theme.OneLook">
+
+    <ImageView
+        android:id="@+id/image_view_activity_icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:contentDescription="@string/item_activity_task_image_view_activity_icon"
+        android:src="@drawable/ic_breath"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_breath" />
+
+    <Button
+        android:id="@+id/button_continue_exercise"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/home_button_continue_exercise"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/text_view_task_name"
+        app:layout_constraintTop_toBottomOf="@+id/text_view_task_name"
+        app:strokeColor="?colorPrimary" />
+
+    <TextView
+        android:id="@+id/text_view_task_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/m_margin"
+        android:text="Breath training"
+        android:textColor="?colorOnSurface"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/button_continue_exercise"
+        app:layout_constraintStart_toEndOf="@+id/image_view_activity_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Breath training" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

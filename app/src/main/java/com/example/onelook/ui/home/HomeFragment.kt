@@ -2,6 +2,7 @@ package com.example.onelook.ui.home
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.onelook.ui.mainactivity.MainActivity
@@ -21,11 +22,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
+
         binding = FragmentHomeBinding.bind(view)
         viewModel
 
         val userName = auth.currentUser?.displayName
-        binding.textViewSubtitle.text = "Wecolme: $userName"
+        binding.textViewGreeting.text = getString(R.string.home_text_view_greeting, userName)
     }
 
     override fun onResume() {
