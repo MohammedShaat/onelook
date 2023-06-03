@@ -1,6 +1,10 @@
 package com.example.onelook.ui.login
 
 import androidx.lifecycle.*
+import com.example.onelook.data.AppState
+import com.example.onelook.data.AppStateManager
+import com.example.onelook.data.network.OneLookApi
+import com.example.onelook.data.network.requests.NetworkLoginAndDeleteUserRequest
 import com.facebook.AccessToken
 import com.google.android.gms.auth.api.identity.SignInCredential
 import com.google.firebase.FirebaseNetworkException
@@ -10,13 +14,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import retrofit2.HttpException
 import timber.log.Timber
+import java.net.HttpURLConnection
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val state: SavedStateHandle,
-    val auth: FirebaseAuth
+    private val appStateManager: AppStateManager,
+    private val oneLookApi: OneLookApi,
+    val auth: FirebaseAuth,
 ) : ViewModel() {
 
     val email = state.getLiveData("email", "")
@@ -46,7 +55,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onForgetPasswordClicked() = viewModelScope.launch {
-        _loginEvent.emit(LoginEvent.NavigateToPasswordReminder1)
+        _loginEvent.emit(LoginEvent.NavigateToPasswordReminder)
     }
 
     fun onButtonLoginWithEmailClicked() = viewModelScope.launch {
@@ -150,8 +159,10 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun signingWithEmailOrProviderSucceeded() = viewModelScope.launch {
+        val result = saveAccessToken()
         _isLoading.value = false
-        _loginEvent.emit(LoginEvent.NavigateToHomeFragment)
+        if (result)
+            _loginEvent.emit(LoginEvent.NavigateToHomeFragment)
     }
 
     private fun inputsAreNotEmpty(
@@ -192,6 +203,29 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    private suspend fun saveAccessToken(): Boolean {
+        val user = auth.currentUser!!
+        val firebaseToken = user.getIdToken(false).await().token ?: return false
+        Timber.i("firebaseToken: $firebaseToken")
+        return try {
+            val response =
+                oneLookApi.login(NetworkLoginAndDeleteUserRequest(firebaseToken))
+            appStateManager.apply {
+                updateAppState(AppState.LOGGED_IN)
+                setAccessToken(response.accessToken)
+            }
+            Timber.i("accessToken: ${response.accessToken}")
+            true
+        } catch (exception: HttpException) {
+            Timber.e("API login failed\n $exception")
+            when (exception.code()) {
+                HttpURLConnection.HTTP_NOT_FOUND -> _loginEvent.emit(LoginEvent.ShowUserNotFoundMessage)
+                else -> _loginEvent.emit(LoginEvent.ErrorOccurred(exception.localizedMessage))
+            }
+            false
+        }
+    }
+
     sealed class LoginEvent {
         data class ShowEmptyFieldsMessage(val fields: List<Fields>) : LoginEvent()
         data class ShowSigningWithEmailFailedMessage(
@@ -206,11 +240,12 @@ class LoginViewModel @Inject constructor(
         ) : LoginEvent()
 
         object NavigateToSignUpFragment : LoginEvent()
-        object NavigateToPasswordReminder1 : LoginEvent()
+        object NavigateToPasswordReminder : LoginEvent()
         object NavigateToHomeFragment : LoginEvent()
         object LoginWithGoogle : LoginEvent()
         object LoginWithFacebook : LoginEvent()
         data class ErrorOccurred(val message: String? = null) : LoginEvent()
+        object ShowUserNotFoundMessage : LoginEvent()
     }
 
     enum class Fields {

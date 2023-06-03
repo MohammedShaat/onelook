@@ -1,4 +1,4 @@
-package com.example.onelook.ui.login.passwordreminder1
+package com.example.onelook.ui.login.passwordreminder
 
 import android.os.Bundle
 import android.view.View
@@ -9,22 +9,21 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
-import com.example.onelook.databinding.FragmentPasswordReminder1Binding
-import com.example.onelook.ui.login.LoginViewModel
+import com.example.onelook.databinding.FragmentPasswordReminderBinding
 import com.example.onelook.util.Constants.PASSWORD_REST_EMAIL_REQ
 import com.example.onelook.util.onCollect
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class PasswordReminder1Fragment : Fragment(R.layout.fragment_password_reminder_1) {
+class PasswordReminderFragment : Fragment(R.layout.fragment_password_reminder) {
 
-    private lateinit var binding: FragmentPasswordReminder1Binding
-    private val viewModel: PasswordReminder1ViewModel by viewModels()
+    private lateinit var binding: FragmentPasswordReminderBinding
+    private val viewModel: PasswordReminderViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding = FragmentPasswordReminder1Binding.bind(view)
+        binding = FragmentPasswordReminderBinding.bind(view)
 
         // Listeners
         binding.apply {
@@ -51,7 +50,7 @@ class PasswordReminder1Fragment : Fragment(R.layout.fragment_password_reminder_1
             onCollect(passwordReminder1Event) { event ->
                 hideError()
                 when (event) {
-                    is PasswordReminder1ViewModel.PasswordReminder1Event.ShowEmptyEmailFieldMessage -> {
+                    is PasswordReminderViewModel.PasswordReminder1Event.ShowEmptyEmailFieldMessage -> {
                         markErrorEmailField()
                         binding.textViewMessage.apply {
                             setText(R.string.empty_email_field)
@@ -59,25 +58,25 @@ class PasswordReminder1Fragment : Fragment(R.layout.fragment_password_reminder_1
                         }
                     }//ShowEmptyEmailFieldMessage
 
-                    is PasswordReminder1ViewModel.PasswordReminder1Event.ShowSendPasswordResetEmailFailedMessage -> {
+                    is PasswordReminderViewModel.PasswordReminder1Event.ShowSendPasswordResetEmailFailedMessage -> {
                         markErrorEmailField()
                         val textViewMessage = binding.textViewMessage
                         textViewMessage.isVisible = true
                         when (event.exception) {
-                            PasswordReminder1ViewModel.SendPasswordResetEmailExceptions.INVALID_EMAIL -> {
+                            PasswordReminderViewModel.SendPasswordResetEmailExceptions.INVALID_EMAIL -> {
                                 textViewMessage.setText(R.string.not_exist_email_reset_password)
                             }
-                            PasswordReminder1ViewModel.SendPasswordResetEmailExceptions.NETWORK_ISSUE -> {
+                            PasswordReminderViewModel.SendPasswordResetEmailExceptions.NETWORK_ISSUE -> {
                                 textViewMessage.setText(R.string.no_internet_connection)
                             }
-                            PasswordReminder1ViewModel.SendPasswordResetEmailExceptions.OTHER_EXCEPTIONS -> {
+                            PasswordReminderViewModel.SendPasswordResetEmailExceptions.OTHER_EXCEPTIONS -> {
                                 textViewMessage.text =
                                     event.message ?: getString(R.string.unexpected_error_2)
                             }
                         }
                     }
 
-                    is PasswordReminder1ViewModel.PasswordReminder1Event.NavigateBackToLoginFragment -> {
+                    is PasswordReminderViewModel.PasswordReminder1Event.NavigateBackToLoginFragment -> {
                         setFragmentResult(PASSWORD_REST_EMAIL_REQ, Bundle().apply {
                             putString("email", email.value!!)
                         })

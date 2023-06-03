@@ -22,6 +22,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentHomeBinding.bind(view)
+        viewModel
 
         val userName = auth.currentUser?.displayName
         binding.textViewSubtitle.text = "Wecolme: $userName"

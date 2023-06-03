@@ -2,18 +2,17 @@ package com.example.onelook.ui.mainactivity
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.onelook.data.ApplicationLaunchStateManager
+import com.example.onelook.data.AppState
+import com.example.onelook.data.AppStateManager
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val state: SavedStateHandle,
-    private val appLaunchStateManager: ApplicationLaunchStateManager,
+    private val appStateManager: AppStateManager,
     private val auth: FirebaseAuth
 ) : ViewModel() {
 
@@ -29,13 +28,10 @@ class MainActivityViewModel @Inject constructor(
         }
         hasBeenChecked.value = true
 
-        val isFirstLaunch = appLaunchStateManager.isFirstLaunch()
-        val isSignedIn = auth.currentUser?.let { true } ?: false
-
-        when {
-            isSignedIn -> emit(MainActivityEvent.NavigateToHomeFragment)
-            !isFirstLaunch -> emit(MainActivityEvent.NavigateToLoginFragment)
-            else -> _isChecking.emit(false)
+        when (appStateManager.getAppState()) {
+            AppState.FIRST_LAUNCH -> _isChecking.emit(false)
+            AppState.LOGGED_IN -> emit(MainActivityEvent.NavigateToHomeFragment)
+            AppState.LOGGED_OUT -> emit(MainActivityEvent.NavigateToLoginFragment)
         }
     }
 

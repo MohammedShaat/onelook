@@ -2,7 +2,6 @@ package com.example.onelook.ui.signup
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
-import android.content.IntentSender.SendIntentException
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.view.View
@@ -179,6 +178,14 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                         }
                         Snackbar.make(requireView(), msg, Snackbar.LENGTH_LONG).show()
                     }//ShowCreationWithProviderFailedMessage
+
+                    SignUpViewModel.SignUpEvent.ShowUserAlreadyExistsMessage -> {
+                        Snackbar.make(
+                            view,
+                            R.string.account_already_registered,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }//ShowUserNotFoundException
 
                     is SignUpViewModel.SignUpEvent.SignUpWithGoogle -> {
                         signUpWithGoogle()

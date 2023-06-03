@@ -18,7 +18,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.example.onelook.HiltTestRunner"
     }
 
     buildTypes {
@@ -37,6 +37,10 @@ android {
     buildFeatures {
         dataBinding true
         viewBinding true
+    }
+
+    packagingOptions {
+        exclude 'META-INF/gradle/incremental.annotation.processors'
     }
 }
 
@@ -82,6 +86,24 @@ dependencies {
 
     //Splash screen
     implementation "androidx.core:core-splashscreen:1.0.1"
+
+    //Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    //Gson
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+
+
+
+    //Unit Test
+    //Hamcrest
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+
+
+
+    //Android Test
+    //Dagger Hilt
+    androidTestImplementation "com.google.dagger:hilt-android-testing:2.44"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:2.44"
 }
 
 kapt {

@@ -52,9 +52,9 @@
     </fragment>
     <fragment
         android:id="@+id/passwordReminder1Fragment"
-        android:name="com.example.onelook.ui.login.passwordreminder1.PasswordReminder1Fragment"
+        android:name="com.example.onelook.ui.login.passwordreminder.PasswordReminderFragment"
         android:label="fragment_password_reminder_1"
-        tools:layout="@layout/fragment_password_reminder_1">
+        tools:layout="@layout/fragment_password_reminder">
         <action
             android:id="@+id/action_passwordReminder1Fragment_to_passwordReminder2Fragment"
             app:destination="@id/passwordReminder2Fragment" />

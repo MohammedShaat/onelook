@@ -131,11 +131,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         navController.navigate(R.id.signUpFragment)
                     }//NavigateToSignUpFragment
 
-                    is LoginViewModel.LoginEvent.NavigateToPasswordReminder1 -> {
+                    is LoginViewModel.LoginEvent.NavigateToPasswordReminder -> {
                         val action =
                             LoginFragmentDirections.actionLoginFragmentToPasswordReminder1Fragment()
                         navController.navigate(action)
-                    }//NavigateToPasswordReminder1
+                    }//NavigateToPasswordReminder
 
                     is LoginViewModel.LoginEvent.NavigateToHomeFragment -> {
                         val action = LoginFragmentDirections.actionLoginFragmentToHomeFragment()
@@ -178,11 +178,20 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         val msg = when (event.exception) {
                             LoginViewModel.SigningWithProviderExceptions.NETWORK_ISSUE ->
                                 getString(R.string.no_internet_connection)
+
                             LoginViewModel.SigningWithProviderExceptions.OTHER_EXCEPTIONS ->
                                 event.message ?: getString(R.string.unexpected_error)
                         }
                         Snackbar.make(requireView(), msg, Snackbar.LENGTH_LONG).show()
                     }//ShowSigningWithProviderFailedMessage
+
+                    is LoginViewModel.LoginEvent.ShowUserNotFoundMessage -> {
+                        Snackbar.make(
+                            view,
+                            R.string.account_not_registered_yet,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }//ShowUserNotFoundException
 
                     is LoginViewModel.LoginEvent.LoginWithGoogle -> {
                         loginWithGoogle()

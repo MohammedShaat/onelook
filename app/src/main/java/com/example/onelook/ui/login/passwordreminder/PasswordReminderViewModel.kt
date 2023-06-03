@@ -1,4 +1,4 @@
-package com.example.onelook.ui.login.passwordreminder1
+package com.example.onelook.ui.login.passwordreminder
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -16,7 +16,7 @@ import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
-class PasswordReminder1ViewModel @Inject constructor(
+class PasswordReminderViewModel @Inject constructor(
     private val state: SavedStateHandle,
     val auth: FirebaseAuth
 ) : ViewModel() {

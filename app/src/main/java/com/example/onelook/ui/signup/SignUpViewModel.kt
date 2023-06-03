@@ -2,7 +2,10 @@ package com.example.onelook.ui.signup
 
 import android.os.Bundle
 import androidx.lifecycle.*
-import com.example.onelook.data.ApplicationLaunchStateManager
+import com.example.onelook.data.AppState
+import com.example.onelook.data.AppStateManager
+import com.example.onelook.data.network.OneLookApi
+import com.example.onelook.data.network.requests.NetworkRegisterRequest
 import com.facebook.AccessToken
 import com.facebook.GraphRequest
 import com.google.android.gms.auth.api.identity.SignInCredential
@@ -13,14 +16,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import timber.log.Timber
+import java.net.HttpURLConnection
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val state: SavedStateHandle,
-    private val appLaunchStateManager: ApplicationLaunchStateManager,
+    private val appStateManager: AppStateManager,
+    private val oneLookApi: OneLookApi,
     val auth: FirebaseAuth
 ) : ViewModel() {
 
@@ -42,7 +49,7 @@ class SignUpViewModel @Inject constructor(
 
     // marks that the app has been launched in DataStore
     fun onSignUpVisited() = viewModelScope.launch {
-        appLaunchStateManager.updateApplicationLaunchState()
+        appStateManager.updateAppState(AppState.LOGGED_OUT)
     }
 
     fun onErrorOccurred(message: String? = null) = viewModelScope.launch {
@@ -159,27 +166,21 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun creationWithEmailOrProviderSucceeded(name: String?, email: String? = null) {
+    private fun creationWithEmailOrProviderSucceeded(
+        name: String?, email: String? = null
+    ) = viewModelScope.launch {
         val user = auth.currentUser!!
         val request = UserProfileChangeRequest.Builder()
             .setDisplayName(name)
             .build()
+        user.updateProfile(request).await()
+        if (email != null)
+            user.updateEmail(email).await()
 
-        user.updateProfile(request).addOnCompleteListener {
-            if (email != null) {
-                user.updateEmail(email).addOnCompleteListener {
-                    viewModelScope.launch {
-                        _isLoading.value = false
-                        _singUpEvent.emit(SignUpEvent.NavigateToHomeFragment)
-                    }
-                }//updateEmail
-            } else {
-                viewModelScope.launch {
-                    _isLoading.value = false
-                    _singUpEvent.emit(SignUpEvent.NavigateToHomeFragment)
-                }
-            }
-        }//updateProfile
+        val result = saveAccessToken()
+        _isLoading.value = false
+        if (result)
+            _singUpEvent.emit(SignUpEvent.NavigateToHomeFragment)
     }
 
     private fun inputsAreNotEmpty(
@@ -244,6 +245,29 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
+    private suspend fun saveAccessToken(): Boolean {
+        val user = auth.currentUser!!
+        val firebaseToken = user.getIdToken(false).await().token ?: return false
+        Timber.i("firebaseToken: $firebaseToken")
+        return try {
+            val response =
+                oneLookApi.register(NetworkRegisterRequest(firebaseToken, user.displayName ?: ""))
+            appStateManager.apply {
+                updateAppState(AppState.LOGGED_IN)
+                setAccessToken(response.accessToken)
+            }
+            Timber.i("accessToken: ${response.accessToken}")
+            true
+        } catch (exception: HttpException) {
+            Timber.e("API register failed\n $exception")
+            when (exception.code()) {
+                HttpURLConnection.HTTP_CONFLICT -> _singUpEvent.emit(SignUpEvent.ShowUserAlreadyExistsMessage)
+                else -> _singUpEvent.emit(SignUpEvent.ErrorOccurred(exception.localizedMessage))
+            }
+            false
+        }
+    }
+
     sealed class SignUpEvent {
         data class ShowEmptyFieldsMessage(val fields: List<Fields>) : SignUpEvent()
         data class ShowCreationWithEmailFailedMessage(
@@ -262,6 +286,7 @@ class SignUpViewModel @Inject constructor(
         object SignUpWithGoogle : SignUpEvent()
         object SignUpWithFacebook : SignUpEvent()
         data class ErrorOccurred(val message: String? = null) : SignUpEvent()
+        object ShowUserAlreadyExistsMessage : SignUpEvent()
     }
 
     enum class Fields {
