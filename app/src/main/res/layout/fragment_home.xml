@@ -58,7 +58,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/text_view_add_task"
         app:layout_constraintEnd_toStartOf="@+id/text_view_add_task"
         app:layout_constraintTop_toTopOf="@+id/text_view_add_task"
-        />
+        tools:ignore="TouchTargetSizeCheck" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_tasks"
@@ -79,10 +79,10 @@
         app:layout_constraintTop_toBottomOf="@+id/text_view_to_do_list_title"
         tools:layout_editor_absoluteX="24dp">
 
+        <include layout="@layout/item_supplement_task" />
         <include layout="@layout/item_activity_task" />
         <include layout="@layout/item_activity_task" />
-        <include layout="@layout/item_activity_task" />
-        <include layout="@layout/item_activity_task" />
+        <include layout="@layout/item_supplement_task" />
         <include layout="@layout/item_activity_task" />
         <include layout="@layout/item_activity_task" />
         <include layout="@layout/item_activity_task" />

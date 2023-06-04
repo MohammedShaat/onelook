@@ -9,14 +9,14 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/image_view_activity_icon"
+        android:id="@+id/image_view_supplement_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:contentDescription="@string/item_activity_task_image_view_activity_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_activity_breath" />
+        tools:src="@drawable/ic_supplement_pill" />
 
     <TextView
         android:id="@+id/text_view_task_name"
@@ -26,36 +26,30 @@
         android:textColor="?colorOnSurface"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/button_continue_exercise"
-        app:layout_constraintStart_toEndOf="@+id/image_view_activity_icon"
+        app:layout_constraintBottom_toTopOf="@+id/text_view_taking_with_meals"
+        app:layout_constraintStart_toEndOf="@+id/image_view_supplement_icon"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Breath training" />
+        tools:text="Vitamin D" />
 
-    <Button
-        android:id="@+id/button_continue_exercise"
-        style="@style/Widget.Material3.Button.OutlinedButton"
+    <TextView
+        android:id="@+id/text_view_taking_with_meals"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/home_button_continue_exercise"
-        android:textAllCaps="false"
-        android:textSize="14sp"
         android:textStyle="bold"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/text_view_task_name"
         app:layout_constraintTop_toBottomOf="@+id/text_view_task_name"
-        app:strokeColor="?colorPrimary"
-        tools:visibility="visible" />
+        tools:text="1 sashet before meal" />
 
-    <com.example.onelook.views.CustomProgressRingView
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/check_box_is_completed"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:button="@drawable/custom_checkbox_task"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:progress="40"
-        app:progressColor="?colorSecondary"
-        app:ringColor="@color/light_grey"
-        app:textColor="?colorOnSurface" />
+        app:useMaterialThemeColors="false"
+        tools:checked="true"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
