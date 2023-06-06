@@ -14,15 +14,4 @@ class HomeViewModel @Inject constructor(
     val auth: FirebaseAuth
 ) : ViewModel() {
 
-    init {
-        val user = auth.currentUser!!
-        user.getIdToken(false).addOnCompleteListener { task ->
-            if (task.isSuccessful) viewModelScope.launch {
-                Timber.i("idToken: ${task.result.token}")
-            } else viewModelScope.launch {
-                Timber.i("getting token failed: ${task.exception}")
-            }
-        }
-    }
-
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/background">
+        <shape android:shape="rectangle">
+            <solid android:color="?colorSurface" />
+            <corners android:radius="5dp" />
+        </shape>
+    </item>
+    <item
+        android:id="@+id/icon"
+        android:drawable="@drawable/ic_notifications_inactive" />
+</layer-list>

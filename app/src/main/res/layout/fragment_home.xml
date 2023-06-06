@@ -1,92 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lilac_petals"
-    android:paddingHorizontal="@dimen/h_padding"
-    tools:context=".ui.home.HomeFragment"
-    tools:theme="@style/Theme.OneLook">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/text_view_greeting"
-        style="@style/CustomHeader"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/m_margin"
-        android:text="@string/home_text_view_greeting"
-        android:textAlignment="textStart"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Hi Madison!" />
+        android:background="@color/lilac_petals"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        app:logo="@drawable/ic_brand_logo_tool_bar"
+        tools:background="@android:color/holo_red_light" />
 
-    <TextView
-        android:id="@+id/text_view_to_do_list_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/xh_margin"
-        android:text="@string/home_text_view_to_do_lit"
-        android:textColor="?colorOnSurface"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_view_greeting" />
-
-    <TextView
-        android:id="@+id/text_view_add_task"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/home_image_button_add_task"
-        android:src="@drawable/ic_add"
-        android:text="@string/home_image_button_add_task"
-        android:textColor="?colorPrimary"
-        android:textSize="@dimen/mid_text_size"
-        app:layout_constraintBottom_toBottomOf="@+id/text_view_to_do_list_title"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <ImageButton
-        android:id="@+id/image_button_add_task"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/s_margin"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/home_image_button_add_task"
-        android:src="@drawable/ic_add"
-        android:textColor="?colorPrimary"
-        android:textSize="@dimen/s_text_size"
-        app:layout_constraintBottom_toBottomOf="@+id/text_view_add_task"
-        app:layout_constraintEnd_toStartOf="@+id/text_view_add_task"
-        app:layout_constraintTop_toTopOf="@+id/text_view_add_task"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_tasks"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_view_to_do_list_title"
-        tools:layout_editor_absoluteX="24dp"
-        tools:listitem="@layout/item_activity_task"
-        tools:visibility="invisible" />
+        android:layout_height="match_parent"
+        android:background="@color/lilac_petals"
+        android:paddingHorizontal="@dimen/h_padding"
+        tools:context=".ui.home.HomeFragment"
+        tools:theme="@style/Theme.OneLook">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/text_view_to_do_list_title"
-        tools:layout_editor_absoluteX="24dp">
+        <TextView
+            android:id="@+id/text_view_greeting"
+            style="@style/CustomHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/m_margin"
+            android:text="@string/home_text_view_greeting"
+            android:textAlignment="textStart"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Hi Madison!" />
 
-        <include layout="@layout/item_supplement_task" />
-        <include layout="@layout/item_activity_task" />
-        <include layout="@layout/item_activity_task" />
-        <include layout="@layout/item_supplement_task" />
-        <include layout="@layout/item_activity_task" />
-        <include layout="@layout/item_activity_task" />
-        <include layout="@layout/item_activity_task" />
-        <include layout="@layout/item_activity_task" />
-    </LinearLayout>
+        <TextView
+            android:id="@+id/text_view_to_do_list_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xh_margin"
+            android:text="@string/home_text_view_to_do_lit"
+            android:textColor="?colorOnSurface"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_greeting" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/text_view_add_task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/home_image_button_add_task"
+            android:src="@drawable/ic_add"
+            android:text="@string/home_image_button_add_task"
+            android:textColor="?colorPrimary"
+            android:textSize="@dimen/mid_text_size"
+            app:layout_constraintBottom_toBottomOf="@+id/text_view_to_do_list_title"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageButton
+            android:id="@+id/image_button_add_task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/s_margin"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/home_image_button_add_task"
+            android:src="@drawable/ic_add"
+            android:textColor="?colorPrimary"
+            android:textSize="@dimen/s_text_size"
+            app:layout_constraintBottom_toBottomOf="@+id/text_view_add_task"
+            app:layout_constraintEnd_toStartOf="@+id/text_view_add_task"
+            app:layout_constraintTop_toTopOf="@+id/text_view_add_task"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_tasks"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_view_to_do_list_title"
+            tools:layout_editor_absoluteX="24dp"
+            tools:listitem="@layout/item_activity_task"
+            tools:visibility="invisible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_to_do_list_title"
+            tools:layout_editor_absoluteX="24dp">
+
+            <include layout="@layout/item_supplement_task" />
+
+            <include layout="@layout/item_activity_task" />
+
+            <include layout="@layout/item_activity_task" />
+
+            <include layout="@layout/item_supplement_task" />
+
+            <include layout="@layout/item_activity_task" />
+
+            <include layout="@layout/item_activity_task" />
+
+            <include layout="@layout/item_activity_task" />
+
+            <include layout="@layout/item_activity_task" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

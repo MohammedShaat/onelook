@@ -2,14 +2,16 @@ package com.example.onelook.ui.mainactivity
 
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.onelook.GLOBAL_TAG
 import com.example.onelook.R
 import com.example.onelook.util.onCollect
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
     var keepSplashScreen = true
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     // Just for testing
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,8 +42,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_main)
-        supportActionBar?.hide()
-        setupNavigation()
+        setupNavController()
+        setupAndHandleBottomNavigation()
+        hideBottomNavigation()
 
         // Observers
         viewModel.apply {
@@ -66,18 +70,63 @@ class MainActivity : AppCompatActivity() {
         }//Observers
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
-    }
-
-    private fun setupNavigation() {
+    private fun setupNavController() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_Container_view)
                 as NavHostFragment
         navController = navHostFragment.navController
-        setupActionBarWithNavController(navController)
     }
 
     fun hideSplashScreen() {
         keepSplashScreen = false
+    }
+
+    private fun setupAndHandleBottomNavigation() {
+        bottomNavigationView = findViewById<BottomNavigationView?>(R.id.bottom_navigation)
+            .apply {
+                itemIconTintList = null
+                setOnItemSelectedListener { item ->
+                    when (item.itemId) {
+                        R.id.action_home -> {
+                            navController.popBackStack()
+                            navController.navigate(R.id.homeFragment)
+                            true
+                        }
+                        R.id.action_timer -> {
+//                    item.icon = AppCompatResources.getDrawable(applicationContext, R.drawable.)
+//                            navController.popBackStack()
+//                            navController.navigate()
+                            true
+                        }
+                        R.id.action_progress -> {
+//                    item.icon = AppCompatResources.getDrawable(applicationContext, R.drawable.)
+//                    navController.popBackStack()
+//                    navController.navigate()
+                            true
+                        }
+                        R.id.action_settings -> {
+//                    item.icon = AppCompatResources.getDrawable(applicationContext, R.drawable.)
+//                    navController.popBackStack()
+//                    navController.navigate()
+                            true
+                        }
+                        else -> false
+                    }
+                }
+
+                // To prevent repeated navigation to the same destination
+                setOnItemReselectedListener {}
+            }
+    }
+
+    fun setSelectedItem(@IdRes id: Int) {
+        bottomNavigationView.selectedItemId = id
+    }
+
+    fun showBottomNavigation() {
+        bottomNavigationView.isVisible = true
+    }
+
+    fun hideBottomNavigation() {
+        bottomNavigationView.isVisible = false
     }
 }
