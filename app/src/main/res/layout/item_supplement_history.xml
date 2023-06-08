@@ -36,20 +36,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/text_view_task_name"
         app:layout_constraintTop_toBottomOf="@+id/text_view_task_name"
         tools:text="1 sashet before meal" />
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/check_box_is_completed"
+    <com.example.onelook.views.CustomSupplementProgressView
+        android:id="@+id/custom_supplement_progress_view"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:button="@drawable/custom_checkbox_task"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:useMaterialThemeColors="false"
-        tools:checked="true"/>
+        app:progressColor="?colorSecondary"
+        app:ringColor="@color/light_grey"
+        app:textColor="?colorOnSurface"
+        tools:progress="3"
+        tools:total="4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

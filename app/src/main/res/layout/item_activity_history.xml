@@ -47,13 +47,14 @@
         app:strokeColor="?colorPrimary"
         tools:visibility="visible" />
 
-    <com.example.onelook.views.CustomProgressRingView
+    <com.example.onelook.views.CustomActivityProgressView
+        android:id="@+id/custom_activity_progress_view"
         android:layout_width="40dp"
         android:layout_height="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:progress="40"
+        tools:progress="40"
         app:progressColor="?colorSecondary"
         app:ringColor="@color/light_grey"
         app:textColor="?colorOnSurface" />

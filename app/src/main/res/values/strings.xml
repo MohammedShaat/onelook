@@ -72,6 +72,7 @@
     <string name="home_button_add_task">Add task</string>
     <string name="home_image_button_add_task">Add task</string>
     <string name="item_activity_task_image_view_activity_icon">Image represents the activity</string>
+    <string name="item_supplement_history_text_view_task_name">%d %s %s meal</string>
     <string name="home_button_continue_exercise">Continue exercise</string>
     <string name="menu_fragment_home_action_notifications">Notifications</string>
     <string name="menu_bottom_navigation_action_home">Home</string>

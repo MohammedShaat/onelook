@@ -1,8 +1,8 @@
 package com.example.onelook.data.network
 
 import androidx.test.filters.SmallTest
-import com.example.onelook.data.network.requests.NetworkLoginAndDeleteUserRequest
-import com.example.onelook.data.network.requests.NetworkRegisterRequest
+import com.example.onelook.data.network.requests.NetworkLoginAndDeleteUserRequestBody
+import com.example.onelook.data.network.requests.NetworkRegisterRequestBody
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -42,7 +42,7 @@ class OneLookApiTest {
 
     @Before
     fun setupFirebaseIdToken() = runBlocking {
-        auth.signInWithEmailAndPassword("test@test.com", "123123").await()
+        auth.signInWithEmailAndPassword("mohammedshaat.it@gmail.com", "123123").await()
         firebaseIdToken = auth.currentUser!!.getIdToken(false).await().token
         Timber.i("Id token: $firebaseIdToken")
     }
@@ -50,7 +50,7 @@ class OneLookApiTest {
     @Test
     fun register_idTokenAndName_createsUserAndReturnUserIdAndAccessToken() = runBlocking {
         // WHEN call register
-        val response = oneLookApi.register(NetworkRegisterRequest(firebaseIdToken!!, name))
+        val response = oneLookApi.register(NetworkRegisterRequestBody(firebaseIdToken!!, name))
 
         // THEN response contains an access token
         assertThat(response.accessToken, not(isEmptyString()))
@@ -59,7 +59,7 @@ class OneLookApiTest {
     @Test
     fun login_idTokenAndName_returnsUserIdAndAccessToken() = runBlocking {
         // WHEN call login
-        val response = oneLookApi.login(NetworkLoginAndDeleteUserRequest(firebaseIdToken!!))
+        val response = oneLookApi.login(NetworkLoginAndDeleteUserRequestBody(firebaseIdToken!!))
 
         // THEN response contains an access token
         assertThat(response.accessToken, not(isEmptyString()))
@@ -68,9 +68,27 @@ class OneLookApiTest {
     @Test
     fun deleteUser_idTokenAndName_deletesUserFromApi() = runBlocking {
         // WHEN call deleteUser
-        val response = oneLookApi.deleteUser(NetworkLoginAndDeleteUserRequest(firebaseIdToken!!))
+        val response = oneLookApi.deleteUser(NetworkLoginAndDeleteUserRequestBody(firebaseIdToken!!))
 
         // THEN response contains an access token
         assertThat(response.message, equalTo("User deleted successfully"))
+    }
+
+    @Test
+    fun getTodayTasks_returnsListOfNetworkSupplementAndActivityHistory() = runBlocking {
+        // WHEN call getTodayTasks()
+        val response = oneLookApi.getTodayTasks()
+
+        // THEN response contains a list of SupplementHistory and ActivityHistory
+        assertThat(response.size, equalTo(4))
+    }
+
+    @Test
+    fun getSupplements_returnsListOfNetworkSupplement() = runBlocking {
+        // WHEN call getSupplements()
+        val response = oneLookApi.getSupplements()
+
+        // THEN response contains a list of NetworkSupplement
+        assertThat(response.size, equalTo(4))
     }
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.*
 import com.example.onelook.data.AppState
 import com.example.onelook.data.AppStateManager
 import com.example.onelook.data.network.OneLookApi
-import com.example.onelook.data.network.requests.NetworkLoginAndDeleteUserRequest
+import com.example.onelook.data.network.requests.NetworkLoginAndDeleteUserRequestBody
 import com.facebook.AccessToken
 import com.google.android.gms.auth.api.identity.SignInCredential
 import com.google.firebase.FirebaseNetworkException
@@ -209,7 +209,7 @@ class LoginViewModel @Inject constructor(
         Timber.i("firebaseToken: $firebaseToken")
         return try {
             val response =
-                oneLookApi.login(NetworkLoginAndDeleteUserRequest(firebaseToken))
+                oneLookApi.login(NetworkLoginAndDeleteUserRequestBody(firebaseToken))
             appStateManager.apply {
                 updateAppState(AppState.LOGGED_IN)
                 setAccessToken(response.accessToken)

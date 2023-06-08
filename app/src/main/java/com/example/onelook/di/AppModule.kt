@@ -2,21 +2,20 @@ package com.example.onelook.di
 
 import android.content.Context
 import com.example.onelook.R
+import com.example.onelook.data.network.HeaderInterceptor
 import com.example.onelook.data.network.OneLookApi
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -71,9 +70,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit {
+    fun provideRetrofit(headerInterceptor: HeaderInterceptor): Retrofit {
         return Retrofit.Builder()
             .baseUrl(OneLookApi.BASE_URL)
+            .client(OkHttpClient.Builder().addInterceptor(headerInterceptor).build())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

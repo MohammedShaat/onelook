@@ -10,7 +10,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.example.onelook.R
 import kotlin.math.min
 
-class CustomProgressRingView(context: Context, attrs: AttributeSet) :
+class CustomActivityProgressView(context: Context, attrs: AttributeSet) :
     View(context, attrs) {
 
     var progress: Int = 0
@@ -23,20 +23,20 @@ class CustomProgressRingView(context: Context, attrs: AttributeSet) :
     private var textColor: Int
 
     init {
-        context.theme.obtainStyledAttributes(attrs, R.styleable.CustomProgressRingView, 0, 0)
+        context.theme.obtainStyledAttributes(attrs, R.styleable.CustomProgressView, 0, 0)
             .apply {
                 try {
-                    progress = getInteger(R.styleable.CustomProgressRingView_progress, 0)
+                    progress = getInteger(R.styleable.CustomProgressView_progress, 0)
                     ringColor = getColor(
-                        R.styleable.CustomProgressRingView_ringColor,
+                        R.styleable.CustomProgressView_ringColor,
                         ResourcesCompat.getColor(resources, R.color.light_grey, null)
                     )
                     progressColor = getColor(
-                        R.styleable.CustomProgressRingView_progressColor,
+                        R.styleable.CustomProgressView_progressColor,
                         ResourcesCompat.getColor(resources, R.color.turquoise, null)
                     )
                     textColor = getColor(
-                        R.styleable.CustomProgressRingView_textColor,
+                        R.styleable.CustomProgressView_textColor,
                         ResourcesCompat.getColor(resources, R.color.black, null)
                     )
                 } finally {
@@ -90,7 +90,7 @@ class CustomProgressRingView(context: Context, attrs: AttributeSet) :
         paint.apply {
             style = Paint.Style.STROKE
             color = ringColor
-            strokeWidth = this@CustomProgressRingView.strokeWidth
+            strokeWidth = this@CustomActivityProgressView.strokeWidth
         }
         canvas.drawCircle(centerX, centerY, ringRadius, paint)
     }
