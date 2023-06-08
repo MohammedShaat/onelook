@@ -1,9 +1,10 @@
 package com.example.onelook.data.domain.models
 
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 data class SupplementHistory(
-    override val id: String,
+    override val id: UUID,
     @SerializedName("supplement_id") val supplementId: String,
     val progress: Int,
     val completed: Boolean,

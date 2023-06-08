@@ -1,9 +1,10 @@
 package com.example.onelook.data.network.models
 
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 data class NetworkActivity(
-    val id: String,
+    val id: UUID,
     val type: String,
     @SerializedName("time_of_day") val timeOfDay: String,
     val duration: String,

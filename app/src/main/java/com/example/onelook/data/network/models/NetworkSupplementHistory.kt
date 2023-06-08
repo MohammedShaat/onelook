@@ -1,9 +1,10 @@
 package com.example.onelook.data.network.models
 
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 data class NetworkSupplementHistory(
-    val id: String,
+    val id: UUID,
     @SerializedName("supplement_id") val supplementId: String,
     val progress: Int,
     val completed: Boolean,

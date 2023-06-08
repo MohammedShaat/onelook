@@ -1,10 +1,11 @@
 package com.example.onelook.data.domain.models
 
 import com.google.gson.annotations.SerializedName
+import java.util.*
 import kotlin.time.Duration
 
 data class ActivityHistory(
-    override val id: String,
+    override val id: UUID,
     @SerializedName("activity_id") val activityId: String,
     val progress: String,
     val completed: Boolean,
