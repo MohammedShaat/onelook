@@ -1,4 +1,4 @@
-package com.example.onelook.data.database.models
+package com.example.onelook.data.local.supplementshistory
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 import java.util.*
 
 @Entity("supplements_history")
-data class DatabaseSupplementHistory(
+data class LocalSupplementHistory(
     @PrimaryKey val id: UUID,
-    @ColumnInfo("supplement_id") val supplementId: String,
+    @ColumnInfo("supplement_id") val supplementId: UUID,
     val progress: Int,
     val completed: Boolean,
     @ColumnInfo("created_at") val createdAt: String,

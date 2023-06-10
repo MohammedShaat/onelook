@@ -1,4 +1,4 @@
-package com.example.onelook.data.domain.models
+package com.example.onelook.data.domain
 
 import java.util.*
 

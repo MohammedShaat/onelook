@@ -1,7 +1,7 @@
 package com.example.onelook.data.network.todaytasks
 
-import com.example.onelook.data.domain.models.ActivityHistory
-import com.example.onelook.data.domain.models.SupplementHistory
+import com.example.onelook.data.domain.ActivityHistory
+import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.data.network.activities.NetworkActivity
 import com.example.onelook.data.network.activitieshistory.NetworkActivityHistory
 import com.example.onelook.data.network.supplementshistory.NetworkSupplementHistory

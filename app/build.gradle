@@ -76,9 +76,7 @@ dependencies {
 
     //Google Services
     implementation platform('com.google.firebase:firebase-bom:32.0.0')
-    //Firebase Authentication
     implementation 'com.google.firebase:firebase-auth:22.0.0'
-    //Google Play services
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
 
     //Facebook
@@ -95,7 +93,7 @@ dependencies {
 
     //Room
     implementation 'androidx.room:room-runtime:2.5.1'
-    annotationProcessor 'androidx.room:room-compiler:2.5.1'
+    kapt 'androidx.room:room-compiler:2.5.1'
     implementation 'androidx.room:room-ktx:2.5.1'
 
     //Coroutines
@@ -113,6 +111,9 @@ dependencies {
     //Dagger Hilt
     androidTestImplementation "com.google.dagger:hilt-android-testing:2.44"
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:2.44"
+    //Architecture Components
+    androidTestImplementation 'androidx.arch.core:core-testing:2.2.0'
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
 }
 
 kapt {

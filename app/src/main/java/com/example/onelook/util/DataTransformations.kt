@@ -1,6 +1,6 @@
 package com.example.onelook.util
 
-import com.example.onelook.data.domain.models.TodayTask
+import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.network.todaytasks.NetworkTodayTask
 
 fun List<NetworkTodayTask>.toDomainModels(): List<TodayTask> {

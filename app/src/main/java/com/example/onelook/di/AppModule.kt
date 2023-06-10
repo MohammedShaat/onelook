@@ -1,7 +1,15 @@
 package com.example.onelook.di
 
 import android.content.Context
+import androidx.room.Room
 import com.example.onelook.R
+import com.example.onelook.data.local.OneLookDatabase
+import com.example.onelook.data.local.activities.ActivityDao
+import com.example.onelook.data.local.activitieshistory.ActivityHistoryDao
+import com.example.onelook.data.local.supplements.SupplementDao
+import com.example.onelook.data.local.supplementshistory.SupplementHistoryDao
+import com.example.onelook.data.local.todaytasks.TodayTaskDao
+import com.example.onelook.data.local.users.UserDao
 import com.example.onelook.data.network.HeaderInterceptor
 import com.example.onelook.data.network.todaytasks.TodayTaskApi
 import com.example.onelook.data.network.users.UserApi
@@ -70,8 +78,8 @@ object AppModule {
     }
 
     @Provides
-    @Named("user")
     @Singleton
+    @Named("user")
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(UserApi.BASE_URL)
@@ -86,8 +94,8 @@ object AppModule {
     }
 
     @Provides
-    @Named("today_task")
     @Singleton
+    @Named("today_task")
     fun provideTodayTaskRetrofit(headerInterceptor: HeaderInterceptor): Retrofit {
         return Retrofit.Builder()
             .baseUrl(UserApi.BASE_URL)
@@ -100,5 +108,48 @@ object AppModule {
     @Singleton
     fun provideTodayTaskApi(@Named("today_task") retrofit: Retrofit): TodayTaskApi {
         return retrofit.create(TodayTaskApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOneLookDatabase(@ApplicationContext context: Context): OneLookDatabase {
+        synchronized(this) {
+            return Room.databaseBuilder(
+                context.applicationContext,
+                OneLookDatabase::class.java,
+                "OneLook.db"
+            ).build()
+
+        }
+    }
+
+    @Provides
+    fun provideUserDao(db: OneLookDatabase): UserDao {
+        return db.userDao
+    }
+
+    @Provides
+    fun provideSupplementDao(db: OneLookDatabase): SupplementDao {
+        return db.supplementDao
+    }
+
+    @Provides
+    fun provideActivityDao(db: OneLookDatabase): ActivityDao {
+        return db.activityDao
+    }
+
+    @Provides
+    fun provideSupplementHistoryDao(db: OneLookDatabase): SupplementHistoryDao {
+        return db.supplementHistoryDao
+    }
+
+    @Provides
+    fun provideActivityHistoryDao(db: OneLookDatabase): ActivityHistoryDao {
+        return db.activityHistoryDao
+    }
+
+    @Provides
+    fun provideTodayTaskDao(db: OneLookDatabase): TodayTaskDao {
+        return db.todayTaskDao
     }
 }

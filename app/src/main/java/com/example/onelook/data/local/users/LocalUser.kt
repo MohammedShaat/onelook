@@ -1,15 +1,15 @@
-package com.example.onelook.data.database.models
+package com.example.onelook.data.local.users
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity("users")
-data class DatabaseUser(
+data class LocalUser(
     @PrimaryKey val id: Int,
-    val name: Int,
-    val firebase_uid: String,
+    val name: String,
+    @ColumnInfo("firebase_uid") val firebaseUid: String,
+    @ColumnInfo("access _token") val accessToken: String,
     @ColumnInfo("updated_at") val updatedAt: String,
     @ColumnInfo("created_at") val createdAt: String,
 )

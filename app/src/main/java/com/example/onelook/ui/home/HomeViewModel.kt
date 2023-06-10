@@ -2,7 +2,7 @@ package com.example.onelook.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.onelook.data.domain.models.TodayTask
+import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.network.todaytasks.TodayTaskApi
 import com.example.onelook.util.toDomainModels
 import com.google.firebase.auth.FirebaseAuth

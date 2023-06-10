@@ -5,7 +5,7 @@ import java.util.*
 
 data class NetworkSupplementHistory(
     val id: UUID,
-    @SerializedName("supplement_id") val supplementId: String,
+    @SerializedName("supplement_id") val supplementId: UUID,
     val progress: Int,
     val completed: Boolean,
     @SerializedName("created_at") val createdAt: String,

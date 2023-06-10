@@ -1,18 +1,16 @@
 package com.example.onelook.ui.home
 
 import android.content.res.Resources
-import android.text.Layout
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.onelook.R
-import com.example.onelook.data.domain.models.ActivityHistory
-import com.example.onelook.data.domain.models.SupplementHistory
-import com.example.onelook.data.domain.models.TodayTask
+import com.example.onelook.data.domain.ActivityHistory
+import com.example.onelook.data.domain.SupplementHistory
+import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.databinding.ItemActivityHistoryBinding
 import com.example.onelook.databinding.ItemSupplementHistoryBinding
 

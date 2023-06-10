@@ -2,8 +2,8 @@ package com.example.onelook.ui.home
 
 import android.widget.ImageView
 import com.example.onelook.R
-import com.example.onelook.data.domain.models.ActivityHistory
-import com.example.onelook.data.domain.models.SupplementHistory
+import com.example.onelook.data.domain.ActivityHistory
+import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.views.CustomActivityProgressView
 import kotlin.time.Duration
 
