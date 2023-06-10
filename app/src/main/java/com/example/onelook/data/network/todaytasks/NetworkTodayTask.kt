@@ -1,19 +1,20 @@
-package com.example.onelook.data.network.responses
+package com.example.onelook.data.network.todaytasks
 
 import com.example.onelook.data.domain.models.ActivityHistory
 import com.example.onelook.data.domain.models.SupplementHistory
-import com.example.onelook.data.network.models.NetworkActivity
-import com.example.onelook.data.network.models.NetworkActivityHistory
-import com.example.onelook.data.network.models.NetworkSupplement
-import com.example.onelook.data.network.models.NetworkSupplementHistory
+import com.example.onelook.data.network.activities.NetworkActivity
+import com.example.onelook.data.network.activitieshistory.NetworkActivityHistory
+import com.example.onelook.data.network.supplementshistory.NetworkSupplementHistory
+import com.example.onelook.data.network.supplements.NetworkSupplement
 import com.google.gson.annotations.SerializedName
 
-data class NetworkTodayTasksResponse(
+data class NetworkTodayTask(
     @SerializedName("supplement_history") val supplementHistory: NetworkSupplementHistory?,
     val supplement: NetworkSupplement?,
     @SerializedName("activity_history") val activityHistory: NetworkActivityHistory?,
     val activity: NetworkActivity?,
 ) {
+
     fun toSupplementHistoryModel(): SupplementHistory {
         return SupplementHistory(
             id = supplementHistory!!.id,

@@ -1,7 +1,7 @@
-package com.example.onelook.data.network.models
+package com.example.onelook.data.network.supplements
 
 import com.google.gson.annotations.SerializedName
-import java.util.UUID
+import java.util.*
 
 data class NetworkSupplement(
     val id: UUID,

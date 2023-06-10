@@ -2,9 +2,8 @@ package com.example.onelook.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.onelook.data.domain.models.SupplementHistory
 import com.example.onelook.data.domain.models.TodayTask
-import com.example.onelook.data.network.OneLookApi
+import com.example.onelook.data.network.todaytasks.TodayTaskApi
 import com.example.onelook.util.toDomainModels
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     val auth: FirebaseAuth,
-    private val api: OneLookApi
+    private val todayTaskApi: TodayTaskApi
 ) : ViewModel() {
 
     val userFirstName: String?
@@ -40,7 +39,7 @@ class HomeViewModel @Inject constructor(
     private fun fetchTodayTasks(refreshing: Boolean = false) = viewModelScope.launch {
         _isRefreshing.value = refreshing
         _isLoading.value = !refreshing
-        _todayTasks.emit(api.getTodayTasks().toDomainModels())
+        _todayTasks.emit(todayTaskApi.getTodayTasks().toDomainModels())
         _isRefreshing.value = false
         _isLoading.value = false
     }

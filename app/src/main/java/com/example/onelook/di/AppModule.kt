@@ -3,7 +3,8 @@ package com.example.onelook.di
 import android.content.Context
 import com.example.onelook.R
 import com.example.onelook.data.network.HeaderInterceptor
-import com.example.onelook.data.network.OneLookApi
+import com.example.onelook.data.network.todaytasks.TodayTaskApi
+import com.example.onelook.data.network.users.UserApi
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -69,10 +70,27 @@ object AppModule {
     }
 
     @Provides
+    @Named("user")
     @Singleton
-    fun provideRetrofit(headerInterceptor: HeaderInterceptor): Retrofit {
+    fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(OneLookApi.BASE_URL)
+            .baseUrl(UserApi.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserApi(@Named("user") retrofit: Retrofit): UserApi {
+        return retrofit.create(UserApi::class.java)
+    }
+
+    @Provides
+    @Named("today_task")
+    @Singleton
+    fun provideTodayTaskRetrofit(headerInterceptor: HeaderInterceptor): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(UserApi.BASE_URL)
             .client(OkHttpClient.Builder().addInterceptor(headerInterceptor).build())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -80,7 +98,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideOneLookApi(retrofit: Retrofit): OneLookApi {
-        return retrofit.create(OneLookApi::class.java)
+    fun provideTodayTaskApi(@Named("today_task") retrofit: Retrofit): TodayTaskApi {
+        return retrofit.create(TodayTaskApi::class.java)
     }
 }

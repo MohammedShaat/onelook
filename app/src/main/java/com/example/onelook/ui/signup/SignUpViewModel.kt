@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.lifecycle.*
 import com.example.onelook.data.AppState
 import com.example.onelook.data.AppStateManager
-import com.example.onelook.data.network.OneLookApi
-import com.example.onelook.data.network.requests.NetworkRegisterRequestBody
+import com.example.onelook.data.network.users.UserApi
+import com.example.onelook.data.network.users.NetworkUserRegisterRequest
 import com.facebook.AccessToken
 import com.facebook.GraphRequest
 import com.google.android.gms.auth.api.identity.SignInCredential
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val state: SavedStateHandle,
     private val appStateManager: AppStateManager,
-    private val oneLookApi: OneLookApi,
+    private val userApi: UserApi,
     val auth: FirebaseAuth
 ) : ViewModel() {
 
@@ -251,7 +251,7 @@ class SignUpViewModel @Inject constructor(
         Timber.i("firebaseToken: $firebaseToken")
         return try {
             val response =
-                oneLookApi.register(NetworkRegisterRequestBody(firebaseToken, user.displayName ?: ""))
+                userApi.register(NetworkUserRegisterRequest(firebaseToken, user.displayName ?: ""))
             appStateManager.apply {
                 updateAppState(AppState.LOGGED_IN)
                 setAccessToken(response.accessToken)

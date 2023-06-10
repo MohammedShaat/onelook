@@ -1,4 +1,4 @@
-package com.example.onelook.data.network.models
+package com.example.onelook.data.network.activities
 
 import com.google.gson.annotations.SerializedName
 import java.util.*

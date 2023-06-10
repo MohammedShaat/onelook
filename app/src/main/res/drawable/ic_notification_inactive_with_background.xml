@@ -4,9 +4,16 @@
         <shape android:shape="rectangle">
             <solid android:color="?colorSurface" />
             <corners android:radius="5dp" />
+            <stroke
+                android:width="1dp"
+                android:color="@color/light_grey" />
         </shape>
     </item>
     <item
         android:id="@+id/icon"
-        android:drawable="@drawable/ic_notifications_inactive" />
+        android:bottom="2dp"
+        android:drawable="@drawable/ic_notifications_inactive"
+        android:left="2dp"
+        android:right="2dp"
+        android:top="2dp" />
 </layer-list>

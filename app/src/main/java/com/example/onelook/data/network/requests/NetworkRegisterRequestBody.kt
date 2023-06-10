@@ -1,9 +1,0 @@
-package com.example.onelook.data.network.requests
-
-import com.google.gson.annotations.SerializedName
-
-data class NetworkRegisterRequestBody(
-    @SerializedName("firebase_token")
-    val firebaseToken: String,
-    val name: String
-)
