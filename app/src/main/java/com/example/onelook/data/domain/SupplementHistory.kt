@@ -8,7 +8,7 @@ data class SupplementHistory(
     val supplementId: UUID,
     val progress: Int,
     val completed: Boolean,
-    val createdAt: String,
+    override val createdAt: String,
     val updatedAt: String,
     val name: String,
     val form: String,

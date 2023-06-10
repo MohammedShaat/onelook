@@ -13,10 +13,10 @@ interface SupplementDao {
     @Query("SELECT * FROM supplements WHERE id=:id")
     fun getSupplementById(id: UUID): Flow<LocalSupplement>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSupplement(supplement: LocalSupplement)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSupplements(supplement: List<LocalSupplement>)
 
     @Update

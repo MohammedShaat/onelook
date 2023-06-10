@@ -4,8 +4,10 @@ import android.os.Bundle
 import androidx.lifecycle.*
 import com.example.onelook.data.AppState
 import com.example.onelook.data.AppStateManager
+import com.example.onelook.data.Repository
 import com.example.onelook.data.network.users.UserApi
 import com.example.onelook.data.network.users.NetworkUserRegisterRequest
+import com.example.onelook.util.toLocalModel
 import com.facebook.AccessToken
 import com.facebook.GraphRequest
 import com.google.android.gms.auth.api.identity.SignInCredential
@@ -28,7 +30,8 @@ class SignUpViewModel @Inject constructor(
     private val state: SavedStateHandle,
     private val appStateManager: AppStateManager,
     private val userApi: UserApi,
-    val auth: FirebaseAuth
+    val auth: FirebaseAuth,
+    private val repository: Repository
 ) : ViewModel() {
 
     val name = state.getLiveData("name", "")
@@ -46,6 +49,10 @@ class SignUpViewModel @Inject constructor(
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean>
         get() = _isLoading
+
+    fun isLoading(status: Boolean) = viewModelScope.launch {
+        _isLoading.value = status
+    }
 
     // marks that the app has been launched in DataStore
     fun onSignUpVisited() = viewModelScope.launch {
@@ -75,23 +82,25 @@ class SignUpViewModel @Inject constructor(
             return@launch
         }
 
-        _isLoading.value = true
+        isLoading(true)
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     creationWithEmailOrProviderSucceeded(name)
                 } else {
-                    _isLoading.value = false
+                    isLoading(false)
                     creationWithEmailFailed(task.exception)
                 }
             }
     }
 
     fun onButtonSignUpWithGoogleClicked() = viewModelScope.launch {
+        isLoading(true)
         _singUpEvent.emit(SignUpEvent.SignUpWithGoogle)
     }
 
     fun onButtonSignUpWithFacebookClicked() = viewModelScope.launch {
+        isLoading(true)
         _singUpEvent.emit(SignUpEvent.SignUpWithFacebook)
     }
 
@@ -178,7 +187,7 @@ class SignUpViewModel @Inject constructor(
             user.updateEmail(email).await()
 
         val result = saveAccessToken()
-        _isLoading.value = false
+        isLoading(false)
         if (result)
             _singUpEvent.emit(SignUpEvent.NavigateToHomeFragment)
     }
@@ -200,19 +209,19 @@ class SignUpViewModel @Inject constructor(
 
     fun onGoogleTokenReceived(credential: SignInCredential) {
         val googleAuthCredential = GoogleAuthProvider.getCredential(credential.googleIdToken, null)
-        _isLoading.value = true
+        isLoading(true)
         auth.signInWithCredential(googleAuthCredential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 creationWithEmailOrProviderSucceeded(credential.displayName)
             } else {
                 creationWithProviderFailed(task.exception)
-                _isLoading.value = false
+                isLoading(false)
             }
         }
     }
 
     fun onFacebookTokenReceived(accessToken: AccessToken) {
-        _isLoading.value = true
+        isLoading(true)
         val facebookCredential = FacebookAuthProvider.getCredential(accessToken.token)
         auth.signInWithCredential(facebookCredential).addOnCompleteListener { task ->
             if (task.isSuccessful) viewModelScope.launch {
@@ -220,7 +229,7 @@ class SignUpViewModel @Inject constructor(
                 creationWithEmailOrProviderSucceeded(data.first, data.second)
             } else {
                 creationWithProviderFailed(task.exception)
-                _isLoading.value = false
+                isLoading(false)
             }
         }
     }
@@ -252,6 +261,7 @@ class SignUpViewModel @Inject constructor(
         return try {
             val response =
                 userApi.register(NetworkUserRegisterRequest(firebaseToken, user.displayName ?: ""))
+            repository.loginUserInDatabase(response.user.toLocalModel())
             appStateManager.apply {
                 updateAppState(AppState.LOGGED_IN)
                 setAccessToken(response.accessToken)

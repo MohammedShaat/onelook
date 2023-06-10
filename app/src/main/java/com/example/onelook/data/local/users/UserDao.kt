@@ -12,7 +12,10 @@ interface UserDao {
     suspend fun insertUser(user: LocalUser)
 
     @Query("SELECT * FROM users WHERE id=:id")
-    suspend fun getUser(id: Int): LocalUser
+    suspend fun getUserById(id: Int): LocalUser
+
+    @Query("SELECT * FROM users WHERE firebase_uid=:firebaseUid")
+    suspend fun getUserByFirebaseUid(firebaseUid: String): LocalUser
 
     @Delete
     suspend fun deleteUser(user: LocalUser)

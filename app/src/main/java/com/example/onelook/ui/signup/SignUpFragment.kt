@@ -250,8 +250,10 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     Timber.e("Couldn't start One Tap UI\n $e")
                     viewModel.onErrorOccurred()
                 }
+                viewModel.isLoading(false)
             }
             .addOnFailureListener() { e ->
+                viewModel.isLoading(false)
                 Timber.e("Sign in request failed\n $e")
                 if (!isInternetAvailable()) {
                     Timber.e("No internet connection")
@@ -312,6 +314,8 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                         viewModel.onErrorOccurred(error.localizedMessage)
                     }
                 }
-            })
+            }
+        )
+        viewModel.isLoading(false)
     }
 }

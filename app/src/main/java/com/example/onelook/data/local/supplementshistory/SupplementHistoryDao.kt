@@ -13,10 +13,10 @@ interface SupplementHistoryDao {
     @Query("SELECT * FROM supplements_history WHERE id=:id")
     fun getSupplementHistoryById(id: UUID): Flow<LocalSupplementHistory>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSupplementHistory(supplementHistory: LocalSupplementHistory)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSupplementsHistory(supplementHistory: List<LocalSupplementHistory>)
 
     @Update

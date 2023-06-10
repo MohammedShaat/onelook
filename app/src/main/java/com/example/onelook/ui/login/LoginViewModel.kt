@@ -3,8 +3,12 @@ package com.example.onelook.ui.login
 import androidx.lifecycle.*
 import com.example.onelook.data.AppState
 import com.example.onelook.data.AppStateManager
+import com.example.onelook.data.Repository
+import com.example.onelook.data.local.users.LocalUser
+import com.example.onelook.data.local.users.UserDao
 import com.example.onelook.data.network.users.UserApi
 import com.example.onelook.data.network.users.NetworkUserLoginRequest
+import com.example.onelook.util.toLocalModel
 import com.facebook.AccessToken
 import com.google.android.gms.auth.api.identity.SignInCredential
 import com.google.firebase.FirebaseNetworkException
@@ -26,6 +30,7 @@ class LoginViewModel @Inject constructor(
     private val appStateManager: AppStateManager,
     private val userApi: UserApi,
     val auth: FirebaseAuth,
+    private val repository: Repository
 ) : ViewModel() {
 
     val email = state.getLiveData("email", "")
@@ -42,6 +47,10 @@ class LoginViewModel @Inject constructor(
     val isLoading: LiveData<Boolean>
         get() = _isLoading
 
+    fun isLoading(status: Boolean) = viewModelScope.launch {
+        _isLoading.value = status
+    }
+    
     fun onErrorOccurred(message: String? = null) = viewModelScope.launch {
         _loginEvent.emit(LoginEvent.ErrorOccurred(message))
     }
@@ -68,23 +77,25 @@ class LoginViewModel @Inject constructor(
             return@launch
         }
 
-        _isLoading.value = true
+        isLoading(true)
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     signingWithEmailOrProviderSucceeded()
                 } else {
-                    _isLoading.value = false
+                    isLoading(false)
                     signingWithEmailFailed(task.exception)
                 }
             }
     }
 
     fun onButtonLoginWithGoogleClicked() = viewModelScope.launch {
+        isLoading(true)
         _loginEvent.emit(LoginEvent.LoginWithGoogle)
     }
 
     fun onButtonLoginWithFacebookClicked() = viewModelScope.launch {
+        isLoading(true)
         _loginEvent.emit(LoginEvent.LoginWithFacebook)
     }
 
@@ -160,7 +171,7 @@ class LoginViewModel @Inject constructor(
 
     private fun signingWithEmailOrProviderSucceeded() = viewModelScope.launch {
         val result = saveAccessToken()
-        _isLoading.value = false
+        isLoading(false)
         if (result)
             _loginEvent.emit(LoginEvent.NavigateToHomeFragment)
     }
@@ -179,26 +190,26 @@ class LoginViewModel @Inject constructor(
 
     fun onGoogleTokenReceived(credential: SignInCredential) {
         val googleAuthCredential = GoogleAuthProvider.getCredential(credential.googleIdToken, null)
-        _isLoading.value = true
+        isLoading(true)
         auth.signInWithCredential(googleAuthCredential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 signingWithEmailOrProviderSucceeded()
             } else {
                 signingWithProviderFailed(task.exception)
-                _isLoading.value = false
+                isLoading(false)
             }
         }
     }
 
     fun onFacebookTokenReceived(accessToken: AccessToken) {
-        _isLoading.value = true
+        isLoading(true)
         val facebookCredential = FacebookAuthProvider.getCredential(accessToken.token)
         auth.signInWithCredential(facebookCredential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 signingWithEmailOrProviderSucceeded()
             } else {
                 signingWithProviderFailed(task.exception)
-                _isLoading.value = false
+                isLoading(false)
             }
         }
     }
@@ -208,8 +219,8 @@ class LoginViewModel @Inject constructor(
         val firebaseToken = user.getIdToken(false).await().token ?: return false
         Timber.i("firebaseToken: $firebaseToken")
         return try {
-            val response =
-                userApi.login(NetworkUserLoginRequest(firebaseToken))
+            val response = userApi.login(NetworkUserLoginRequest(firebaseToken))
+            repository.loginUserInDatabase(response.user.toLocalModel())
             appStateManager.apply {
                 updateAppState(AppState.LOGGED_IN)
                 setAccessToken(response.accessToken)

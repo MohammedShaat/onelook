@@ -9,7 +9,7 @@ data class ActivityHistory(
     val activityId: UUID,
     val progress: String,
     val completed: Boolean,
-    val createdAt: String,
+    override val createdAt: String,
     val updatedAt: String,
     val type: String,
     val duration: String,

@@ -79,4 +79,6 @@
     <string name="menu_bottom_navigation_action_timer">Timer</string>
     <string name="menu_bottom_navigation_action_progress">Progress</string>
     <string name="menu_bottom_navigation_action_settings">Settings</string>
+    <string name="you_are_offline">You\'re offline</string>
+    <string name="home_image_view_no_data">No data</string>
 </resources>

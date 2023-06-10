@@ -24,7 +24,7 @@ class UserDaoTest {
 
     private val user = LocalUser(
         1, "Android Test",
-        "firebaseUid", "accessToken",
+        "ABCDEFGHIJKLMN1234567890", "accessToken",
         "2023-06-10 11:45:30", "2023-06-10 11:45:30"
     )
 
@@ -45,19 +45,29 @@ class UserDaoTest {
         userDao.insertUser(user)
 
         // THEN a user is created
-        val userResult = userDao.getUser(1)
+        val userResult = userDao.getUserById(1)
         assertThat(userResult, equalTo(user))
     }
 
     @Test
-    fun getUser_id_returnsUser() = runBlocking {
+    fun getUserById_id_returnsUser() = runBlocking {
         userDao.insertUser(user)
 
         // WHEN call getUser()
-        userDao.getUser(user.id)
+        val userResult = userDao.getUserById(user.id)
 
         // THEN the user is received
-        val userResult = userDao.getUser(1)
+        assertThat(userResult, equalTo(user))
+    }
+
+    @Test
+    fun getUserByFirebaseUid_firebaseUid_returnsUser() = runBlocking {
+        userDao.insertUser(user)
+
+        // WHEN call getUser()
+        val userResult = userDao.getUserByFirebaseUid(user.firebaseUid)
+
+        // THEN the user is retrieved
         assertThat(userResult, equalTo(user))
     }
 
@@ -69,7 +79,7 @@ class UserDaoTest {
         userDao.deleteUser(user)
 
         // THEN the user is deleted
-        val userResult = userDao.getUser(1)
+        val userResult = userDao.getUserById(1)
         assertThat(userResult, not(equalTo(user)))
     }
 }

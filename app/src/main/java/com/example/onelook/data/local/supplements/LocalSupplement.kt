@@ -26,7 +26,7 @@ data class LocalSupplement(
     val duration: String?,
     @ColumnInfo("time_of_day") val timeOfDay: String,
     @ColumnInfo("taking_with_meals") val takingWithMeals: String,
-    val reminder: String,
+    val reminder: String?,
     val completed: Boolean,
     @ColumnInfo("user_id") val userId: Int,
     @ColumnInfo("created_at") val createdAt: String,

@@ -13,10 +13,10 @@ interface ActivityHistoryDao {
     @Query("SELECT * FROM activities_history WHERE id=:id")
     fun getActivityHistoryById(id: UUID): Flow<LocalActivityHistory>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertActivityHistory(activityHistory: LocalActivityHistory)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertActivitiesHistory(activityHistory: List<LocalActivityHistory>)
 
     @Update

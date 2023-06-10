@@ -10,10 +10,9 @@ data class NetworkSupplement(
     val dosage: Int,
     val frequency: String,
     val duration: String?,
-
     @SerializedName("time_of_day") val timeOfDay: String,
     @SerializedName("taking_with_meals") val takingWithMeals: String,
-    val reminder: String,
+    val reminder: String?,
     val completed: Boolean,
     @SerializedName("user_id") val userId: Int,
     @SerializedName("created_at") val createdAt: String,

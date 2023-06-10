@@ -5,6 +5,7 @@ import com.example.onelook.R
 import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.views.CustomActivityProgressView
+import timber.log.Timber
 import kotlin.time.Duration
 
 fun ImageView.supplementHistoryImage(form: SupplementHistory.Form) {
@@ -36,5 +37,5 @@ fun CustomActivityProgressView.activityHistoryProgress(
     durationProgress: Duration,
     duration: Duration
 ) {
-    progress = (durationProgress.inWholeSeconds / duration.inWholeSeconds * 100).toInt()
+    progress = (durationProgress.inWholeSeconds / duration.inWholeSeconds.toFloat() * 100).toInt()
 }

@@ -13,10 +13,10 @@ interface ActivityDao {
     @Query("SELECT * FROM activities WHERE id=:id")
     fun getActivityById(id: UUID): Flow<LocalActivity>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertActivity(activity: LocalActivity)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertActivities(activity: List<LocalActivity>)
 
     @Update

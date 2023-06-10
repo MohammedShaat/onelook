@@ -261,8 +261,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     Timber.e("Couldn't start One Tap UI\n $e")
                     viewModel.onErrorOccurred()
                 }
+                viewModel.isLoading(false)
             }
             .addOnFailureListener { e ->
+                viewModel.isLoading(false)
                 Timber.e("Login with Google failed\n $e")
                 if (!isInternetAvailable()) {
                     Timber.e("No internet connection")
@@ -325,5 +327,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
             }
         )
+        viewModel.isLoading(false)
     }
 }

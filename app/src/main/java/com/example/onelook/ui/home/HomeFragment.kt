@@ -9,18 +9,19 @@ import androidx.fragment.app.viewModels
 import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentHomeBinding
+import com.example.onelook.util.CustomResult
 import com.example.onelook.util.onCollect
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import java.net.UnknownHostException
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by viewModels()
-
-    private val auth = FirebaseAuth.getInstance()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,9 +49,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         // Observers
         viewModel.apply {
             // Today tasks
-            onCollect(todayTasks) { tasks ->
-                todayTasksAdapter.submitList(tasks)
-                Timber.i("tasks size: ${tasks.size}")
+            onCollect(todayTasks) { result ->
+                todayTasksAdapter.submitList(result.data)
+                binding.apply {
+                    recyclerViewTodayTasks.scrollToPosition(0)
+                    imageViewNotData.isVisible =
+                        result.data.isNullOrEmpty() && result is CustomResult.Success
+                }
             }
 
             // ProgressBar of loading
@@ -62,6 +67,21 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             onCollect(isRefreshing) { isRefreshing ->
                 binding.swipeRefreshLayout.isRefreshing = isRefreshing
             }
+
+            // Events
+            onCollect(homeEvent) { event ->
+                when (event) {
+                    is HomeViewModel.HomeEvent.ShowRefreshFailedMessage -> {
+                        val msg = when (event.exception) {
+                            is UnknownHostException -> R.string.you_are_offline
+                            else -> R.string.unexpected_error
+                        }
+                        Snackbar.make(view, msg, Snackbar.LENGTH_LONG)
+                            .setAnchorView(requireActivity().findViewById(R.id.bottom_navigation))
+                            .show()
+                    }//ShowRefreshFailedMessage
+                }
+            }//homeEvent
         }
     }
 
