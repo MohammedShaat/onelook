@@ -5,11 +5,14 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Build.VERSION_CODES
+import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.onelook.ui.mainactivity.MainActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -39,4 +42,20 @@ fun Fragment.isInternetAvailable(): Boolean {
         val network = connectivityManager.activeNetworkInfo ?: return false
         return network.isConnected
     }
+}
+
+fun Fragment.hideBottomNavigation() {
+    (requireActivity() as MainActivity).hideBottomNavigation()
+}
+
+fun Fragment.showBottomNavigation() {
+    (requireActivity() as MainActivity).showBottomNavigation()
+}
+
+fun Fragment.showToast(text: String, length: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(context, text, length).show()
+}
+
+fun Fragment.showToast(@StringRes resId: Int, length: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(context, resId, length).show()
 }

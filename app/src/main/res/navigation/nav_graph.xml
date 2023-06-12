@@ -54,29 +54,34 @@
         android:id="@+id/passwordReminder1Fragment"
         android:name="com.example.onelook.ui.login.passwordreminder.PasswordReminderFragment"
         android:label="fragment_password_reminder_1"
-        tools:layout="@layout/fragment_password_reminder">
-        <action
-            android:id="@+id/action_passwordReminder1Fragment_to_passwordReminder2Fragment"
-            app:destination="@id/passwordReminder2Fragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/passwordReminder2Fragment"
-        android:name="com.example.onelook.ui.login.passwordreminder2.PasswordReminder2Fragment"
-        android:label="fragment_password_reminder_2"
-        tools:layout="@layout/fragment_password_reminder_2">
-        <action
-            android:id="@+id/action_passwordReminder2Fragment_to_passwordReminder3Fragment"
-            app:destination="@id/passwordReminder3Fragment"
-            app:popUpTo="@id/loginFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/passwordReminder3Fragment"
-        android:name="com.example.onelook.ui.login.passwordreminder3.PasswordReminder3Fragment"
-        android:label="fragment_password_reminder_3"
-        tools:layout="@layout/fragment_password_reminder_3" />
+        tools:layout="@layout/fragment_password_reminder"></fragment>
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.onelook.ui.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
+    <dialog
+        android:id="@+id/addTaskDialog"
+        android:name="com.example.onelook.ui.addtask.AddTaskDialog"
+        android:label="dialog_add_task"
+        tools:layout="@layout/dialog_add_task" />
+    <action
+        android:id="@+id/action_global_addTaskDialog"
+        app:destination="@id/addTaskDialog" />
+    <fragment
+        android:id="@+id/addSupplementDialog"
+        android:name="com.example.onelook.ui.addsupplement.AddSupplementFragment"
+        android:label="dialog_add_supplement_"
+        tools:layout="@layout/fragment_add_supplement" />
+    <action
+        android:id="@+id/action_global_addSupplementFragment"
+        app:destination="@id/addSupplementDialog" />
+    <fragment
+        android:id="@+id/addActivityFragment"
+        android:name="com.example.onelook.ui.addactivity.AddActivityFragment"
+        android:label="fragment_add_activity"
+        tools:layout="@layout/fragment_add_activity" />
+    <action
+        android:id="@+id/action_global_addActivityFragment"
+        app:destination="@id/addActivityFragment" />
 </navigation>

@@ -72,7 +72,12 @@ class HomeViewModel @Inject constructor(
         fetchTodayTasks(true)
     }
 
+    fun onAddEventClicked() = viewModelScope.launch {
+        _homeEvent.emit(HomeEvent.NavigateToAddTaskDialog)
+    }
+
     sealed class HomeEvent {
         data class ShowRefreshFailedMessage(val exception: Exception) : HomeEvent()
+        object NavigateToAddTaskDialog : HomeEvent()
     }
 }

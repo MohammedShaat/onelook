@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="110dp"
     android:layout_marginBottom="12dp"
-    android:background="@drawable/item_task_background"
+    android:background="@drawable/bg_item_task"
     android:padding="16dp">
 
     <ImageView

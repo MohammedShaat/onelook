@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:background="@drawable/bg_dialog"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="@dimen/xh_margin"
+    tools:context=".ui.addtask.AddTaskDialog"
+    tools:layout_gravity="center">
+
+    <TextView
+        android:id="@+id/text_view_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_task_text_view_title"
+        android:textColor="?colorOnSurface"
+        android:textSize="@dimen/large_text_size"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/button_activity"
+        style="@style/CustomSecondaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/m_margin"
+        android:text="@string/add_task_button_activity" />
+
+    <Button
+        android:id="@+id/button_supplement"
+        style="@style/CustomSecondaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/m_margin"
+        android:text="@string/add_task_button_supplement" />
+
+</LinearLayout>

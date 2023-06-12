@@ -10,7 +10,7 @@
         </shape>
     </item>
     <item
-        android:id="@+id/icon"
+        android:id="@+id/image_button_icon"
         android:bottom="2dp"
         android:drawable="@drawable/ic_notifications_inactive"
         android:left="2dp"

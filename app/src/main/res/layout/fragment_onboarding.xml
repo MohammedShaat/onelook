@@ -70,7 +70,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginBottom="50dp"
-        android:background="@drawable/button_solid_background_primary_color"
+        android:background="@drawable/bg_primary_button"
         android:contentDescription="@string/onboarding_1_image_view_next"
         android:padding="@dimen/m_padding"
         android:src="@drawable/ic_right_arrow"

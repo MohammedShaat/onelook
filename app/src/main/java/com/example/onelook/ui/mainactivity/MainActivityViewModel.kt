@@ -26,13 +26,13 @@ class MainActivityViewModel @Inject constructor(
             _isChecking.emit(false)
             return@flow
         }
-        hasBeenChecked.value = true
 
         when (appStateManager.getAppState()) {
             AppState.FIRST_LAUNCH -> _isChecking.emit(false)
             AppState.LOGGED_IN -> emit(MainActivityEvent.NavigateToHomeFragment)
             AppState.LOGGED_OUT -> emit(MainActivityEvent.NavigateToLoginFragment)
         }
+        hasBeenChecked.value = true
     }
 
     sealed class MainActivityEvent {

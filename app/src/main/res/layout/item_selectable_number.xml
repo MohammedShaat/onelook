@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_marginEnd="12dp"
+    tools:layout_height="48dp"
+    tools:layout_width="48dp">
+
+    <TextView
+        android:id="@+id/text_view_number"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_ic_oval"
+        android:gravity="center"
+        tools:src="@drawable/ic_supplement_pill"
+        tools:text="1" />
+
+</FrameLayout>

@@ -6,15 +6,15 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentHomeBinding
 import com.example.onelook.util.CustomResult
 import com.example.onelook.util.onCollect
+import com.example.onelook.util.showBottomNavigation
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.net.UnknownHostException
 
 @AndroidEntryPoint
@@ -26,10 +26,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Shows bottom navigation
+        showBottomNavigation()
+
         // Binding
         binding = FragmentHomeBinding.bind(view)
-        // Shows bottom navigation
-        (requireActivity() as MainActivity).showBottomNavigation()
         setupToolbar()
 
         // Shows the first name of the user in greeting
@@ -46,13 +47,23 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         // Sets up swipe refresh layout and set listener
         setupAndHandleSwipeRefreshLayout()
 
+        // Listeners
+        binding.apply {
+            imageButtonAddTask.setOnClickListener {
+                viewModel.onAddEventClicked()
+            }
+            textViewAddTask.setOnClickListener {
+                viewModel.onAddEventClicked()
+            }
+        }//Listeners
+
         // Observers
         viewModel.apply {
             // Today tasks
             onCollect(todayTasks) { result ->
                 todayTasksAdapter.submitList(result.data)
                 binding.apply {
-                    recyclerViewTodayTasks.scrollToPosition(0)
+//                    recyclerViewTodayTasks.scrollToPosition(0)
                     imageViewNotData.isVisible =
                         result.data.isNullOrEmpty() && result is CustomResult.Success
                 }
@@ -80,6 +91,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             .setAnchorView(requireActivity().findViewById(R.id.bottom_navigation))
                             .show()
                     }//ShowRefreshFailedMessage
+
+                    is HomeViewModel.HomeEvent.NavigateToAddTaskDialog -> {
+                        val action = HomeFragmentDirections.actionGlobalAddTaskDialog()
+                        findNavController().navigate(action)
+                    }//NavigateToAddTaskDialog
                 }
             }//homeEvent
         }

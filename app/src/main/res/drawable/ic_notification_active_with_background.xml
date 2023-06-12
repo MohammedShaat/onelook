@@ -7,6 +7,6 @@
         </shape>
     </item>
     <item
-        android:id="@+id/icon"
+        android:id="@+id/image_button_icon"
         android:drawable="@drawable/ic_notifications_active" />
 </layer-list>

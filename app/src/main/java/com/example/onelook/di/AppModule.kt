@@ -25,6 +25,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -97,9 +98,15 @@ object AppModule {
     @Singleton
     @Named("today_task")
     fun provideTodayTaskRetrofit(headerInterceptor: HeaderInterceptor): Retrofit {
+        val client = OkHttpClient.Builder()
+            .addInterceptor(headerInterceptor)
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            .build()
+
         return Retrofit.Builder()
             .baseUrl(UserApi.BASE_URL)
-            .client(OkHttpClient.Builder().addInterceptor(headerInterceptor).build())
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
