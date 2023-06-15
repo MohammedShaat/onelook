@@ -1,8 +1,7 @@
-package com.example.onelook.di
+package com.example.onelook.di.appmodules
 
 import android.content.Context
 import androidx.room.Room
-import com.example.onelook.R
 import com.example.onelook.data.local.OneLookDatabase
 import com.example.onelook.data.local.activities.ActivityDao
 import com.example.onelook.data.local.activitieshistory.ActivityHistoryDao
@@ -10,21 +9,11 @@ import com.example.onelook.data.local.supplements.SupplementDao
 import com.example.onelook.data.local.supplementshistory.SupplementHistoryDao
 import com.example.onelook.data.local.todaytasks.TodayTaskDao
 import com.example.onelook.data.local.users.UserDao
-import com.example.onelook.data.network.HeaderInterceptor
-import com.example.onelook.data.network.todaytasks.TodayTaskApi
-import com.example.onelook.data.network.users.UserApi
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.identity.Identity
-import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 

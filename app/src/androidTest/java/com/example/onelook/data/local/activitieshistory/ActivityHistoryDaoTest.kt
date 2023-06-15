@@ -36,8 +36,7 @@ class ActivityHistoryDaoTest {
     lateinit var activityHistoryDao: ActivityHistoryDao
 
     private val user = LocalUser(
-        1, "Android Test",
-        "firebaseUid", "accessToken",
+        1, "Android Test", "firebaseUid",
         "2023-06-10 11:45:30", "2023-06-10 11:45:30"
     )
     private val activities = listOf(

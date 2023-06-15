@@ -9,6 +9,6 @@ data class LocalUser(
     @PrimaryKey val id: Int,
     val name: String,
     @ColumnInfo("firebase_uid") val firebaseUid: String,
-    @ColumnInfo("updated_at") val updatedAt: String,
     @ColumnInfo("created_at") val createdAt: String,
+    @ColumnInfo("updated_at") val updatedAt: String,
 )

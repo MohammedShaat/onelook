@@ -30,22 +30,21 @@ class ActivityDaoTest {
     lateinit var activityDao: ActivityDao
 
     private val user = LocalUser(
-        1, "Android Test",
-        "firebaseUid", "accessToken",
+        1, "Android Test", "firebaseUid",
         "2023-06-10 11:45:30", "2023-06-10 11:45:30"
     )
     private val activities = listOf(
         LocalActivity(
             UUID.randomUUID(), "breathing", "evening", "00:10", "before",
-             1, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            1, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
         ),
         LocalActivity(
             UUID.randomUUID(), "waking", "morning", "01:30", "before",
-             1, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            1, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
         ),
         LocalActivity(
             UUID.randomUUID(), "yoga", "morning", "00:25", "before",
-             1, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            1, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
         )
     )
 

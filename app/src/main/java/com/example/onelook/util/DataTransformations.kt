@@ -1,7 +1,5 @@
 package com.example.onelook.util
 
-import com.example.onelook.data.domain.ActivityHistory
-import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.local.activities.LocalActivity
 import com.example.onelook.data.local.activitieshistory.LocalActivityHistory
@@ -14,8 +12,6 @@ import com.example.onelook.data.network.supplements.NetworkSupplement
 import com.example.onelook.data.network.supplementshistory.NetworkSupplementHistory
 import com.example.onelook.data.network.todaytasks.NetworkTodayTask
 import com.example.onelook.data.network.users.NetworkUserLoginResult
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 
 fun List<NetworkTodayTask>.toDomainModels(): List<TodayTask> {
     return map { task ->

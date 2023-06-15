@@ -29,8 +29,6 @@ class UserApiTest {
     lateinit var auth: FirebaseAuth
     private var firebaseIdToken: String? = null
     private val name = "test user"
-    private var accessToken =
-        "eyJhbGciOiJSUzI1NiIsImtpZCI6IjU0NWUyNDZjNTEwNmExMGQ2MzFiMTA0M2E3MWJiNTllNWJhMGM5NGQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vb25lbG9vay04MWJjZCIsImF1ZCI6Im9uZWxvb2stODFiY2QiLCJhdXRoX3RpbWUiOjE2ODU4MDE3NzcsInVzZXJfaWQiOiJOTUEydGJ6UWZOYk5Hc1ZGQlg0UXR2M2J6V3AxIiwic3ViIjoiTk1BMnRielFmTmJOR3NWRkJYNFF0djNieldwMSIsImlhdCI6MTY4NTgwMTc3NywiZXhwIjoxNjg1ODA1Mzc3LCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsidGVzdEB0ZXN0LmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.fZdCPxfkHNjk0LCtHDXGAMNtVw0zEMkN3gDMOM1xqQTkHtp3KGUMtLO3uXas0sdfmNGtPiIZGdNbJNHVXN_XhkAvsy2RupZm8tElrF0nM4PrZ7CTCRAPSXuv2kxP1rf_4PFEAT9UnnxPpjsc3hgTwZHzfi-xFvS_venzuPNcR2HpM2s3-bqjQUuENCA7HI9mgdv16qckr7BsBYPpPLL94I6hmVxenaCgz8h2H-VaHAZNoqyOSdUF40RgfWntkW3Q2w8QJi5AdTGHvNEYW1RyMzM5Ib9PitcjLcxMIBB48SEA2j8uVbld2VIbP9EpCuzh_QgnGgF0GDy_4-UmeHi09w"
 
     @Before
     fun setupHilt() {
@@ -41,7 +39,6 @@ class UserApiTest {
     fun setupFirebaseIdToken() = runBlocking {
         auth.signInWithEmailAndPassword("test@test.com", "123123").await()
         firebaseIdToken = auth.currentUser!!.getIdToken(false).await().token
-        Timber.i("Id token: $firebaseIdToken")
     }
 
     @Test
