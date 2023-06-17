@@ -2,7 +2,9 @@ package com.example.onelook.di.appmodules
 
 import com.example.onelook.data.network.HeaderInterceptor
 import com.example.onelook.data.network.activities.ActivityApi
+import com.example.onelook.data.network.activitieshistory.ActivityHistoryApi
 import com.example.onelook.data.network.supplements.SupplementApi
+import com.example.onelook.data.network.supplementshistory.SupplementHistoryApi
 import com.example.onelook.data.network.todaytasks.TodayTaskApi
 import com.example.onelook.data.network.users.UserApi
 import dagger.Module
@@ -75,5 +77,17 @@ object RetrofitModules {
     @Singleton
     fun provideActivityApi(@Named("headers") retrofit: Retrofit): ActivityApi {
         return retrofit.create(ActivityApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideActivityHistoryApi(@Named("headers") retrofit: Retrofit): ActivityHistoryApi {
+        return retrofit.create(ActivityHistoryApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSupplementHistoryApi(@Named("headers") retrofit: Retrofit): SupplementHistoryApi {
+        return retrofit.create(SupplementHistoryApi::class.java)
     }
 }

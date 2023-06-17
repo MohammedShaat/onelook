@@ -4,20 +4,24 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.ChipTakingWithMealsBinding
 import com.example.onelook.databinding.FragmentAddSupplementBinding
+import com.example.onelook.util.Constants.ADD_SUPPLEMENT_REQ_KEY
+import com.example.onelook.util.Constants.SUPPLEMENT_NAME_KEY
 import com.example.onelook.util.adapters.SelectableItemAdapter
 import com.example.onelook.util.hideBottomNavigation
 import com.example.onelook.util.onCollect
-import com.example.onelook.util.showToast
 import com.example.onelook.util.toTimeString
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.util.Calendar
 
 @AndroidEntryPoint
@@ -46,7 +50,10 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
 
         // Populates dosages RecyclerView
         val dosageAdapter =
-            SelectableItemAdapter(viewModel.dosagesList, viewModel.selectedDosage.value!!) { position ->
+            SelectableItemAdapter(
+                viewModel.dosagesList,
+                viewModel.selectedDosage.value!!
+            ) { position ->
                 viewModel.onDosageSelected(position)
             }
         binding.recyclerViewDosages.apply {
@@ -85,18 +92,19 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
         // Populates taking with meals chips
         binding.chipGroupTakingWithMeals.apply {
             val inflater = LayoutInflater.from(this.context)
-            val chips = viewModel.takingWithMealsList.map { time ->
+            val chips = viewModel.takingWithMealsList.mapIndexed { idx, time ->
                 ChipTakingWithMealsBinding.inflate(inflater, this, false).root.apply {
+                    id = idx
                     text = time
-                    isChecked = false
+                    isChecked = viewModel.selectedTakingWithMeals.value == idx
                 }
             }
 
+            removeAllViews()
             chips.forEach(::addView)
-            setOnCheckedStateChangeListener { group, checkedIds ->
-                Timber.i("Chip: $checkedIds")
-            }
         }
+
+        markErrorFields(viewModel.errorFields)
 
 
         // Listeners
@@ -112,6 +120,23 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
 
             buttonAddCustomTime.setOnClickListener {
                 viewModel.onButtonAddCustomTimeClicked()
+            }
+
+            chipGroupTakingWithMeals.setOnCheckedStateChangeListener { _, checkedIds ->
+                viewModel.onChipTakingWithMealsClicked(checkedIds.firstOrNull())
+            }
+
+            switchReminderBefore.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.onSwitchReminderBeforeSwitched(isChecked)
+            }
+
+            switchReminderBefore.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.onSwitchReminderAfterSwitched(isChecked)
+            }
+
+            buttonAddSupplement.setOnClickListener {
+                hideErrorFields()
+                viewModel.onButtonAddSupplementClicked()
             }
 
         }//Listeners
@@ -137,6 +162,13 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
                     time ?: getString(R.string.button_add_custom_time)
             }
 
+            onCollect(isLoading) { isLoading ->
+                binding.apply {
+                    buttonAddSupplement.isEnabled = !isLoading
+                    progressBar.isVisible = isLoading
+                }
+            }
+
             onCollect(addSupplementEvent) { event ->
                 when (event) {
                     is AddSupplementViewModel.AddSupplementEvent.CloseDialog -> {
@@ -148,8 +180,23 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
                     }//ShowTimePicker
 
                     is AddSupplementViewModel.AddSupplementEvent.ShowCannotAddCustomTimeMessage -> {
-                        showToast(R.string.dosage_must_be_one)
+                        Snackbar.make(view, R.string.dosage_must_be_one, Snackbar.LENGTH_SHORT)
+                            .show()
                     }//ShowCannotAddCustomTimeMessage
+
+                    is AddSupplementViewModel.AddSupplementEvent.ShowFillRequiredFieldsMessage -> {
+                        markErrorFields(viewModel.errorFields)
+                        Snackbar.make(view, R.string.fill_required_fields, Snackbar.LENGTH_SHORT)
+                            .setAnchorView(binding.buttonAddSupplement)
+                            .show()
+                    }//ShowFillRequiredFieldsMessage
+
+                    is AddSupplementViewModel.AddSupplementEvent.NavigateBackAfterSupplementAdded -> {
+                        setFragmentResult(ADD_SUPPLEMENT_REQ_KEY, Bundle().apply {
+                            putString(SUPPLEMENT_NAME_KEY, event.supplementName)
+                        })
+                        findNavController().popBackStack()
+                    }//SupplementCreationSucceeded
                 }
             }
         }//Observers
@@ -174,5 +221,35 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
             true
         )
             .show()
+    }
+
+    private fun markErrorFields(fields: List<AddSupplementViewModel.Fields>) {
+        val color = ContextCompat.getColor(requireContext(), R.color.alert)
+        fields.forEach { field ->
+            when (field) {
+                AddSupplementViewModel.Fields.NAME -> binding.textViewName.setTextColor(color)
+                AddSupplementViewModel.Fields.FORM -> binding.textViewForm.setTextColor(color)
+                AddSupplementViewModel.Fields.DOSAGE -> binding.textViewDosage.setTextColor(color)
+                AddSupplementViewModel.Fields.TIME_OF_DAY ->
+                    binding.textViewTimeOfDay.setTextColor(color)
+                AddSupplementViewModel.Fields.TAKING_WITH_MEALS ->
+                    binding.textViewTakingWithMeals.setTextColor(color)
+            }
+        }//fields
+    }
+
+    private fun hideErrorFields() {
+        val typeArray = requireContext().theme.obtainStyledAttributes(
+            intArrayOf(com.google.android.material.R.attr.colorOnSurface)
+        )
+        val color = typeArray.getColor(0, ContextCompat.getColor(requireContext(), R.color.black))
+        typeArray.recycle()
+        binding.apply {
+            textViewName.setTextColor(color)
+            textViewForm.setTextColor(color)
+            textViewDosage.setTextColor(color)
+            textViewTimeOfDay.setTextColor(color)
+            textViewTakingWithMeals.setTextColor(color)
+        }
     }
 }

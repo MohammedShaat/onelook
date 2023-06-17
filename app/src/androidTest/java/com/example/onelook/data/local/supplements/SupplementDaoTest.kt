@@ -13,6 +13,8 @@ import org.hamcrest.Matchers.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -28,26 +30,28 @@ class SupplementDaoTest {
     @Inject
     @Named("test")
     lateinit var supplementDao: SupplementDao
+    
+    private val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"))
 
     private val user = LocalUser(
         1, "Android Test", "firebaseUid",
-        "2023-06-10 11:45:30", "2023-06-10 11:45:30"
+        date, date
     )
     private val supplements = listOf(
         LocalSupplement(
             UUID.randomUUID(), "Supplement 1", "tablet", 3, "everyday",
             null, "morning", "before", "before", false,
-            1, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalSupplement(
             UUID.randomUUID(), "Supplement 2", "drops", 2, "every 2 days",
             null, "evening", "after", "after", true,
-            1, "2023-06-10 13:01:03", "2023-06-10 13:01:03"
+            date, date
         ),
         LocalSupplement(
             UUID.randomUUID(), "Supplement 3", "spoon", 2, "every 5 days",
             null, "afternoon", "with", "before", false,
-            1, "2023-06-10 13:01:07", "2023-06-10 13:01:07"
+            date, date
         )
     )
 
@@ -67,7 +71,7 @@ class SupplementDaoTest {
     fun getSupplements_userId_returnsListOfSupplements() = runBlocking {
         supplementDao.insertSupplements(supplements)
         // WHEN call getSupplements()
-        val supplementsResult = supplementDao.getSupplements(user.id).first()
+        val supplementsResult = supplementDao.getSupplements().first()
 
         // THEN there is a list of supplements
         assertThat(supplementsResult, hasSize(3))
@@ -106,7 +110,7 @@ class SupplementDaoTest {
         supplementDao.insertSupplements(supplements)
 
         // THEN the supplements are inserted
-        val supplementsResult = supplementDao.getSupplements(user.id).first()
+        val supplementsResult = supplementDao.getSupplements().first()
         assertThat(supplementsResult, hasSize(3))
     }
 

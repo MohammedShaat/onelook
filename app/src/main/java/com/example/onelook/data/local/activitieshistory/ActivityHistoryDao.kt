@@ -7,8 +7,8 @@ import java.util.*
 @Dao
 interface ActivityHistoryDao {
 
-    @Query("SELECT * FROM activities_history WHERE activity_id=:activityId")
-    fun getActivitiesHistory(activityId: UUID): Flow<List<LocalActivityHistory>>
+    @Query("SELECT * FROM activities_history")
+    fun getActivitiesHistory(): Flow<List<LocalActivityHistory>>
 
     @Query("SELECT * FROM activities_history WHERE id=:id")
     fun getActivityHistoryById(id: UUID): Flow<LocalActivityHistory>

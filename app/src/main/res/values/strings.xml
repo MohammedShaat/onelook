@@ -40,7 +40,7 @@
     <string name="sign_up_image_button_facebook">sign up with Facebook</string>
     <string name="sign_up_text_view_already_have_an_account">Already have an account?</string>
     <string name="sign_up_text_view_login">Login</string>
-    <string name="empty_fields">Please fill in all the required fields.</string>
+    <string name="fill_required_fields">Please fill in all the required fields.</string>
     <string name="login_text_view_header">Welcome back</string>
     <string name="login_text_view_forgot_your_password">Forgot your password?</string>
     <string name="password_reminder_1_text_view_header">Enter your e-mail</string>
@@ -142,4 +142,7 @@
     <string name="add_activity_text_view_duration_explanation">(hours/minutes)</string>
     <string name="add_activity_text_view_colon">:</string>
     <string name="custom_time_text">%s : %s</string>
+    <string name="scroll_to_see_content">Scroll to see remaining content</string>
+    <string name="supplement_added">%s supplement added successfully</string>
+    <string name="activity_added">%s activity added successfully</string>
 </resources>

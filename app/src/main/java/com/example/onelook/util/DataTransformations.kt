@@ -30,7 +30,6 @@ fun NetworkActivity.toLocalModel(): LocalActivity {
         timeOfDay = timeOfDay,
         duration = duration,
         reminder = reminder,
-        userId = userId,
         createdAt = createdAt,
         updatedAt = updatedAt
     )
@@ -48,7 +47,6 @@ fun NetworkSupplement.toLocalModel(): LocalSupplement {
         takingWithMeals = takingWithMeals,
         reminder = reminder,
         completed = completed,
-        userId = userId,
         createdAt = createdAt,
         updatedAt = updatedAt,
     )
@@ -88,4 +86,57 @@ fun NetworkUserLoginResult.NetworkUser.toLocalModel(): LocalUser {
 
 fun List<TodayTask>.sortByDate(): List<TodayTask> {
     return sortedByDescending { it.createdAt }
+}
+
+fun LocalSupplement.toNetworkModel(): NetworkSupplement {
+    return NetworkSupplement(
+        id = id,
+        name = name,
+        form = form,
+        dosage = dosage,
+        frequency = frequency,
+        duration = duration,
+        timeOfDay = timeOfDay,
+        takingWithMeals = takingWithMeals,
+        reminder = reminder,
+        completed = completed,
+        userId = 0,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
+}
+
+fun LocalSupplementHistory.toNetworkModel(): NetworkSupplementHistory {
+    return NetworkSupplementHistory(
+        id = id,
+        supplementId = supplementId,
+        progress = progress,
+        completed = completed,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
+}
+
+fun LocalActivity.toNetworkModel(): NetworkActivity {
+    return NetworkActivity(
+        id = id,
+        type = type,
+        duration = duration,
+        timeOfDay = timeOfDay,
+        reminder = reminder,
+        userId = 0,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
+}
+
+fun LocalActivityHistory.toNetworkModel(): NetworkActivityHistory {
+    return NetworkActivityHistory(
+        id = id,
+        activityId = activityId,
+        progress = progress,
+        completed = completed,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
 }

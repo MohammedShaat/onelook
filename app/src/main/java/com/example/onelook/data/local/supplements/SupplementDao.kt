@@ -7,8 +7,8 @@ import java.util.UUID
 @Dao
 interface SupplementDao {
 
-    @Query("SELECT * FROM supplements WHERE user_id=:userId")
-    fun getSupplements(userId: Int): Flow<List<LocalSupplement>>
+    @Query("SELECT * FROM supplements")
+    fun getSupplements(): Flow<List<LocalSupplement>>
 
     @Query("SELECT * FROM supplements WHERE id=:id")
     fun getSupplementById(id: UUID): Flow<LocalSupplement>

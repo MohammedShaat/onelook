@@ -13,6 +13,8 @@ import org.hamcrest.Matchers.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -28,23 +30,25 @@ class ActivityDaoTest {
     @Inject
     @Named("test")
     lateinit var activityDao: ActivityDao
+    
+    private val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"))
 
     private val user = LocalUser(
         1, "Android Test", "firebaseUid",
-        "2023-06-10 11:45:30", "2023-06-10 11:45:30"
+        date, date
     )
     private val activities = listOf(
         LocalActivity(
             UUID.randomUUID(), "breathing", "evening", "00:10", "before",
-            1, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalActivity(
             UUID.randomUUID(), "waking", "morning", "01:30", "before",
-            1, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            "date", "date"
         ),
         LocalActivity(
             UUID.randomUUID(), "yoga", "morning", "00:25", "before",
-            1, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            "date", "date"
         )
     )
 
@@ -67,7 +71,7 @@ class ActivityDaoTest {
         val userId = user.id
 
         // WHEN call getActivities()
-        val activitiesResult = activityDao.getActivities(userId).first()
+        val activitiesResult = activityDao.getActivities().first()
 
         // THEN there is a list of activities
         assertThat(activitiesResult, hasSize(3))
@@ -108,7 +112,7 @@ class ActivityDaoTest {
         activityDao.insertActivities(activities)
 
         // THEN the activities are inserted
-        val activitiesResult = activityDao.getActivities(user.id).first()
+        val activitiesResult = activityDao.getActivities().first()
         assertThat(activitiesResult, hasSize(3))
     }
 

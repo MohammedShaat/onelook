@@ -18,7 +18,7 @@ interface ActivityApi {
     suspend fun createActivities(@Body activities: List<NetworkActivity>)
 
     @PUT("activities/update")
-    suspend fun updateActivity(@Body activity: NetworkActivity): NetworkActivity
+    suspend fun updateActivity(@Body activity: NetworkActivity)
 
     @DELETE("activities/delete/{id}")
     suspend fun deleteActivity(@Path("id") id: UUID)

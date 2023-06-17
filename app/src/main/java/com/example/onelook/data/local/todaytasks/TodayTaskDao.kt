@@ -22,11 +22,9 @@ interface TodayTaskDao {
                 "supplements.taking_with_meals AS takingWithMeals " +
                 "FROM supplements_history INNER JOIN supplements " +
                 "ON supplements_history.supplement_id=supplements.id " +
-                "WHERE supplements.user_id=:userId AND " +
-                "strftime('%Y-%m-%d', supplements_history.created_at)=date('now') " +
-                "ORDER BY supplements_history.created_at"
+                "WHERE strftime('%Y-%m-%d', supplements_history.created_at)=date('now')"
     )
-    fun getTodaySupplementTasks(userId: Int): Flow<List<SupplementHistory>>
+    fun getTodaySupplementTasks(): Flow<List<SupplementHistory>>
 
     @Query(
         "SELECT activities_history.id AS id, " +
@@ -39,9 +37,7 @@ interface TodayTaskDao {
                 "activities.duration AS duration " +
                 "FROM activities_history INNER JOIN activities " +
                 "ON activities_history.activity_id=activities.id " +
-                "WHERE activities.user_id=:userId AND " +
-                "strftime('%Y-%m-%d', activities_history.created_at)=date('now') " +
-                "ORDER BY activities_history.created_at"
+                "WHERE strftime('%Y-%m-%d', activities_history.created_at)=date('now')"
     )
-    fun getTodayActivityTasks(userId: Int): Flow<List<ActivityHistory>>
+    fun getTodayActivityTasks(): Flow<List<ActivityHistory>>
 }

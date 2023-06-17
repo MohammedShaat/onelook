@@ -62,7 +62,6 @@ class CustomSpinnerAdapter(
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        onClickListener(position)
         val binding = if (convertView != null)
             ItemSpinnerDropDownBinding.bind(convertView)
         else

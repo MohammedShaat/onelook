@@ -15,6 +15,8 @@ import org.hamcrest.Matchers.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -34,37 +36,39 @@ class ActivityHistoryDaoTest {
     @Inject
     @Named("test")
     lateinit var activityHistoryDao: ActivityHistoryDao
+    
+    private val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"))
 
     private val user = LocalUser(
         1, "Android Test", "firebaseUid",
-        "2023-06-10 11:45:30", "2023-06-10 11:45:30"
+        date, date
     )
     private val activities = listOf(
         LocalActivity(
             UUID.randomUUID(), "breathing", "evening", "00:10", "before",
-            user.id, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalActivity(
             UUID.randomUUID(), "waking", "morning", "01:30", "before",
-            user.id, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalActivity(
             UUID.randomUUID(), "yoga", "morning", "00:25", "before",
-            user.id, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         )
     )
     private val activitiesHistory = listOf(
         LocalActivityHistory(
             UUID.randomUUID(), activities[0].id, "00:05", false,
-            "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalActivityHistory(
             UUID.randomUUID(), activities[0].id, "00:010", true,
-            "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalActivityHistory(
             UUID.randomUUID(), activities[1].id, "01:05", false,
-            "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
     )
 
@@ -85,10 +89,11 @@ class ActivityHistoryDaoTest {
     fun getActivitiesHistory_userId_returnsListOfActivitiesHistory() = runBlocking {
         activityHistoryDao.insertActivitiesHistory(activitiesHistory)
         // WHEN call getActivitiesHistory()
-        val activitiesHistoryResult = activityHistoryDao.getActivitiesHistory(activities[0].id).first()
+        val activitiesHistoryResult =
+            activityHistoryDao.getActivitiesHistory().first()
 
         // THEN there is a list of ActivitiesHistory
-        assertThat(activitiesHistoryResult, hasSize(2))
+        assertThat(activitiesHistoryResult, hasSize(3))
     }
 
     @Test
@@ -126,8 +131,8 @@ class ActivityHistoryDaoTest {
 
             // THEN the ActivitiesHistory objects are inserted
             val activitiesHistoryResult =
-                activityHistoryDao.getActivitiesHistory(activities[1].id).first()
-            assertThat(activitiesHistoryResult, hasSize(1))
+                activityHistoryDao.getActivitiesHistory().first()
+            assertThat(activitiesHistoryResult, hasSize(3))
         }
 
     @Test

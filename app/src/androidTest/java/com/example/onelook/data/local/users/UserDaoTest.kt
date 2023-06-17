@@ -11,6 +11,8 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -22,9 +24,11 @@ class UserDaoTest {
     @Named("test")
     lateinit var userDao: UserDao
 
+    private val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"))
+
     private val user = LocalUser(
         1, "Android Test", "firebaseUid",
-        "2023-06-10 11:45:30", "2023-06-10 11:45:30"
+        date, date
     )
 
     @get:Rule

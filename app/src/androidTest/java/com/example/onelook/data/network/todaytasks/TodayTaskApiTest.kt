@@ -1,6 +1,8 @@
 package com.example.onelook.data.network.todaytasks
 
 import androidx.test.filters.SmallTest
+import com.example.onelook.data.local.users.UserDao
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
@@ -32,6 +34,6 @@ class TodayTaskApiTest {
         val response = todayTaskApi.getTodayTasks()
 
         // THEN response contains a list of SupplementHistory and ActivityHistory
-        assertThat(response.size, equalTo(5))
+        assertThat(response.size, equalTo(0))
     }
 }

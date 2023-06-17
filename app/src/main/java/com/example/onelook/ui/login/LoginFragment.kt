@@ -121,7 +121,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     is LoginViewModel.LoginEvent.ShowEmptyFieldsMessage -> {
                         markErrorFields(event.fields)
                         binding.textViewErrorMessage.apply {
-                            setText(R.string.empty_fields)
+                            setText(R.string.fill_required_fields)
                             isVisible = true
                         }
                     }//ShowEmptyFieldsMessage
@@ -204,7 +204,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
         }//Observers
 
-        setFragmentResultListener(Constants.PASSWORD_REST_EMAIL_REQ) { _, bundle ->
+        setFragmentResultListener(Constants.PASSWORD_REST_EMAIL_REQ_KEY) { _, bundle ->
             val receivedEmail = bundle.getString("email") ?: return@setFragmentResultListener
             Snackbar.make(
                 view,

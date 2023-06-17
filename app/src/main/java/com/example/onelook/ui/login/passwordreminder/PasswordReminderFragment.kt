@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentPasswordReminderBinding
-import com.example.onelook.util.Constants.PASSWORD_REST_EMAIL_REQ
+import com.example.onelook.util.Constants.PASSWORD_REST_EMAIL_REQ_KEY
 import com.example.onelook.util.onCollect
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -77,7 +77,7 @@ class PasswordReminderFragment : Fragment(R.layout.fragment_password_reminder) {
                     }
 
                     is PasswordReminderViewModel.PasswordReminder1Event.NavigateBackToLoginFragment -> {
-                        setFragmentResult(PASSWORD_REST_EMAIL_REQ, Bundle().apply {
+                        setFragmentResult(PASSWORD_REST_EMAIL_REQ_KEY, Bundle().apply {
                             putString("email", email.value!!)
                         })
                         findNavController().popBackStack()

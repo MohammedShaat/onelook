@@ -15,6 +15,8 @@ import org.hamcrest.Matchers.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -34,40 +36,42 @@ class SupplementHistoryDaoTest {
     @Inject
     @Named("test")
     lateinit var supplementHistoryDao: SupplementHistoryDao
+    
+    private val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"))
 
     private val user = LocalUser(
         1, "Android Test", "firebaseUid",
-        "2023-06-10 11:45:30", "2023-06-10 11:45:30"
+        date, date
     )
     private val supplements = listOf(
         LocalSupplement(
             UUID.randomUUID(), "Supplement 1", "tablet", 3, "everyday",
             null, "morning", "before", "before", false,
-            user.id, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalSupplement(
             UUID.randomUUID(), "Supplement 2", "drops", 2, "every 2 days",
             null, "evening", "after", "after", true,
-            user.id, "2023-06-10 13:01:03", "2023-06-10 13:01:03"
+            date, date
         ),
         LocalSupplement(
             UUID.randomUUID(), "Supplement 3", "spoon", 2, "every 5 days",
             null, "afternoon", "with", "before", false,
-            user.id, "2023-06-10 13:01:07", "2023-06-10 13:01:07"
+            date, date
         )
     )
     private val supplementsHistory = listOf(
         LocalSupplementHistory(
             UUID.randomUUID(), supplements[0].id, 1, false,
-            "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalSupplementHistory(
             UUID.randomUUID(), supplements[0].id, 2, true,
-            "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalSupplementHistory(
             UUID.randomUUID(), supplements[1].id, 2, true,
-            "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
     )
 
@@ -88,7 +92,8 @@ class SupplementHistoryDaoTest {
     fun getSupplementsHistory_userId_returnsListOfSupplementsHistory() = runBlocking {
         supplementHistoryDao.insertSupplementsHistory(supplementsHistory)
         // WHEN call getSupplementsHistory()
-        val supplementsHistoryResult = supplementHistoryDao.getSupplementsHistory(supplements[0].id).first()
+        val supplementsHistoryResult =
+            supplementHistoryDao.getSupplementsHistory(supplements[0].id).first()
 
         // THEN there is a list of SupplementsHistory
         assertThat(supplementsHistoryResult, hasSize(2))
@@ -145,7 +150,10 @@ class SupplementHistoryDaoTest {
         // THEN the supplementHistory is updated
         val supplementsHistoryResult =
             supplementHistoryDao.getSupplementHistoryById(supplementHistory.id).first()
-        assertThat(supplementsHistoryResult.completed, not(equalTo(supplementsHistory[0].completed)))
+        assertThat(
+            supplementsHistoryResult.completed,
+            not(equalTo(supplementsHistory[0].completed))
+        )
     }
 
     @Test

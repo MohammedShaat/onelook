@@ -21,6 +21,8 @@ import org.hamcrest.Matchers.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -53,49 +55,51 @@ class TodayTasksDaoTest {
     @Named("test")
     lateinit var todayTasksDao: TodayTaskDao
 
+    private val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"))
+
     private val user = LocalUser(
         1, "Android Test", "firebaseUid",
-        "2023-06-10 11:45:30", "2023-06-10 11:45:30"
+        date, date
     )
     private val supplements = listOf(
         LocalSupplement(
             UUID.randomUUID(), "Supplement 1", "tablet", 3, "everyday",
             null, "morning", "before", "before", false,
-            user.id, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalSupplement(
             UUID.randomUUID(), "Supplement 2", "drops", 2, "every 2 days",
             null, "evening", "after", "after", true,
-            user.id, "2023-06-10 13:01:03", "2023-06-10 13:01:03"
+            date, date
         ),
         LocalSupplement(
             UUID.randomUUID(), "Supplement 3", "spoon", 2, "every 5 days",
             null, "afternoon", "with", "before", false,
-            user.id, "2023-06-10 13:01:07", "2023-06-10 13:01:07"
+            date, date
         )
     )
     private val activities = listOf(
         LocalActivity(
             UUID.randomUUID(), "breathing", "evening", "00:10", "before",
-            user.id, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalActivity(
             UUID.randomUUID(), "waking", "morning", "01:30", "before",
-            user.id, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalActivity(
             UUID.randomUUID(), "yoga", "morning", "00:25", "before",
-            user.id, "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         )
     )
     private val supplementsHistory = listOf(
         LocalSupplementHistory(
             UUID.randomUUID(), supplements[0].id, 1, false,
-            "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalSupplementHistory(
             UUID.randomUUID(), supplements[0].id, 2, true,
-            "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalSupplementHistory(
             UUID.randomUUID(), supplements[1].id, 2, true,
@@ -105,15 +109,15 @@ class TodayTasksDaoTest {
     private val activitiesHistory = listOf(
         LocalActivityHistory(
             UUID.randomUUID(), activities[0].id, "00:05", false,
-            "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalActivityHistory(
             UUID.randomUUID(), activities[0].id, "00:010", true,
-            "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
         LocalActivityHistory(
             UUID.randomUUID(), activities[1].id, "01:05", false,
-            "2023-06-10 13:00:50", "2023-06-10 13:00:50"
+            date, date
         ),
     )
 
@@ -136,15 +140,16 @@ class TodayTasksDaoTest {
     @Test
     fun getTodaySupplementTasks_userId_returnsListOfTodaySupplementTasks() = runBlocking {
         // WHEN call getTodaySupplementTasks()
-        val todaySupplementTasksResult = todayTasksDao.getTodaySupplementTasks(user.id).first()
+        val todaySupplementTasksResult = todayTasksDao.getTodaySupplementTasks().first()
 
         // THEN there is a list of today supplement tasks
         assertThat(todaySupplementTasksResult, hasSize(2))
     }
+
     @Test
     fun getTodayActivityTasks_userId_returnsListOfTodayActivityTasks() = runBlocking {
         // WHEN call getTodayActivityTasks()
-        val todaySupplementTasksResult = todayTasksDao.getTodayActivityTasks(user.id).first()
+        val todaySupplementTasksResult = todayTasksDao.getTodayActivityTasks().first()
 
         // THEN there is a list of today activity tasks
         assertThat(todaySupplementTasksResult, hasSize(3))

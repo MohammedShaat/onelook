@@ -23,7 +23,7 @@ interface SupplementApi {
     suspend fun createSupplements(@Body supplements: List<NetworkSupplement>)
 
     @PUT("supplements/update")
-    suspend fun updateSupplement(@Body supplement: NetworkSupplement): NetworkSupplement
+    suspend fun updateSupplement(@Body supplement: NetworkSupplement)
 
     @DELETE("supplements/delete/{id}")
     suspend fun deleteSupplement(@Path("id") id: UUID)

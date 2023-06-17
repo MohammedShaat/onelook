@@ -6,19 +6,26 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.onelook.R
-import com.example.onelook.util.adapters.SelectableRectWithText
+import com.example.onelook.data.Repository
+import com.example.onelook.data.local.supplements.LocalSupplement
+import com.example.onelook.util.CustomResult
+import com.example.onelook.util.OperationSource
 import com.example.onelook.util.adapters.SelectableOvalNumber
+import com.example.onelook.util.adapters.SelectableRectWithText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class AddSupplementViewModel @Inject constructor(
     @ApplicationContext context: Context,
-    private val state: SavedStateHandle
+    state: SavedStateHandle,
+    private val repository: Repository
 ) : ViewModel() {
 
     val formsList = listOf(
@@ -72,11 +79,11 @@ class AddSupplementViewModel @Inject constructor(
     val selectedDosage: LiveData<Int>
         get() = _selectedDosage
 
-    private val _selectedFrequency = state.getLiveData("selected_frequency", -1)
+    private val _selectedFrequency = state.getLiveData("selected_frequency", 0)
     val selectedFrequency: LiveData<Int>
         get() = _selectedFrequency
 
-    private val _selectedDuration = state.getLiveData("selected_duration", -1)
+    private val _selectedDuration = state.getLiveData("selected_duration", 0)
     val selectedDuration: LiveData<Int>
         get() = _selectedDuration
 
@@ -92,9 +99,18 @@ class AddSupplementViewModel @Inject constructor(
     val selectedTakingWithMeals: LiveData<Int>
         get() = _selectedTakingWithMeals
 
+    private val _reminderBefore = state.getLiveData<Boolean>("reminder_before", false)
+    private val _reminderAfter = state.getLiveData<Boolean>("reminder_after", false)
 
     private val _addSupplementEvent = MutableSharedFlow<AddSupplementEvent>()
     val addSupplementEvent = _addSupplementEvent.asSharedFlow()
+
+    private var _errorFields = emptyList<Fields>()
+    val errorFields: List<Fields>
+        get() = _errorFields
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
     fun onButtonCloseClicked() = viewModelScope.launch {
         _addSupplementEvent.emit(AddSupplementEvent.CloseDialog)
@@ -145,9 +161,93 @@ class AddSupplementViewModel @Inject constructor(
         _selectedTimeOfDay.value = -1
     }
 
+    fun onChipTakingWithMealsClicked(newPosition: Int?) {
+        _selectedTakingWithMeals.value = newPosition ?: -1
+    }
+
+    fun onSwitchReminderBeforeSwitched(isChecked: Boolean) {
+        _reminderBefore.value = isChecked
+    }
+
+    fun onSwitchReminderAfterSwitched(isChecked: Boolean) {
+        _reminderAfter.value = isChecked
+    }
+
+    fun onButtonAddSupplementClicked() = viewModelScope.launch {
+        _isLoading.emit(true)
+        _errorFields = getEmptyRequiredFields()
+        if (_errorFields.isNotEmpty()) {
+            _isLoading.emit(false)
+            _addSupplementEvent.emit(AddSupplementEvent.ShowFillRequiredFieldsMessage)
+            return@launch
+        }
+
+        createSupplement().collect { result ->
+            if (result is CustomResult.Success) {
+                _addSupplementEvent.emit(
+                    AddSupplementEvent.NavigateBackAfterSupplementAdded(
+                        formsList[_selectedForm.value!!].text
+                    )
+                )
+                _isLoading.emit(false)
+            }
+        }
+    }
+
+    private fun createSupplement(): Flow<CustomResult<OperationSource>> {
+        val creationDateTime = SimpleDateFormat(
+            "y-MM-dd HH:mm:ss",
+            Locale.getDefault()
+        ).format(Calendar.getInstance().time)
+
+        val localSupplement = LocalSupplement(
+            id = UUID.randomUUID(),
+            name = _name.value!!,
+            form = formsList[_selectedForm.value!!].text.lowercase(),
+            dosage = dosagesList[_selectedDosage.value!!].number.toInt(),
+            frequency = frequenciesList[_selectedFrequency.value!!].text.lowercase(),
+            duration = durationsList[_selectedDuration.value!!].text.lowercase()
+                .takeIf { it != durationsList[0].text.lowercase() },
+            timeOfDay = timesOfDayList.getOrNull(_selectedTimeOfDay.value!!)?.text?.lowercase()
+                ?: _customTime.value!!.replace(" ", ""),
+            takingWithMeals = takingWithMealsList[_selectedTakingWithMeals.value!!].lowercase()
+                .split(" ")[0],
+            reminder = when {
+                _reminderBefore.value!! && _reminderAfter.value!! -> "both"
+                _reminderBefore.value!! -> "before"
+                _reminderAfter.value!! -> "after"
+                else -> null
+            },
+            completed = false,
+            createdAt = creationDateTime,
+            updatedAt = creationDateTime,
+        )
+        return repository.createSupplement(localSupplement, creationDateTime)
+    }
+
+    private fun getEmptyRequiredFields(): List<Fields> {
+        val fields = mutableListOf<Fields>()
+        if (_name.value!!.isBlank()) fields.add(Fields.NAME)
+        if (_selectedForm.value == -1) fields.add(Fields.FORM)
+        if (_selectedDosage.value == -1) fields.add(Fields.DOSAGE)
+        if (dosagesList.getOrNull(_selectedDosage.value!!)?.number?.toInt() == 1 &&
+            (_selectedTimeOfDay.value == -1 && _customTime.value == null)
+        )
+            fields.add(Fields.TIME_OF_DAY)
+        if (_selectedTakingWithMeals.value == -1) fields.add(Fields.TAKING_WITH_MEALS)
+        return fields
+    }
+
     sealed class AddSupplementEvent {
         object CloseDialog : AddSupplementEvent()
         object ShowTimePicker : AddSupplementEvent()
         object ShowCannotAddCustomTimeMessage : AddSupplementEvent()
+        object ShowFillRequiredFieldsMessage : AddSupplementEvent()
+        data class NavigateBackAfterSupplementAdded(val supplementName: String) :
+            AddSupplementEvent()
+    }
+
+    enum class Fields {
+        NAME, FORM, DOSAGE, TIME_OF_DAY, TAKING_WITH_MEALS
     }
 }

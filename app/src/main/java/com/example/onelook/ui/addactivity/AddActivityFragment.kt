@@ -4,17 +4,20 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.NumberPicker
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentAddActivityBinding
 import com.example.onelook.ui.addsupplement.AddSupplementViewModel
+import com.example.onelook.util.*
+import com.example.onelook.util.Constants.ACTIVITY_NAME_KEY
+import com.example.onelook.util.Constants.ADD_ACTIVITY_REQ_KEY
 import com.example.onelook.util.adapters.SelectableItemAdapter
-import com.example.onelook.util.hideBottomNavigation
-import com.example.onelook.util.onCollect
-import com.example.onelook.util.showToast
-import com.example.onelook.util.toTimeString
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -73,6 +76,7 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
             }
         }
 
+        markErrorFields(viewModel.errorFields)
 
         // Listeners
         binding.apply {
@@ -91,6 +95,19 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
 
             numberPickerMinutes.setOnValueChangedListener { _, _, newVal ->
                 viewModel.onNumberPickerMinutesChanged(newVal)
+            }
+
+            switchReminderBefore.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.onSwitchReminderBeforeSwitched(isChecked)
+            }
+
+            switchReminderBefore.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.onSwitchReminderAfterSwitched(isChecked)
+            }
+
+            buttonAddActivity.setOnClickListener {
+                hideErrorFields()
+                viewModel.onButtonAddSupplementClicked()
             }
         }//Listeners
 
@@ -111,6 +128,13 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
                     time ?: getString(R.string.button_add_custom_time)
             }
 
+            onCollect(isLoading) { isLoading ->
+                binding.apply {
+                    buttonAddActivity.isEnabled = !isLoading
+                    progressBar.isVisible = isLoading
+                }
+            }
+
             onCollect(addActivityEvent) { event ->
                 when (event) {
                     is AddActivityViewModel.AddActivityEvent.CloseDialog -> {
@@ -122,8 +146,23 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
                     }//ShowTimePicker
 
                     is AddActivityViewModel.AddActivityEvent.ShowCannotAddCustomTimeMessage -> {
-                        showToast(R.string.dosage_must_be_one)
+                        Snackbar.make(view, R.string.dosage_must_be_one, Snackbar.LENGTH_SHORT)
+                            .show()
                     }//ShowCannotAddCustomTimeMessage
+
+                    is AddActivityViewModel.AddActivityEvent.ShowFillRequiredFieldsMessage -> {
+                        markErrorFields(viewModel.errorFields)
+                        Snackbar.make(view, R.string.fill_required_fields, Snackbar.LENGTH_SHORT)
+                            .setAnchorView(binding.buttonAddActivity)
+                            .show()
+                    }//ShowFillRequiredFieldsMessage
+
+                    is AddActivityViewModel.AddActivityEvent.NavigateBackAfterSupplementAdded -> {
+                        setFragmentResult(ADD_ACTIVITY_REQ_KEY, Bundle().apply {
+                            putString(ACTIVITY_NAME_KEY, event.activityType)
+                        })
+                        findNavController().popBackStack()
+                    }//SupplementCreationSucceeded
                 }
             }
         }
@@ -148,5 +187,30 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
             true
         )
             .show()
+    }
+
+    private fun markErrorFields(fields: List<AddActivityViewModel.Fields>) {
+        val color = ContextCompat.getColor(requireContext(), R.color.alert)
+        fields.forEach { field ->
+            when (field) {
+                AddActivityViewModel.Fields.TYPE -> binding.textViewType.setTextColor(color)
+                AddActivityViewModel.Fields.TIME_OF_DAY ->
+                    binding.textViewTimeOfDay.setTextColor(color)
+                AddActivityViewModel.Fields.DURATION -> binding.textViewDuration.setTextColor(color)
+            }
+        }//fields
+    }
+
+    private fun hideErrorFields() {
+        val typeArray = requireContext().theme.obtainStyledAttributes(
+            intArrayOf(com.google.android.material.R.attr.colorOnSurface)
+        )
+        val color = typeArray.getColor(0, ContextCompat.getColor(requireContext(), R.color.black))
+        typeArray.recycle()
+        binding.apply {
+            textViewType.setTextColor(color)
+            textViewTimeOfDay.setTextColor(color)
+            textViewDuration.setTextColor(color)
+        }
     }
 }

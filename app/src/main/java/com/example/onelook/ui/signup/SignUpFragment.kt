@@ -122,7 +122,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     is SignUpViewModel.SignUpEvent.ShowEmptyFieldsMessage -> {
                         markErrorFields(event.fields)
                         binding.textViewErrorMessage.apply {
-                            setText(R.string.empty_fields)
+                            setText(R.string.fill_required_fields)
                             isVisible = true
                         }
                     }//EmptyFields
