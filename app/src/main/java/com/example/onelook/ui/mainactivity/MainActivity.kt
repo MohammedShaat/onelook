@@ -56,12 +56,10 @@ class MainActivity : AppCompatActivity() {
             onCollect(checkAppLaunchStateAndSigningFlow) { event ->
                 when (event) {
                     is MainActivityViewModel.MainActivityEvent.NavigateToLoginFragment -> {
-                        Timber.tag(GLOBAL_TAG).i("NavigateToLoginFragment")
                         navController.popBackStack()
                         navController.navigate(R.id.loginFragment)
                     }
                     is MainActivityViewModel.MainActivityEvent.NavigateToHomeFragment -> {
-                        Timber.tag(GLOBAL_TAG).i("NavigateToHomeFragment")
                         navController.popBackStack()
                         navController.navigate(R.id.homeFragment)
                     }
@@ -92,21 +90,14 @@ class MainActivity : AppCompatActivity() {
                             true
                         }
                         R.id.action_timer -> {
-//                    item.icon = AppCompatResources.getDrawable(applicationContext, R.drawable.)
-//                            navController.popBackStack()
-//                            navController.navigate()
                             true
                         }
                         R.id.action_progress -> {
-//                    item.icon = AppCompatResources.getDrawable(applicationContext, R.drawable.)
-//                    navController.popBackStack()
-//                    navController.navigate()
                             true
                         }
                         R.id.action_settings -> {
-//                    item.icon = AppCompatResources.getDrawable(applicationContext, R.drawable.)
-//                    navController.popBackStack()
-//                    navController.navigate()
+                            navController.popBackStack()
+                            navController.navigate(R.id.settingsFragment)
                             true
                         }
                         else -> false

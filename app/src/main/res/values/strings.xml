@@ -145,4 +145,24 @@
     <string name="scroll_to_see_content">Scroll to see remaining content</string>
     <string name="supplement_added">%s supplement added successfully</string>
     <string name="activity_added">%s activity added successfully</string>
+    <string name="settings_text_view_title">Settings</string>
+    <string name="settings_image_button_activity_manager">Icon of activity manager settings</string>
+    <string name="settings_text_view_activity_manager">Activity Manager</string>
+    <string name="settings_image_button_notification_settings">Icon of notification settings</string>
+    <string name="settings_text_view_notification_settings">Notification Settings</string>
+    <string name="settings_image_button_personal_data">Icon of personal data settings</string>
+    <string name="settings_text_view_personal_data">Personal Data</string>
+    <string name="settings_image_button_contact_us">Icon of contact us settings</string>
+    <string name="settings_text_view_contact_us">Contact Us</string>
+    <string name="settings_image_button_privacy_policy">Icon of privacy policy settings</string>
+    <string name="settings_text_view_privacy_policy">Privacy Policy</string>
+    <string name="activity_manager_tool_bar_title">Activity Manager</string>
+    <string name="settings_text_view_activities">Activities</string>
+    <string name="settings_text_view_supplements">Supplements</string>
+    <string name="activities_tool_bar_title">Activities</string>
+    <string name="activities_text_view_your_activities">Your activities</string>
+    <string name="activities_button_add_activity">Add Activity</string>
+    <string name="supplements_tool_bar_title">Supplements</string>
+    <string name="supplements_text_view_your_supplements">Your supplements</string>
+    <string name="supplements_button_add_supplement">Add Supplements</string>
 </resources>

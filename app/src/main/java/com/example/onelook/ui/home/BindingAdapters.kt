@@ -2,33 +2,33 @@ package com.example.onelook.ui.home
 
 import android.widget.ImageView
 import com.example.onelook.R
-import com.example.onelook.data.domain.ActivityHistory
+import com.example.onelook.data.domain.DomainActivity
+import com.example.onelook.data.domain.Supplement
 import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.views.CustomActivityProgressView
-import timber.log.Timber
 import kotlin.time.Duration
 
-fun ImageView.supplementHistoryImage(form: SupplementHistory.Form) {
+fun ImageView.supplementIcon(form: Supplement.Form) {
     setImageResource(
         when (form) {
-            SupplementHistory.Form.PILL -> R.drawable.ic_supplement_pill
-            SupplementHistory.Form.TABLET -> R.drawable.ic_supplement_tablet
-            SupplementHistory.Form.SACHET -> R.drawable.ic_supplement_sachet
-            SupplementHistory.Form.DROPS -> R.drawable.ic_supplement_drop
-            SupplementHistory.Form.SPOON -> R.drawable.ic_supplement_spoon
+            Supplement.Form.PILL -> R.drawable.ic_supplement_pill
+            Supplement.Form.TABLET -> R.drawable.ic_supplement_tablet
+            Supplement.Form.SACHET -> R.drawable.ic_supplement_sachet
+            Supplement.Form.DROPS -> R.drawable.ic_supplement_drop
+            Supplement.Form.SPOON -> R.drawable.ic_supplement_spoon
         }
     )
 }
 
-fun ImageView.activityHistoryImage(type: ActivityHistory.Type) {
+fun ImageView.activityIcon(type: DomainActivity.ActivityType) {
     setImageResource(
         when (type) {
-            ActivityHistory.Type.RUNNING -> R.drawable.ic_activity_running
-            ActivityHistory.Type.WALKING -> R.drawable.ic_activity_walking
-            ActivityHistory.Type.FITNESS -> R.drawable.ic_activity_fitness
-            ActivityHistory.Type.YOGA -> R.drawable.ic_activity_yoga
-            ActivityHistory.Type.BREATHING -> R.drawable.ic_activity_breath
-            ActivityHistory.Type.ROLLERSKATING -> R.drawable.ic_activity_rollers
+            DomainActivity.ActivityType.RUNNING -> R.drawable.ic_activity_running
+            DomainActivity.ActivityType.WALKING -> R.drawable.ic_activity_walking
+            DomainActivity.ActivityType.FITNESS -> R.drawable.ic_activity_fitness
+            DomainActivity.ActivityType.YOGA -> R.drawable.ic_activity_yoga
+            DomainActivity.ActivityType.BREATHING -> R.drawable.ic_activity_breath
+            DomainActivity.ActivityType.ROLLERSKATING -> R.drawable.ic_activity_rollers
         }
     )
 }

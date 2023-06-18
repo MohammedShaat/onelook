@@ -1,6 +1,5 @@
 package com.example.onelook.data.domain
 
-import com.google.gson.annotations.SerializedName
 import java.util.*
 import kotlin.time.Duration
 
@@ -20,15 +19,11 @@ data class ActivityHistory(
             val formattedString = progress.replace(":", "h ") + "m"
             return Duration.parse(formattedString)
         }
-    val formattedType: Type
-        get() = Type.valueOf(type.uppercase())
+    val formattedType: DomainActivity.ActivityType
+        get() = DomainActivity.ActivityType.valueOf(type.uppercase())
     val formattedDuration: Duration
         get() {
             val formattedString = duration.replace(":", "h ") + "m"
             return Duration.parse(formattedString)
         }
-
-    enum class Type {
-        RUNNING, WALKING, FITNESS, YOGA, BREATHING, ROLLERSKATING
-    }
 }

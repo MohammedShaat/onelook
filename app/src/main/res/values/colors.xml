@@ -24,4 +24,5 @@
     <color name="light_grey">#E5E6EE</color>
     <color name="alert">#ED4337</color>
     <color name="transparent_gray">#A1BAB7B7</color>
+    <color name="dust_grey">#B0B2C3</color>
 </resources>

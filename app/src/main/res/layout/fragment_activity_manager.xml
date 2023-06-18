@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activitymanager.ActivityManagerFragment">
+
+    <Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/m_margin"
+        android:navigationIcon="@drawable/ic_left_arrow_long"
+        android:title="@string/activity_manager_tool_bar_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/h_padding">
+
+        <TextView
+            android:id="@+id/text_view_activities"
+            style="@style/CustomTextViewWithIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_text_view_activities"
+            app:drawableStartCompat="@drawable/ic_timer_inactive" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="24dp" />
+
+        <TextView
+            android:id="@+id/text_view_supplements"
+            style="@style/CustomTextViewWithIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_text_view_supplements"
+            app:drawableStartCompat="@drawable/ic_supplements" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="24dp" />
+    </LinearLayout>
+</LinearLayout>

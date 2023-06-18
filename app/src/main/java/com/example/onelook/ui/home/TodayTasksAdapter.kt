@@ -63,7 +63,7 @@ class TodayTasksAdapter(private val resource: Resources) :
         fun bind(supplementHistory: SupplementHistory) {
             binding.apply {
                 textViewTaskName.text = supplementHistory.name
-                imageViewSupplementIcon.supplementHistoryImage(supplementHistory.formattedForm)
+                imageViewSupplementIcon.supplementIcon(supplementHistory.formattedForm)
                 textViewTakingWithMeals.text =
                     resource.getString(
                         R.string.item_supplement_history_text_view_task_name,
@@ -83,7 +83,7 @@ class TodayTasksAdapter(private val resource: Resources) :
         fun bind(activityHistory: ActivityHistory) {
             binding.apply {
                 textViewTaskName.text = activityHistory.type.replaceFirstChar { it.uppercase() }
-                imageViewActivityIcon.activityHistoryImage(activityHistory.formattedType)
+                imageViewIcon.activityIcon(activityHistory.formattedType)
                 customActivityProgressView.activityHistoryProgress(
                     activityHistory.formattedProgress,
                     activityHistory.formattedDuration

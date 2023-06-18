@@ -59,15 +59,16 @@
         android:id="@+id/homeFragment"
         android:name="com.example.onelook.ui.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_addTaskDialog"
+            app:destination="@id/addTaskDialog" />
+    </fragment>
     <dialog
         android:id="@+id/addTaskDialog"
         android:name="com.example.onelook.ui.addtask.AddTaskDialog"
         android:label="dialog_add_task"
         tools:layout="@layout/dialog_add_task" />
-    <action
-        android:id="@+id/action_global_addTaskDialog"
-        app:destination="@id/addTaskDialog" />
     <fragment
         android:id="@+id/addSupplementDialog"
         android:name="com.example.onelook.ui.addsupplement.AddSupplementFragment"
@@ -84,4 +85,35 @@
     <action
         android:id="@+id/action_global_addActivityFragment"
         app:destination="@id/addActivityFragment" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.onelook.ui.settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_activityManagerFragment"
+            app:destination="@id/activityManagerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/activityManagerFragment"
+        android:name="com.example.onelook.ui.activitymanager.ActivityManagerFragment"
+        android:label="fragment_activity_manager"
+        tools:layout="@layout/fragment_activity_manager" >
+        <action
+            android:id="@+id/action_activityManagerFragment_to_activitiesFragment"
+            app:destination="@id/activitiesFragment" />
+        <action
+            android:id="@+id/action_activityManagerFragment_to_supplementsFragment"
+            app:destination="@id/supplementsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/activitiesFragment"
+        android:name="com.example.onelook.ui.activities.ActivitiesFragment"
+        android:label="fragment_activities"
+        tools:layout="@layout/fragment_activities" />
+    <fragment
+        android:id="@+id/supplementsFragment"
+        android:name="com.example.onelook.ui.supplements.SupplementsFragment"
+        android:label="fragment_supplements"
+        tools:layout="@layout/fragment_supplements" />
 </navigation>

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.onelook.data.Repository
 import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.network.todaytasks.TodayTaskApi
+import com.example.onelook.ui.activities.ActivitiesViewModel
 import com.example.onelook.util.CustomResult
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +33,7 @@ class HomeViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
 
-    private val _todayTasks = MutableSharedFlow<Flow<CustomResult<out List<TodayTask>?>>>()
+    private val _todayTasks = MutableSharedFlow<Flow<CustomResult<List<TodayTask>>>>()
     val todayTasks = _todayTasks.flatMapLatest { flowResult ->
         flowResult
     }.stateIn(viewModelScope, SharingStarted.Eagerly, CustomResult.Loading())
@@ -47,21 +48,18 @@ class HomeViewModel @Inject constructor(
     private fun fetchTodayTasks(forceRefresh: Boolean = false) = viewModelScope.launch {
         _todayTasks.emit(
             repository.getTodayTasks(
-                whileLoading = {
+                onLoading = {
                     _isLoading.emit(true)
                 },
-                whileRefreshing = {
-                    _isLoading.emit(false)
+                onForceRefresh = {
                     _isRefreshing.emit(true)
                 },
-                onRefreshSucceeded = {
-                    _isLoading.emit(false)
-                    _isRefreshing.emit(false)
-                },
-                onRefreshFailed = { exception ->
-                    _isLoading.emit(false)
-                    _isRefreshing.emit(false)
+                onForceRefreshFailed = { exception ->
                     _homeEvent.emit(HomeEvent.ShowRefreshFailedMessage(exception))
+                },
+                onFinish = {
+                    _isLoading.emit(false)
+                    _isRefreshing.emit(false)
                 },
                 forceRefresh = forceRefresh
             )

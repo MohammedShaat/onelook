@@ -70,9 +70,16 @@
         <item name="android:textColorHint">@color/dark_grey</item>
     </style>
 
-    <style name="CustomNumberPickerStyle" >
+    <style name="CustomNumberPickerStyle">
         <item name="android:textSize">@dimen/large_text_size</item>
         <item name="android:textStyle">bold</item>
         <item name="android:colorControlNormal">@android:color/transparent</item>
+    </style>
+
+    <style name="CustomTextViewWithIcon">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">?colorOnSurface</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:drawablePadding">@dimen/m_margin</item>
     </style>
 </resources>

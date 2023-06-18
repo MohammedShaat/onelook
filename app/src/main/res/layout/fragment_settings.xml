@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.settings.SettingsFragment">
+
+    <TextView
+        android:id="@+id/text_view_header"
+        style="@style/CustomHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:text="@string/settings_text_view_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/m_margin"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/h_padding">
+
+        <TextView
+            android:id="@+id/text_view_activity_manager"
+            style="@style/CustomTextViewWithIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_text_view_activity_manager"
+            app:drawableStartCompat="@drawable/ic_manager" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="24dp" />
+
+        <TextView
+            android:id="@+id/text_view_notification_settings"
+            style="@style/CustomTextViewWithIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_text_view_notification_settings"
+            app:drawableStartCompat="@drawable/ic_notification_settings" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="24dp" />
+
+        <TextView
+            android:id="@+id/text_view_personal_data"
+            style="@style/CustomTextViewWithIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_text_view_personal_data"
+            app:drawableStartCompat="@drawable/ic_profile" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="24dp" />
+
+        <TextView
+            android:id="@+id/text_view_contact_us"
+            style="@style/CustomTextViewWithIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_text_view_contact_us"
+            app:drawableStartCompat="@drawable/ic_contact" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="24dp" />
+
+        <TextView
+            android:id="@+id/text_view_privacy_policy"
+            style="@style/CustomTextViewWithIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_text_view_privacy_policy"
+            app:drawableEndCompat="@drawable/ic_link"
+            app:drawableStartCompat="@drawable/ic_policy" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="24dp" />
+    </LinearLayout>
+</LinearLayout>

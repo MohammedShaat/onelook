@@ -1,5 +1,7 @@
 package com.example.onelook.data
 
+import com.example.onelook.data.domain.DomainActivity
+import com.example.onelook.data.domain.Supplement
 import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.local.activities.ActivityDao
 import com.example.onelook.data.local.activities.LocalActivity
@@ -40,25 +42,23 @@ class Repository @Inject constructor(
 ) {
 
     fun getTodayTasks(
-        whileLoading: suspend () -> Unit,
-        whileRefreshing: suspend () -> Unit,
-        onRefreshSucceeded: suspend () -> Unit,
-        onRefreshFailed: suspend (Exception) -> Unit,
+        onLoading: suspend () -> Unit,
+        onForceRefresh: suspend () -> Unit,
+        onForceRefreshFailed: suspend (Exception) -> Unit,
+        onFinish: suspend () -> Unit,
         forceRefresh: Boolean = false,
     ) = flow<CustomResult<List<TodayTask>>> {
         // Tries to fetch initial cached data if operation is not force refresh
         if (!forceRefresh) {
-            whileLoading()
             val localTodayTasks = (todayTaskDao.getTodaySupplementTasks().first() +
                     todayTaskDao.getTodayActivityTasks().first()).sortByDate()
-
-            // Indicates that is refreshing if there is cached data, otherwise still loading
-            if (localTodayTasks.isNotEmpty()) {
-                whileRefreshing()
-                emit(CustomResult.Refreshing(localTodayTasks))
+            emit(CustomResult.Loading(localTodayTasks))
+            // Indicates that is loading if there is no cached data
+            if (localTodayTasks.isEmpty()) {
+                onLoading()
             }
         } else {
-            whileRefreshing()
+            onForceRefresh()
         }
         // Tries to fetch data from network and store it in cache
         try {
@@ -67,10 +67,10 @@ class Repository @Inject constructor(
             supplementDao.insertSupplements(networkTodayTasks.mapNotNull { it.supplement?.toLocalModel() })
             supplementHistoryDao.insertSupplementsHistory(networkTodayTasks.mapNotNull { it.supplementHistory?.toLocalModel() })
             activityHistoryDao.insertActivitiesHistory(networkTodayTasks.mapNotNull { it.activityHistory?.toLocalModel() })
-            onRefreshSucceeded()
         } catch (exception: Exception) {
             Timber.e(exception)
-            onRefreshFailed(exception)
+            if (forceRefresh)
+                onForceRefreshFailed(exception)
         } finally {
             // Fetches final cached data that will be collected
             val supplementTodayTasks = todayTaskDao.getTodaySupplementTasks()
@@ -79,6 +79,7 @@ class Repository @Inject constructor(
                 supplementTodayTasks.combine(activityTodayTasks) { tasks1, tasks2 ->
                     CustomResult.Success((tasks1 + tasks2).sortByDate())
                 }
+            onFinish()
             emitAll(sortedTodayTasks)
         }
     }
@@ -138,6 +139,78 @@ class Repository @Inject constructor(
         } catch (exception: Exception) {
             Timber.e("Activity and ActivityHistory created locally only\n$exception")
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
+        }
+    }
+
+    fun getActivities(
+        onLoading: suspend () -> Unit,
+        onForceRefresh: suspend () -> Unit,
+        onForceRefreshFailed: suspend (Exception) -> Unit,
+        onFinish: suspend () -> Unit,
+        forceRefresh: Boolean = false,
+    ) = flow<CustomResult<List<DomainActivity>>> {
+        // Tries to fetch initial cached data if operation is not force refresh
+        if (!forceRefresh) {
+            val localActivities = activityDao.getActivities().first()
+            emit(CustomResult.Loading(localActivities.map { it.toDomainModel() }))
+            // Indicates that is loading if there is no cached data
+            if (localActivities.isEmpty())
+                onLoading()
+        } else {
+            onForceRefresh()
+        }
+
+        // Tries to fetch data from network and store it in cache
+        try {
+            val networkActivities = activityApi.getActivities()
+            activityDao.insertActivities(networkActivities.map { it.toLocalModel() })
+        } catch (exception: Exception) {
+            Timber.e(exception)
+            if (forceRefresh)
+                onForceRefreshFailed(exception)
+        } finally {
+            // Fetches final cached data that will be collected
+            val activities = activityDao.getActivities().map { localActivities ->
+                CustomResult.Success(localActivities.map { it.toDomainModel() })
+            }
+            onFinish()
+            emitAll(activities)
+        }
+    }
+
+    fun getSupplements(
+        onLoading: suspend () -> Unit,
+        onForceRefresh: suspend () -> Unit,
+        onForceRefreshFailed: suspend (Exception) -> Unit,
+        onFinish: suspend () -> Unit,
+        forceRefresh: Boolean = false,
+    ) = flow<CustomResult<List<Supplement>>> {
+        // Tries to fetch initial cached data if operation is not force refresh
+        if (!forceRefresh) {
+            val localSupplements = supplementDao.getSupplements().first()
+            emit(CustomResult.Loading(localSupplements.map { it.toDomainModel() }))
+            // Indicates that is loading if there is no cached data
+            if (localSupplements.isEmpty())
+                onLoading()
+        } else {
+            onForceRefresh()
+        }
+
+        // Tries to fetch data from network and store it in cache
+        try {
+            val networkSupplements = supplementApi.getSupplements()
+            supplementDao.insertSupplements(networkSupplements.map { it.toLocalModel() })
+        } catch (exception: Exception) {
+            Timber.e(exception)
+            if (forceRefresh)
+                onForceRefreshFailed(exception)
+        } finally {
+            // Fetches final cached data that will be collected
+            val activities = supplementDao.getSupplements().map { localSupplements ->
+                CustomResult.Success(localSupplements.map { it.toDomainModel() })
+            }
+            onFinish()
+            emitAll(activities)
         }
     }
 }

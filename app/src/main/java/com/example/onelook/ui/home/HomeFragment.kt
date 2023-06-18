@@ -58,9 +58,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         // Listeners
         binding.apply {
+
+            swipeRefreshLayout.setOnRefreshListener {
+                viewModel.onSwipeRefreshSwiped()
+            }
+
             imageButtonAddTask.setOnClickListener {
                 viewModel.onAddEventClicked()
             }
+
             textViewAddTask.setOnClickListener {
                 viewModel.onAddEventClicked()
             }
@@ -102,7 +108,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     }//ShowRefreshFailedMessage
 
                     is HomeViewModel.HomeEvent.NavigateToAddTaskDialog -> {
-                        val action = HomeFragmentDirections.actionGlobalAddTaskDialog()
+                        val action = HomeFragmentDirections.actionHomeFragmentToAddTaskDialog()
                         findNavController().navigate(action)
                     }//NavigateToAddTaskDialog
                 }
@@ -151,10 +157,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 ResourcesCompat.getColor(resources, R.color.turquoise, null),
                 ResourcesCompat.getColor(resources, R.color.purple_plum, null),
             )
-
-            setOnRefreshListener {
-                viewModel.onSwipeRefreshSwiped()
-            }
         }
     }
 }

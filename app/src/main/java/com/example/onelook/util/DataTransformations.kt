@@ -1,5 +1,7 @@
 package com.example.onelook.util
 
+import com.example.onelook.data.domain.DomainActivity
+import com.example.onelook.data.domain.Supplement
 import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.local.activities.LocalActivity
 import com.example.onelook.data.local.activitieshistory.LocalActivityHistory
@@ -100,7 +102,7 @@ fun LocalSupplement.toNetworkModel(): NetworkSupplement {
         takingWithMeals = takingWithMeals,
         reminder = reminder,
         completed = completed,
-        userId = 0,
+        userId = -1,
         createdAt = createdAt,
         updatedAt = updatedAt,
     )
@@ -124,7 +126,7 @@ fun LocalActivity.toNetworkModel(): NetworkActivity {
         duration = duration,
         timeOfDay = timeOfDay,
         reminder = reminder,
-        userId = 0,
+        userId = -1,
         createdAt = createdAt,
         updatedAt = updatedAt,
     )
@@ -136,6 +138,37 @@ fun LocalActivityHistory.toNetworkModel(): NetworkActivityHistory {
         activityId = activityId,
         progress = progress,
         completed = completed,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
+}
+
+fun LocalActivity.toDomainModel(): DomainActivity {
+    return DomainActivity(
+        id = id,
+        type = type,
+        timeOfDay = timeOfDay,
+        duration = duration,
+        reminder = reminder,
+        userId = -1,
+        createdAt = createdAt,
+        updatedAt = updatedAt
+    )
+}
+
+fun LocalSupplement.toDomainModel(): Supplement {
+    return Supplement(
+        id = id,
+        name = name,
+        form = form,
+        dosage = dosage,
+        frequency = frequency,
+        duration = duration,
+        timeOfDay = timeOfDay,
+        takingWithMeals = takingWithMeals,
+        reminder = reminder,
+        completed = completed,
+        userId = -1,
         createdAt = createdAt,
         updatedAt = updatedAt,
     )
