@@ -9,8 +9,12 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.onelook.data.domain.Supplement
 import com.example.onelook.databinding.ItemSupplementActivityEditBinding
 import com.example.onelook.ui.home.supplementIcon
+import java.util.UUID
 
-class SupplementAdapter(private val onEditClickListener: (Supplement) -> Unit) :
+class SupplementAdapter(
+    private val onEditClickListener: (Supplement) -> Unit,
+    private val onDeleteClickListener: (Supplement) -> Unit
+) :
     ListAdapter<Supplement, SupplementAdapter.SupplementVH>(SupplementDiff()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SupplementVH {
@@ -34,6 +38,11 @@ class SupplementAdapter(private val onEditClickListener: (Supplement) -> Unit) :
             binding.imageButtonEdit.setOnClickListener {
                 if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
                 onEditClickListener(getItem(adapterPosition))
+            }
+
+            binding.imageButtonDelete.setOnClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+                onDeleteClickListener(getItem(adapterPosition))
             }
         }
 

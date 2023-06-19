@@ -10,7 +10,10 @@ import com.example.onelook.data.domain.DomainActivity
 import com.example.onelook.databinding.ItemSupplementActivityEditBinding
 import com.example.onelook.ui.home.activityIcon
 
-class ActivityAdapter(private val onEditClickListener: (DomainActivity) -> Unit) :
+class ActivityAdapter(
+    private val onEditClickListener: (DomainActivity) -> Unit,
+    private val onDeleteClickListener: (DomainActivity) -> Unit
+) :
     ListAdapter<DomainActivity, ActivityAdapter.DomainActivityVH>(DomainActivityDiff()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DomainActivityVH {
@@ -34,6 +37,11 @@ class ActivityAdapter(private val onEditClickListener: (DomainActivity) -> Unit)
             binding.imageButtonEdit.setOnClickListener {
                 if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
                 onEditClickListener(getItem(adapterPosition))
+            }
+
+            binding.imageButtonDelete.setOnClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+                onDeleteClickListener(getItem(adapterPosition))
             }
         }
 

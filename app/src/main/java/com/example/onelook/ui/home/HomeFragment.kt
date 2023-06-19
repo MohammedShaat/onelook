@@ -11,12 +11,12 @@ import androidx.navigation.fragment.findNavController
 import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentHomeBinding
-import com.example.onelook.util.Constants.ACTIVITY_NAME_KEY
+import com.example.onelook.util.Constants.ACTIVITY_TYPE_KEY
 import com.example.onelook.util.Constants.ADD_ACTIVITY_REQ_KEY
 import com.example.onelook.util.Constants.ADD_SUPPLEMENT_REQ_KEY
 import com.example.onelook.util.Constants.SUPPLEMENT_NAME_KEY
-import com.example.onelook.util.Constants.UPDATE_SUPPLEMENT_REQ_KEY
 import com.example.onelook.util.CustomResult
+import com.example.onelook.util.capital
 import com.example.onelook.util.onCollect
 import com.example.onelook.util.showBottomNavigation
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -117,7 +117,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             // Shows supplement created successfully snackBar
             setFragmentResultListener(ADD_SUPPLEMENT_REQ_KEY) { _, bundle ->
-                val supplementName = bundle.getString(SUPPLEMENT_NAME_KEY)
+                val supplementName = bundle.getString(SUPPLEMENT_NAME_KEY)?.capital
                 Snackbar.make(
                     view,
                     getString(R.string.supplement_added, supplementName),
@@ -129,7 +129,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             // Shows activity created successfully snackBar
             setFragmentResultListener(ADD_ACTIVITY_REQ_KEY) { _, bundle ->
-                val activityName = bundle.getString(ACTIVITY_NAME_KEY)
+                val activityName = bundle.getString(ACTIVITY_TYPE_KEY)?.capital
                 Snackbar.make(
                     view,
                     getString(R.string.activity_added, activityName),

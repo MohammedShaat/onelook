@@ -75,8 +75,6 @@
         android:padding="@dimen/m_padding"
         android:src="@drawable/ic_right_arrow"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="W, 1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent=".1"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

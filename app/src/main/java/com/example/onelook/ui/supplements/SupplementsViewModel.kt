@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -65,7 +66,15 @@ class SupplementsViewModel @Inject constructor(
     }
 
     fun onEditSupplementClicked(supplement: Supplement) = viewModelScope.launch {
-        _supplementsEvent.emit(SupplementsEvent.NavigateToAddEditSupplementFragmentForEditing(supplement))
+        _supplementsEvent.emit(
+            SupplementsEvent.NavigateToAddEditSupplementFragmentForEditing(
+                supplement
+            )
+        )
+    }
+
+    fun onDeleteSupplementClicked(supplement: Supplement) = viewModelScope.launch {
+        _supplementsEvent.emit(SupplementsEvent.NavigateToDeleteSupplementDialogFragment(supplement))
     }
 
     sealed class SupplementsEvent {
@@ -73,5 +82,7 @@ class SupplementsViewModel @Inject constructor(
         class ShowRefreshFailedMessage(val exception: Exception) : SupplementsEvent()
         data class NavigateToAddEditSupplementFragmentForEditing(val supplement: Supplement) :
             SupplementsEvent()
+
+        data class NavigateToDeleteSupplementDialogFragment(val supplement: Supplement) : SupplementsEvent()
     }
 }

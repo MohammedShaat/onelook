@@ -243,7 +243,7 @@ class AddEditSupplementViewModel @Inject constructor(
             frequency = frequenciesList[_selectedFrequency.value!!].text,
             duration = durationsList[_selectedDuration.value!!].text.takeIf { it != durationsList[0].text },
             timeOfDay = timesOfDayList.getOrNull(_selectedTimeOfDay.value!!)?.text
-                ?: _customTime.value!!.replace(" ", ""),
+                ?: _customTime.value?.replace(" ", ""),
             takingWithMeals = takingWithMealsList[_selectedTakingWithMeals.value!!],
             reminder = when {
                 _reminderBefore.value!! && _reminderAfter.value!! -> "both"
@@ -255,6 +255,7 @@ class AddEditSupplementViewModel @Inject constructor(
             createdAt = _supplement.value?.createdAt ?: timeNowFormatted,
             updatedAt = timeNowFormatted,
         )
+        Timber.i("local supplement ready")
 
         if (_supplement.value == null)
             repository.createSupplement(localSupplement).collect { result ->

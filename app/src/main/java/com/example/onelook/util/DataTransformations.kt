@@ -173,3 +173,32 @@ fun LocalSupplement.toDomainModel(): Supplement {
         updatedAt = updatedAt,
     )
 }
+
+fun Supplement.toLocalModel(): LocalSupplement {
+    return LocalSupplement(
+        id = id,
+        name = name,
+        form = form,
+        dosage = dosage,
+        frequency = frequency,
+        duration = duration,
+        timeOfDay = timeOfDay,
+        takingWithMeals = takingWithMeals,
+        reminder = reminder,
+        completed = completed,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
+}
+
+fun DomainActivity.toLocalModel(): LocalActivity {
+    return LocalActivity(
+        id = id,
+        type = type,
+        timeOfDay = timeOfDay,
+        duration = duration,
+        reminder = reminder,
+        createdAt = createdAt,
+        updatedAt = updatedAt
+    )
+}

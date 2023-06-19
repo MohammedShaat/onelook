@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.onelook.data.Repository
 import com.example.onelook.data.domain.DomainActivity
-import com.example.onelook.data.domain.Supplement
 import com.example.onelook.util.CustomResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -69,10 +68,16 @@ class ActivitiesViewModel @Inject constructor(
         _activitiesEvent.emit(ActivitiesEvent.NavigateToAddEditActivityFragmentForEditing(activity))
     }
 
+    fun onDeleteActivityClicked(activity: DomainActivity) = viewModelScope.launch {
+        _activitiesEvent.emit(ActivitiesEvent.NavigateToDeleteActivityDialogFragment(activity))
+    }
+
     sealed class ActivitiesEvent {
         object NavigateToAddActivityFragment : ActivitiesEvent()
         class ShowRefreshFailedMessage(val exception: Exception) : ActivitiesEvent()
         data class NavigateToAddEditActivityFragmentForEditing(val activity: DomainActivity) :
+            ActivitiesEvent()
+        data class NavigateToDeleteActivityDialogFragment(val activity: DomainActivity) :
             ActivitiesEvent()
     }
 }

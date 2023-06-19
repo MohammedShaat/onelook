@@ -222,7 +222,7 @@ class Repository @Inject constructor(
         }
     }
 
-    fun updateActivity(localActivity: LocalActivity ) = flow<CustomResult<OperationSource>> {
+    fun updateActivity(localActivity: LocalActivity) = flow<CustomResult<OperationSource>> {
         emit(CustomResult.Loading())
         activityDao.updateActivity(localActivity)
 
@@ -232,6 +232,34 @@ class Repository @Inject constructor(
             emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
         } catch (exception: Exception) {
             Timber.e("Activity updated locally only\n$exception")
+            emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
+        }
+    }
+
+    fun deleteSupplement(localSupplement: LocalSupplement) = flow<CustomResult<OperationSource>> {
+        emit(CustomResult.Loading())
+        supplementDao.deleteSupplement(localSupplement)
+
+        try {
+            supplementApi.deleteSupplement(localSupplement.id)
+            Timber.i("Supplement deleted locally and remotely")
+            emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
+        } catch (exception: Exception) {
+            Timber.e("Supplement deleted locally only\n$exception")
+            emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
+        }
+    }
+
+    fun deleteActivity(localActivity: LocalActivity) = flow<CustomResult<OperationSource>> {
+        emit(CustomResult.Loading())
+        activityDao.deleteActivity(localActivity)
+
+        try {
+            activityApi.deleteActivity(localActivity.id)
+            Timber.i("Activity deleted locally and remotely")
+            emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
+        } catch (exception: Exception) {
+            Timber.e("Activity deleted locally only\n$exception")
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
     }

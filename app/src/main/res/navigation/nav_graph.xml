@@ -120,10 +120,35 @@
         android:id="@+id/activitiesFragment"
         android:name="com.example.onelook.ui.activities.ActivitiesFragment"
         android:label="fragment_activities"
-        tools:layout="@layout/fragment_activities"></fragment>
+        tools:layout="@layout/fragment_activities" >
+        <action
+            android:id="@+id/action_activitiesFragment_to_deleteActivityDialogFragment"
+            app:destination="@id/deleteActivityDialogFragment" />
+    </fragment>
     <fragment
         android:id="@+id/supplementsFragment"
         android:name="com.example.onelook.ui.supplements.SupplementsFragment"
         android:label="fragment_supplements"
-        tools:layout="@layout/fragment_supplements" />
+        tools:layout="@layout/fragment_supplements">
+        <action
+            android:id="@+id/action_supplementsFragment_to_deleteSupplementDialogFragment"
+            app:destination="@id/deleteSupplementDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/deleteSupplementDialogFragment"
+        android:name="com.example.onelook.ui.deletesupplement.DeleteSupplementDialogFragment"
+        android:label="DeleteSupplementDialogFragment"
+        tools:layout="@layout/dialog_confirmation" >
+        <argument android:name="supplement"
+            app:argType="com.example.onelook.data.domain.Supplement" />
+    </dialog>
+    <dialog
+        android:id="@+id/deleteActivityDialogFragment"
+        android:name="com.example.onelook.ui.deleteactivity.DeleteActivityDialogFragment"
+        android:label="DeleteActivityDialogFragment"
+        tools:layout="@layout/dialog_confirmation">
+        <argument
+            android:name="activity"
+            app:argType="com.example.onelook.data.domain.DomainActivity" />
+    </dialog>
 </navigation>

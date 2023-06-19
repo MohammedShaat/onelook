@@ -32,6 +32,18 @@
         tools:text="Breath training" />
 
     <ImageButton
+        android:id="@+id/image_button_delete"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_trash"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/image_button_edit"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="@dimen/s_margin"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
         android:id="@+id/image_button_edit"
         android:layout_width="40dp"
         android:layout_height="40dp"

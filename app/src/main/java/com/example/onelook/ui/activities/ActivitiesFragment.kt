@@ -8,18 +8,14 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.example.onelook.GLOBAL_TAG
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentActivitiesBinding
-import com.example.onelook.ui.supplements.SupplementsFragmentDirections
-import com.example.onelook.util.Constants
+import com.example.onelook.util.*
+import com.example.onelook.util.Constants.ACTIVITY_TYPE_KEY
+import com.example.onelook.util.Constants.DELETE_ACTIVITY_REQ_KEY
 import com.example.onelook.util.Constants.UPDATE_ACTIVITY_REQ_KEY
-import com.example.onelook.util.CustomResult
-import com.example.onelook.util.onCollect
-import com.example.onelook.util.toDomainModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.net.UnknownHostException
 
 @AndroidEntryPoint
@@ -36,9 +32,7 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
         _binding = FragmentActivitiesBinding.bind(view)
 
         // Populates activities list recyclerView
-        val activitiesAdapter = ActivityAdapter { activity ->
-            viewModel.onEditActivityClicked(activity)
-        }
+        val activitiesAdapter = ActivityAdapter(viewModel::onEditActivityClicked, viewModel::onDeleteActivityClicked)
         binding.recyclerViewActivitiesList.apply {
             setHasFixedSize(true)
             adapter = activitiesAdapter
@@ -105,21 +99,53 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
 
                     is ActivitiesViewModel.ActivitiesEvent.NavigateToAddEditActivityFragmentForEditing -> {
                         val action =
-                            SupplementsFragmentDirections.actionGlobalAddEditActivityFragment(
+                            ActivitiesFragmentDirections.actionGlobalAddEditActivityFragment(
                                 event.activity
                             )
                         findNavController().navigate(action)
                     }//NavigateToAddEditActivityFragmentForEditing
+
+                    is ActivitiesViewModel.ActivitiesEvent.NavigateToDeleteActivityDialogFragment -> {
+                        val action =
+                            ActivitiesFragmentDirections.actionActivitiesFragmentToDeleteActivityDialogFragment(
+                                event.activity
+                            )
+                        findNavController().navigate(action)
+                    }//NavigateToDeleteActivityFragmentDialog
                 }
             }
         }//Observers
 
+        // Shows activity created successfully snackBar
+        setFragmentResultListener(Constants.ADD_ACTIVITY_REQ_KEY) { _, bundle ->
+            val activityName = bundle.getString(Constants.ACTIVITY_TYPE_KEY)?.capital
+            Snackbar.make(
+                view,
+                getString(R.string.activity_added, activityName),
+                Snackbar.LENGTH_SHORT
+            )
+                .setAnchorView(binding.buttonAddActivity)
+                .show()
+        }
+
         // Shows activity updated successfully snackBar
         setFragmentResultListener(UPDATE_ACTIVITY_REQ_KEY) { _, bundle ->
-            val supplementName = bundle.getString(Constants.SUPPLEMENT_NAME_KEY)
+            val supplementName = bundle.getString(Constants.SUPPLEMENT_NAME_KEY)?.capital
             Snackbar.make(
                 view,
                 getString(R.string.activity_updated, supplementName),
+                Snackbar.LENGTH_SHORT
+            )
+                .setAnchorView(binding.buttonAddActivity)
+                .show()
+        }
+
+        // Shows activity deleted successfully snackBar
+        setFragmentResultListener(DELETE_ACTIVITY_REQ_KEY) { _, bundle ->
+            val supplementName = bundle.getString(ACTIVITY_TYPE_KEY)?.capital
+            Snackbar.make(
+                view,
+                getString(R.string.activity_deleted, supplementName),
                 Snackbar.LENGTH_SHORT
             )
                 .setAnchorView(binding.buttonAddActivity)
