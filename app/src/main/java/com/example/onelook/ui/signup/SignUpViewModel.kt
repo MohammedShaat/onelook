@@ -2,6 +2,7 @@ package com.example.onelook.ui.signup
 
 import android.os.Bundle
 import androidx.lifecycle.*
+import com.example.onelook.GLOBAL_TAG
 import com.example.onelook.data.AppState
 import com.example.onelook.data.AppStateManager
 import com.example.onelook.data.Repository

@@ -95,6 +95,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 if (isPasswordVisible) {
                     binding.apply {
                         textInputPassword.transformationMethod = null
+                        textInputPassword.setSelection(textInputPassword.text.length)
                         imageButtonPasswordVisibility.setImageResource(R.drawable.ic_password_visible)
                     }
 
@@ -102,6 +103,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     binding.apply {
                         textInputPassword.transformationMethod =
                             PasswordTransformationMethod.getInstance()
+                        textInputPassword.setSelection(textInputPassword.text.length)
                         imageButtonPasswordVisibility.setImageResource(R.drawable.ic_password_invisible)
                     }
                 }

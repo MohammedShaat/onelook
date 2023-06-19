@@ -11,12 +11,13 @@
         android:background="?colorSurface"
         android:paddingHorizontal="@dimen/h_padding"
         android:paddingTop="@dimen/m_padding"
-        tools:context=".ui.addactivity.AddActivityFragment"
-        tools:scrollY="1000px">
+        tools:context=".ui.addEditsupplement.AddEditSupplementFragment"
+        tools:scrollY="3000px">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/xxh_padding"
             android:orientation="vertical">
 
             <ImageButton
@@ -25,7 +26,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="end"
                 android:background="@drawable/bg_ic"
-                android:contentDescription="@string/add_activity_image_button_close"
+                android:contentDescription="@string/add_supplement_image_button"
                 android:src="@drawable/ic_close"
                 tools:ignore="TouchTargetSizeCheck" />
 
@@ -36,33 +37,123 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
-                android:text="@string/add_activity_text_view_header" />
-
+                android:text="@string/add_task_text_view_header" />
 
             <TextView
-                android:id="@+id/text_view_type"
+                android:id="@+id/text_view_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/m_margin"
-                android:text="@string/add_activity_text_view_type"
+                android:layout_marginTop="16dp"
+                android:text="@string/add_supplement_text_view_supplement_name"
                 android:textColor="?colorOnSurface"
                 android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_types"
+            <EditText
+                android:id="@+id/text_input_name"
+                style="@style/CustomTextInputEditText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="2"
-                tools:itemCount="10"
-                tools:listitem="@layout/item_selectable_oval" />
+                android:layout_height="@dimen/m_height"
+                android:layout_marginTop="@dimen/s_margin"
+                android:hint="@string/add_supplement_edit_text_supplement_name"
+                android:importantForAutofill="no"
+                android:inputType="textPersonName" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/m_margin" />
+
+            <TextView
+                android:id="@+id/text_view_form"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_supplement_text_view_form"
+                android:textColor="?colorOnSurface"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_forms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_margin"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="10"
+                tools:listitem="@layout/item_selectable_rect" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/m_margin" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_view_dosage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_supplement_text_view_dosage"
+                    android:textColor="?colorOnSurface"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/s_margin"
+                    android:text="@string/add_supplement_text_view_dosage_explanation"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_dosages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_margin"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="10"
+                tools:listitem="@layout/item_selectable_number" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/m_margin" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_supplement_text_view_frequency"
+                android:textColor="?colorOnSurface"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinner_frequency"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="@dimen/s_margin"
+                android:background="@drawable/bg_spinner"
+                android:paddingHorizontal="16dp"
+                tools:listitem="@layout/item_spinner_selected" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/m_margin"
+                android:text="@string/add_supplement_text_view_duration"
+                android:textColor="?colorOnSurface"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinner_duration"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="@dimen/s_margin"
+                android:background="@drawable/bg_spinner"
+                android:paddingHorizontal="16dp"
+                tools:listitem="@layout/item_spinner_selected" />
 
             <TextView
                 android:id="@+id/text_view_time_of_day"
@@ -100,78 +191,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/m_margin" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/text_view_taking_with_meals"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:text="@string/add_supplement_text_view_taking_with_meals"
+                android:textColor="?colorOnSurface"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/text_view_duration"
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_taking_with_meals"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/add_activity_text_view_duration"
-                    android:textColor="?colorOnSurface"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/s_margin"
-                    android:text="@string/add_activity_text_view_duration_explanation"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_number_picker">
-
-                <View
-                    android:id="@+id/view_mid_bg"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:background="@drawable/bg_number_picer_mid_pg"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHeight_percent=".3"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent=".8" />
-
-                <NumberPicker
-                    android:id="@+id/number_picker_hours"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:theme="@style/CustomNumberPickerStyle"
-                    app:layout_constraintEnd_toStartOf="@+id/number_picker_minutes"
-                    app:layout_constraintHorizontal_chainStyle="packed"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <NumberPicker
-                    android:id="@+id/number_picker_minutes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:theme="@style/CustomNumberPickerStyle"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/number_picker_hours"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/text_view_colon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/add_activity_text_view_colon"
-                    android:textColor="?colorOnSurface"
-                    android:textSize="@dimen/large_text_size"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/number_picker_minutes"
-                    app:layout_constraintStart_toStartOf="@+id/number_picker_hours"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    app:singleLine="true"
+                    app:singleSelection="true" />
+            </HorizontalScrollView>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -221,12 +259,23 @@
                 android:layout_marginVertical="@dimen/m_margin" />
 
             <Button
-                android:id="@+id/button_add_activity"
+                android:id="@+id/button_add_edit_supplement"
                 style="@style/CustomPrimaryButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/xh_margin"
                 android:text="@string/button_add_supplement" />
+
+            <Button
+                android:id="@+id/button_cancel"
+                style="@style/CustomSecondaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/m_margin"
+                android:drawableEnd="@drawable/ic_cancel"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:text="@string/button_cancel" />
 
         </LinearLayout>
     </ScrollView>
@@ -240,4 +289,5 @@
         android:indeterminateTint="?colorSecondary"
         android:visibility="invisible"
         tools:visibility="visible" />
+
 </FrameLayout>

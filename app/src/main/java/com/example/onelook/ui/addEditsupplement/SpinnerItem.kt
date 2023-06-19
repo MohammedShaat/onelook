@@ -1,4 +1,4 @@
-package com.example.onelook.ui.addsupplement
+package com.example.onelook.ui.addEditsupplement
 
 data class SpinnerItem(
     val id: Long,

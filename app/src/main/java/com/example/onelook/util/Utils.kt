@@ -7,3 +7,6 @@ fun Int.toTimeString(): String {
         else -> "0$str"
     }
 }
+
+val String.capital: String
+    get() = replaceFirstChar { it.uppercase() }

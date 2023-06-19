@@ -4,12 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.onelook.data.domain.DomainActivity
 import com.example.onelook.databinding.ItemSupplementActivityEditBinding
 import com.example.onelook.ui.home.activityIcon
 
-class ActivityAdapter :
+class ActivityAdapter(private val onEditClickListener: (DomainActivity) -> Unit) :
     ListAdapter<DomainActivity, ActivityAdapter.DomainActivityVH>(DomainActivityDiff()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DomainActivityVH {
@@ -28,6 +29,13 @@ class ActivityAdapter :
 
     inner class DomainActivityVH(private val binding: ItemSupplementActivityEditBinding) :
         ViewHolder(binding.root) {
+
+        init {
+            binding.imageButtonEdit.setOnClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+                onEditClickListener(getItem(adapterPosition))
+            }
+        }
 
         fun bind(activity: DomainActivity) {
             binding.apply {

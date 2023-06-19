@@ -36,7 +36,7 @@ class SupplementsViewModel @Inject constructor(
     }
 
     fun onButtonAddSupplementClicked() = viewModelScope.launch {
-        _supplementsEvent.emit(SupplementsEvent.NavigateToAddSupplementFragment)
+        _supplementsEvent.emit(SupplementsEvent.NavigateToAddEditSupplementFragment)
     }
 
     private fun fetchSupplements(forceRefresh: Boolean = false) = viewModelScope.launch {
@@ -64,8 +64,14 @@ class SupplementsViewModel @Inject constructor(
         fetchSupplements(true)
     }
 
+    fun onEditSupplementClicked(supplement: Supplement) = viewModelScope.launch {
+        _supplementsEvent.emit(SupplementsEvent.NavigateToAddEditSupplementFragmentForEditing(supplement))
+    }
+
     sealed class SupplementsEvent {
-        object NavigateToAddSupplementFragment : SupplementsEvent()
+        object NavigateToAddEditSupplementFragment : SupplementsEvent()
         class ShowRefreshFailedMessage(val exception: Exception) : SupplementsEvent()
+        data class NavigateToAddEditSupplementFragmentForEditing(val supplement: Supplement) :
+            SupplementsEvent()
     }
 }

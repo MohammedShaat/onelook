@@ -150,6 +150,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/m_margin"
+            android:layout_marginBottom="@dimen/xh_margin"
             android:text="@string/sing_up_button_sign_up"
             app:layout_constraintTop_toBottomOf="@id/checkbox_privacy_policy" />
 
@@ -238,10 +239,10 @@
             android:indeterminate="true"
             android:indeterminateTint="?colorSecondary"
             android:visibility="invisible"
-            tools:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

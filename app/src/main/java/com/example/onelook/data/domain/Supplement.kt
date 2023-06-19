@@ -1,8 +1,10 @@
 package com.example.onelook.data.domain
 
-import com.google.gson.annotations.SerializedName
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import java.util.*
 
+@Parcelize
 data class Supplement(
     val id: UUID,
     val name: String,
@@ -17,7 +19,7 @@ data class Supplement(
     val userId: Int,
     val createdAt: String,
     val updatedAt: String
-) {
+) : Parcelable {
 
     val formattedForm: Supplement.Form
         get() = Supplement.Form.valueOf(form.uppercase())

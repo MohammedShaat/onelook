@@ -1,7 +1,10 @@
 package com.example.onelook.data.domain
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import java.util.*
 
+@Parcelize
 data class DomainActivity(
     val id: UUID,
     val type: String,
@@ -11,7 +14,7 @@ data class DomainActivity(
     val userId: Int,
     val createdAt: String,
     val updatedAt: String
-) {
+) : Parcelable {
     val formattedType: ActivityType
         get() = ActivityType.valueOf(type.uppercase())
 

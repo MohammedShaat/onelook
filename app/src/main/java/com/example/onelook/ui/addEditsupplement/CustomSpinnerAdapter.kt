@@ -1,4 +1,4 @@
-package com.example.onelook.ui.addsupplement
+package com.example.onelook.ui.addEditsupplement
 
 import android.database.DataSetObserver
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.SpinnerAdapter
 import com.example.onelook.databinding.ItemSpinnerDropDownBinding
 import com.example.onelook.databinding.ItemSpinnerSelectedBinding
+import com.example.onelook.util.capital
 
 class CustomSpinnerAdapter(
     private val items: List<SpinnerItem>,
@@ -44,7 +45,7 @@ class CustomSpinnerAdapter(
             )
 
         binding.apply {
-            textViewName.text = getItem(position).text
+            textViewName.text = getItem(position).text.capital
         }
         return binding.root
     }
@@ -72,7 +73,7 @@ class CustomSpinnerAdapter(
             )
 
         binding.apply {
-            textViewName.text = getItem(position).text
+            textViewName.text = getItem(position).text.capital
         }
         return binding.root
     }

@@ -46,12 +46,13 @@ class AddTaskDialog : DialogFragment(R.layout.dialog_add_task) {
             onCollect(addTaskEvent) { event ->
                 when (event) {
                     is AddTaskViewModel.AddTaskEvent.NavigateToAddActivityDialog -> {
-                        val action = AddTaskDialogDirections.actionGlobalAddActivityFragment()
+                        val action = AddTaskDialogDirections.actionGlobalAddEditActivityFragment(null)
                         findNavController().navigate(action)
                     }//NavigateToAddActivityDialog
 
                     is AddTaskViewModel.AddTaskEvent.NavigateToAddSupplementDialog -> {
-                        val action = AddTaskDialogDirections.actionGlobalAddSupplementFragment()
+                        val action =
+                            AddTaskDialogDirections.actionGlobalAddEditSupplementFragment(null)
                         findNavController().navigate(action)
                     }//NavigateToAddSupplementDialog
                 }

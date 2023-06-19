@@ -5,6 +5,7 @@ import androidx.datastore.preferences.createDataStore
 import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.emptyPreferences
 import androidx.datastore.preferences.preferencesKey
+import com.example.onelook.GLOBAL_TAG
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first

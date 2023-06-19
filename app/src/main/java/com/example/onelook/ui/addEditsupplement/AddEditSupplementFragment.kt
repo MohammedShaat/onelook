@@ -1,4 +1,4 @@
-package com.example.onelook.ui.addsupplement
+package com.example.onelook.ui.addEditsupplement
 
 import android.app.TimePickerDialog
 import android.os.Bundle
@@ -13,22 +13,24 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.ChipTakingWithMealsBinding
-import com.example.onelook.databinding.FragmentAddSupplementBinding
+import com.example.onelook.databinding.FragmentAddEditSupplementBinding
 import com.example.onelook.util.Constants.ADD_SUPPLEMENT_REQ_KEY
 import com.example.onelook.util.Constants.SUPPLEMENT_NAME_KEY
+import com.example.onelook.util.Constants.UPDATE_SUPPLEMENT_REQ_KEY
 import com.example.onelook.util.adapters.SelectableItemAdapter
+import com.example.onelook.util.capital
 import com.example.onelook.util.hideBottomNavigation
 import com.example.onelook.util.onCollect
 import com.example.onelook.util.toTimeString
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Calendar
+import java.util.*
 
 @AndroidEntryPoint
-class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
+class AddEditSupplementFragment : Fragment(R.layout.fragment_add_edit_supplement) {
 
-    private val viewModel: AddSupplementViewModel by viewModels()
-    private lateinit var binding: FragmentAddSupplementBinding
+    private val viewModel: AddEditSupplementViewModel by viewModels()
+    private lateinit var binding: FragmentAddEditSupplementBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,53 +38,54 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
         hideBottomNavigation()
 
         // Binding
-        binding = FragmentAddSupplementBinding.bind(view)
+        binding = FragmentAddEditSupplementBinding.bind(view)
+
+        // Sets up the text of add/edit button and visibility of cancel button
+        binding.apply {
+            buttonAddEditSupplement.setText(
+                if (viewModel.updateSupplement) R.string.button_update_supplement
+                else R.string.button_add_supplement
+            )
+            buttonCancel.isVisible = viewModel.updateSupplement
+        }
 
         // Populates forms RecyclerView
-        val formsAdapter =
-            SelectableItemAdapter(viewModel.formsList, viewModel.selectedForm.value!!) { position ->
-                viewModel.onFormSelected(position)
-            }
+        val formsAdapter = SelectableItemAdapter(viewModel.formsList) { newPosition ->
+            viewModel.onFormSelected(newPosition)
+        }
         binding.recyclerViewForms.apply {
             setHasFixedSize(true)
             adapter = formsAdapter
         }
 
         // Populates dosages RecyclerView
-        val dosageAdapter =
-            SelectableItemAdapter(
-                viewModel.dosagesList,
-                viewModel.selectedDosage.value!!
-            ) { position ->
-                viewModel.onDosageSelected(position)
-            }
+        val dosageAdapter = SelectableItemAdapter(viewModel.dosagesList) { newPosition ->
+            viewModel.onDosageSelected(newPosition)
+        }
         binding.recyclerViewDosages.apply {
             setHasFixedSize(true)
             adapter = dosageAdapter
         }
 
         // Populates frequency Spinner
-        val frequencyAdapter = CustomSpinnerAdapter(viewModel.frequenciesList) { position ->
-            viewModel.onFrequencySelected(position)
+        val frequencyAdapter = CustomSpinnerAdapter(viewModel.frequenciesList) { newPosition ->
+            viewModel.onFrequencySelected(newPosition)
         }
         binding.spinnerFrequency.apply {
             adapter = frequencyAdapter
         }
 
         // Populates duration Spinner
-        val durationAdapter = CustomSpinnerAdapter(viewModel.durationsList) { position ->
-            viewModel.onDurationSelected(position)
+        val durationAdapter = CustomSpinnerAdapter(viewModel.durationsList) { newPosition ->
+            viewModel.onDurationSelected(newPosition)
         }
         binding.spinnerDuration.apply {
             adapter = durationAdapter
         }
 
         // Populates times of day RecyclerView
-        val timesOfDayAdapter = SelectableItemAdapter(
-            viewModel.timesOfDayList,
-            viewModel.selectedTimeOfDay.value!!
-        ) { position ->
-            viewModel.onTimeOfDaySelected(position)
+        val timesOfDayAdapter = SelectableItemAdapter(viewModel.timesOfDayList) { newPosition ->
+            viewModel.onTimeOfDaySelected(newPosition)
         }
         binding.recyclerViewTimeOfDay.apply {
             setHasFixedSize(true)
@@ -95,8 +98,8 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
             val chips = viewModel.takingWithMealsList.mapIndexed { idx, time ->
                 ChipTakingWithMealsBinding.inflate(inflater, this, false).root.apply {
                     id = idx
-                    text = time
-                    isChecked = viewModel.selectedTakingWithMeals.value == idx
+                    text = getString(R.string.meal, time.capital)
+                    isChecked = false
                 }
             }
 
@@ -114,8 +117,8 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
                 viewModel.onButtonCloseClicked()
             }
 
-            textInputName.addTextChangedListener {
-                viewModel.onNameChanged(it.toString())
+            textInputName.addTextChangedListener { newEditable ->
+                viewModel.onNameChanged(newEditable.toString())
             }
 
             buttonAddCustomTime.setOnClickListener {
@@ -130,13 +133,17 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
                 viewModel.onSwitchReminderBeforeSwitched(isChecked)
             }
 
-            switchReminderBefore.setOnCheckedChangeListener { _, isChecked ->
+            switchReminderAfter.setOnCheckedChangeListener { _, isChecked ->
                 viewModel.onSwitchReminderAfterSwitched(isChecked)
             }
 
-            buttonAddSupplement.setOnClickListener {
+            buttonAddEditSupplement.setOnClickListener {
                 hideErrorFields()
-                viewModel.onButtonAddSupplementClicked()
+                viewModel.onButtonAddEditSupplementClicked()
+            }
+
+            buttonCancel.setOnClickListener {
+                viewModel.onButtonCloseClicked()
             }
 
         }//Listeners
@@ -145,16 +152,32 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
         // Observers
         viewModel.apply {
 
-            selectedForm.observe(viewLifecycleOwner) { position ->
-                formsAdapter.updateSelectedItem(position)
+            name.observe(viewLifecycleOwner) { newName ->
+                binding.textInputName.apply {
+                    if (newName == text.toString()) return@observe
+                    setText(newName)
+                    setSelection(newName.length)
+                }
             }
 
-            selectedDosage.observe(viewLifecycleOwner) { position ->
-                dosageAdapter.updateSelectedItem(position)
+            selectedForm.observe(viewLifecycleOwner) { newPosition ->
+                formsAdapter.updateSelectedItem(newPosition)
             }
 
-            selectedTimeOfDay.observe(viewLifecycleOwner) { position ->
-                timesOfDayAdapter.updateSelectedItem(position)
+            selectedDosage.observe(viewLifecycleOwner) { newPosition ->
+                dosageAdapter.updateSelectedItem(newPosition)
+            }
+
+            selectedFrequency.observe(viewLifecycleOwner) { newPosition ->
+                binding.spinnerFrequency.setSelection(newPosition)
+            }
+
+            selectedDuration.observe(viewLifecycleOwner) { newPosition ->
+                binding.spinnerDuration.setSelection(newPosition)
+            }
+
+            selectedTimeOfDay.observe(viewLifecycleOwner) { newPosition ->
+                timesOfDayAdapter.updateSelectedItem(newPosition)
             }
 
             customTime.observe(viewLifecycleOwner) { time ->
@@ -162,41 +185,62 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
                     time ?: getString(R.string.button_add_custom_time)
             }
 
+            selectedTakingWithMeals.observe(viewLifecycleOwner) { newPosition ->
+                if (newPosition == -1) return@observe
+                binding.chipGroupTakingWithMeals.check(newPosition)
+            }
+
+            reminderBefore.observe(viewLifecycleOwner) { isChecked ->
+                binding.switchReminderBefore.isChecked = isChecked
+            }
+
+            reminderAfter.observe(viewLifecycleOwner) { isChecked ->
+                binding.switchReminderAfter.isChecked = isChecked
+            }
+
             onCollect(isLoading) { isLoading ->
                 binding.apply {
-                    buttonAddSupplement.isEnabled = !isLoading
+                    buttonAddEditSupplement.isEnabled = !isLoading
+                    buttonCancel.isEnabled = !isLoading
                     progressBar.isVisible = isLoading
                 }
             }
 
             onCollect(addSupplementEvent) { event ->
                 when (event) {
-                    is AddSupplementViewModel.AddSupplementEvent.CloseDialog -> {
+                    is AddEditSupplementViewModel.AddSupplementEvent.CloseDialog -> {
                         findNavController().popBackStack()
                     }//CloseDialog
 
-                    is AddSupplementViewModel.AddSupplementEvent.ShowTimePicker -> {
+                    is AddEditSupplementViewModel.AddSupplementEvent.ShowTimePicker -> {
                         showTimePicker()
                     }//ShowTimePicker
 
-                    is AddSupplementViewModel.AddSupplementEvent.ShowCannotAddCustomTimeMessage -> {
+                    is AddEditSupplementViewModel.AddSupplementEvent.ShowCannotAddCustomTimeMessage -> {
                         Snackbar.make(view, R.string.dosage_must_be_one, Snackbar.LENGTH_SHORT)
                             .show()
                     }//ShowCannotAddCustomTimeMessage
 
-                    is AddSupplementViewModel.AddSupplementEvent.ShowFillRequiredFieldsMessage -> {
+                    is AddEditSupplementViewModel.AddSupplementEvent.ShowFillRequiredFieldsMessage -> {
                         markErrorFields(viewModel.errorFields)
                         Snackbar.make(view, R.string.fill_required_fields, Snackbar.LENGTH_SHORT)
-                            .setAnchorView(binding.buttonAddSupplement)
+                            .setAnchorView(binding.buttonAddEditSupplement)
                             .show()
                     }//ShowFillRequiredFieldsMessage
 
-                    is AddSupplementViewModel.AddSupplementEvent.NavigateBackAfterSupplementAdded -> {
+                    is AddEditSupplementViewModel.AddSupplementEvent.NavigateBackAfterSupplementAdded -> {
                         setFragmentResult(ADD_SUPPLEMENT_REQ_KEY, Bundle().apply {
                             putString(SUPPLEMENT_NAME_KEY, event.supplementName)
                         })
                         findNavController().popBackStack()
-                    }//SupplementCreationSucceeded
+                    }//NavigateBackAfterSupplementAdded
+
+                    is AddEditSupplementViewModel.AddSupplementEvent.NavigateBackAfterSupplementUpdated -> {
+                        setFragmentResult(UPDATE_SUPPLEMENT_REQ_KEY, Bundle().apply {
+                            putString(SUPPLEMENT_NAME_KEY, event.supplementName)
+                        })
+                        findNavController().popBackStack()
+                    }//NavigateBackAfterSupplementUpdated
                 }
             }
         }//Observers
@@ -223,16 +267,18 @@ class AddSupplementFragment : Fragment(R.layout.fragment_add_supplement) {
             .show()
     }
 
-    private fun markErrorFields(fields: List<AddSupplementViewModel.Fields>) {
+    private fun markErrorFields(fields: List<AddEditSupplementViewModel.Fields>) {
         val color = ContextCompat.getColor(requireContext(), R.color.alert)
         fields.forEach { field ->
             when (field) {
-                AddSupplementViewModel.Fields.NAME -> binding.textViewName.setTextColor(color)
-                AddSupplementViewModel.Fields.FORM -> binding.textViewForm.setTextColor(color)
-                AddSupplementViewModel.Fields.DOSAGE -> binding.textViewDosage.setTextColor(color)
-                AddSupplementViewModel.Fields.TIME_OF_DAY ->
+                AddEditSupplementViewModel.Fields.NAME -> binding.textViewName.setTextColor(color)
+                AddEditSupplementViewModel.Fields.FORM -> binding.textViewForm.setTextColor(color)
+                AddEditSupplementViewModel.Fields.DOSAGE -> binding.textViewDosage.setTextColor(
+                    color
+                )
+                AddEditSupplementViewModel.Fields.TIME_OF_DAY ->
                     binding.textViewTimeOfDay.setTextColor(color)
-                AddSupplementViewModel.Fields.TAKING_WITH_MEALS ->
+                AddEditSupplementViewModel.Fields.TAKING_WITH_MEALS ->
                     binding.textViewTakingWithMeals.setTextColor(color)
             }
         }//fields

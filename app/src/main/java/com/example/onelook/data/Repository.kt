@@ -1,5 +1,6 @@
 package com.example.onelook.data
 
+import com.example.onelook.GLOBAL_TAG
 import com.example.onelook.data.domain.DomainActivity
 import com.example.onelook.data.domain.Supplement
 import com.example.onelook.data.domain.TodayTask
@@ -20,14 +21,13 @@ import com.example.onelook.data.network.supplements.SupplementApi
 import com.example.onelook.data.network.supplementshistory.SupplementHistoryApi
 import com.example.onelook.data.network.todaytasks.TodayTaskApi
 import com.example.onelook.util.*
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
 class Repository @Inject constructor(
-    private val auth: FirebaseAuth,
+    private val appState: AppStateManager,
     private val todayTaskApi: TodayTaskApi,
     private val todayTaskDao: TodayTaskDao,
     private val activityApi: ActivityApi,
@@ -40,6 +40,10 @@ class Repository @Inject constructor(
     private val supplementHistoryDao: SupplementHistoryDao,
     private val activityHistoryDao: ActivityHistoryDao,
 ) {
+
+    suspend fun loginUserInDatabase(user: LocalUser) {
+        userDao.insertUser(user)
+    }
 
     fun getTodayTasks(
         onLoading: suspend () -> Unit,
@@ -84,14 +88,7 @@ class Repository @Inject constructor(
         }
     }
 
-    suspend fun loginUserInDatabase(user: LocalUser) {
-        userDao.insertUser(user)
-    }
-
-    fun createSupplement(
-        localSupplement: LocalSupplement,
-        creationDateTime: String
-    ) = flow<CustomResult<OperationSource>> {
+    fun createSupplement(localSupplement: LocalSupplement) = flow<CustomResult<OperationSource>> {
         emit(CustomResult.Loading())
         supplementDao.insertSupplement(localSupplement)
         val localSupplementHistory = LocalSupplementHistory(
@@ -99,8 +96,8 @@ class Repository @Inject constructor(
             supplementId = localSupplement.id,
             progress = 0,
             completed = false,
-            createdAt = creationDateTime,
-            updatedAt = creationDateTime,
+            createdAt = localSupplement.createdAt,
+            updatedAt = localSupplement.updatedAt,
         )
         supplementHistoryDao.insertSupplementHistory(localSupplementHistory)
 
@@ -115,10 +112,7 @@ class Repository @Inject constructor(
         }
     }
 
-    fun createActivity(
-        localActivity: LocalActivity,
-        creationDateTime: String
-    ) = flow<CustomResult<OperationSource>> {
+    fun createActivity(localActivity: LocalActivity) = flow<CustomResult<OperationSource>> {
         emit(CustomResult.Loading())
         activityDao.insertActivity(localActivity)
         val localActivityHistory = LocalActivityHistory(
@@ -126,8 +120,8 @@ class Repository @Inject constructor(
             activityId = localActivity.id,
             progress = "00:00",
             completed = false,
-            createdAt = creationDateTime,
-            updatedAt = creationDateTime,
+            createdAt = localActivity.createdAt,
+            updatedAt = localActivity.updatedAt,
         )
         activityHistoryDao.insertActivityHistory(localActivityHistory)
 
@@ -211,6 +205,34 @@ class Repository @Inject constructor(
             }
             onFinish()
             emitAll(activities)
+        }
+    }
+
+    fun updateSupplement(localSupplement: LocalSupplement) = flow<CustomResult<OperationSource>> {
+        emit(CustomResult.Loading())
+        supplementDao.updateSupplement(localSupplement)
+
+        try {
+            supplementApi.updateSupplement(localSupplement.toNetworkModel())
+            Timber.i("Supplement updated locally and remotely")
+            emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
+        } catch (exception: Exception) {
+            Timber.e("Supplement updated locally only\n$exception")
+            emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
+        }
+    }
+
+    fun updateActivity(localActivity: LocalActivity ) = flow<CustomResult<OperationSource>> {
+        emit(CustomResult.Loading())
+        activityDao.updateActivity(localActivity)
+
+        try {
+            activityApi.updateActivity(localActivity.toNetworkModel())
+            Timber.i("Activity updated locally and remotely")
+            emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
+        } catch (exception: Exception) {
+            Timber.e("Activity updated locally only\n$exception")
+            emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
     }
 }

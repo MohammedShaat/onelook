@@ -15,6 +15,7 @@ import com.example.onelook.util.Constants.ACTIVITY_NAME_KEY
 import com.example.onelook.util.Constants.ADD_ACTIVITY_REQ_KEY
 import com.example.onelook.util.Constants.ADD_SUPPLEMENT_REQ_KEY
 import com.example.onelook.util.Constants.SUPPLEMENT_NAME_KEY
+import com.example.onelook.util.Constants.UPDATE_SUPPLEMENT_REQ_KEY
 import com.example.onelook.util.CustomResult
 import com.example.onelook.util.onCollect
 import com.example.onelook.util.showBottomNavigation
@@ -114,7 +115,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             }//homeEvent
 
-            // Shows supplement created successfully snackbar
+            // Shows supplement created successfully snackBar
             setFragmentResultListener(ADD_SUPPLEMENT_REQ_KEY) { _, bundle ->
                 val supplementName = bundle.getString(SUPPLEMENT_NAME_KEY)
                 Snackbar.make(
@@ -126,7 +127,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     .show()
             }
 
-            // Shows activity created successfully snackbar
+            // Shows activity created successfully snackBar
             setFragmentResultListener(ADD_ACTIVITY_REQ_KEY) { _, bundle ->
                 val activityName = bundle.getString(ACTIVITY_NAME_KEY)
                 Snackbar.make(

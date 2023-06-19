@@ -4,12 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.onelook.data.domain.Supplement
 import com.example.onelook.databinding.ItemSupplementActivityEditBinding
 import com.example.onelook.ui.home.supplementIcon
 
-class SupplementAdapter :
+class SupplementAdapter(private val onEditClickListener: (Supplement) -> Unit) :
     ListAdapter<Supplement, SupplementAdapter.SupplementVH>(SupplementDiff()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SupplementVH {
@@ -29,10 +30,17 @@ class SupplementAdapter :
     inner class SupplementVH(private val binding: ItemSupplementActivityEditBinding) :
         ViewHolder(binding.root) {
 
+        init {
+            binding.imageButtonEdit.setOnClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+                onEditClickListener(getItem(adapterPosition))
+            }
+        }
+
         fun bind(supplement: Supplement) {
             binding.apply {
                 imageViewIcon.supplementIcon(supplement.formattedForm)
-                textViewName.text = supplement.form.replaceFirstChar { it.uppercase() }
+                textViewName.text = supplement.name.replaceFirstChar { it.uppercase() }
             }
         }
     }

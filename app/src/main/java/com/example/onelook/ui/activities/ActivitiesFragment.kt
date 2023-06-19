@@ -5,11 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.GLOBAL_TAG
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentActivitiesBinding
+import com.example.onelook.ui.supplements.SupplementsFragmentDirections
+import com.example.onelook.util.Constants
+import com.example.onelook.util.Constants.UPDATE_ACTIVITY_REQ_KEY
 import com.example.onelook.util.CustomResult
 import com.example.onelook.util.onCollect
 import com.example.onelook.util.toDomainModel
@@ -32,7 +36,9 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
         _binding = FragmentActivitiesBinding.bind(view)
 
         // Populates activities list recyclerView
-        val activitiesAdapter = ActivityAdapter()
+        val activitiesAdapter = ActivityAdapter { activity ->
+            viewModel.onEditActivityClicked(activity)
+        }
         binding.recyclerViewActivitiesList.apply {
             setHasFixedSize(true)
             adapter = activitiesAdapter
@@ -82,7 +88,8 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
             onCollect(activitiesEvent) { event ->
                 when (event) {
                     ActivitiesViewModel.ActivitiesEvent.NavigateToAddActivityFragment -> {
-                        val action = ActivitiesFragmentDirections.actionGlobalAddActivityFragment()
+                        val action =
+                            ActivitiesFragmentDirections.actionGlobalAddEditActivityFragment(null)
                         findNavController().navigate(action)
                     }//NavigateToAddActivityFragment
 
@@ -95,9 +102,29 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
                             .setAnchorView(binding.buttonAddActivity)
                             .show()
                     }//ShowRefreshFailedMessage
+
+                    is ActivitiesViewModel.ActivitiesEvent.NavigateToAddEditActivityFragmentForEditing -> {
+                        val action =
+                            SupplementsFragmentDirections.actionGlobalAddEditActivityFragment(
+                                event.activity
+                            )
+                        findNavController().navigate(action)
+                    }//NavigateToAddEditActivityFragmentForEditing
                 }
             }
         }//Observers
+
+        // Shows activity updated successfully snackBar
+        setFragmentResultListener(UPDATE_ACTIVITY_REQ_KEY) { _, bundle ->
+            val supplementName = bundle.getString(Constants.SUPPLEMENT_NAME_KEY)
+            Snackbar.make(
+                view,
+                getString(R.string.activity_updated, supplementName),
+                Snackbar.LENGTH_SHORT
+            )
+                .setAnchorView(binding.buttonAddActivity)
+                .show()
+        }
     }
 
     override fun onDestroyView() {

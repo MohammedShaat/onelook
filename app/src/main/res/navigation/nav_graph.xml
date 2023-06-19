@@ -70,21 +70,31 @@
         android:label="dialog_add_task"
         tools:layout="@layout/dialog_add_task" />
     <fragment
-        android:id="@+id/addSupplementDialog"
-        android:name="com.example.onelook.ui.addsupplement.AddSupplementFragment"
+        android:id="@+id/addEditSupplementFragment"
+        android:name="com.example.onelook.ui.addEditsupplement.AddEditSupplementFragment"
         android:label="dialog_add_supplement_"
-        tools:layout="@layout/fragment_add_supplement" />
+        tools:layout="@layout/fragment_add_edit_supplement">
+        <argument
+            android:name="supplement"
+            app:argType="com.example.onelook.data.domain.Supplement"
+            app:nullable="true" />
+    </fragment>
     <action
-        android:id="@+id/action_global_addSupplementFragment"
-        app:destination="@id/addSupplementDialog" />
+        android:id="@+id/action_global_addEditSupplementFragment"
+        app:destination="@id/addEditSupplementFragment" />
     <fragment
-        android:id="@+id/addActivityFragment"
-        android:name="com.example.onelook.ui.addactivity.AddActivityFragment"
+        android:id="@+id/addEditActivityFragment"
+        android:name="com.example.onelook.ui.addactivity.AddEditActivityFragment"
         android:label="fragment_add_activity"
-        tools:layout="@layout/fragment_add_activity" />
+        tools:layout="@layout/fragment_add_edit_activity">
+        <argument
+            android:name="activity"
+            app:argType="com.example.onelook.data.domain.DomainActivity"
+            app:nullable="true" />
+    </fragment>
     <action
-        android:id="@+id/action_global_addActivityFragment"
-        app:destination="@id/addActivityFragment" />
+        android:id="@+id/action_global_addEditActivityFragment"
+        app:destination="@id/addEditActivityFragment" />
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.onelook.ui.settings.SettingsFragment"
@@ -98,7 +108,7 @@
         android:id="@+id/activityManagerFragment"
         android:name="com.example.onelook.ui.activitymanager.ActivityManagerFragment"
         android:label="fragment_activity_manager"
-        tools:layout="@layout/fragment_activity_manager" >
+        tools:layout="@layout/fragment_activity_manager">
         <action
             android:id="@+id/action_activityManagerFragment_to_activitiesFragment"
             app:destination="@id/activitiesFragment" />
@@ -110,7 +120,7 @@
         android:id="@+id/activitiesFragment"
         android:name="com.example.onelook.ui.activities.ActivitiesFragment"
         android:label="fragment_activities"
-        tools:layout="@layout/fragment_activities" />
+        tools:layout="@layout/fragment_activities"></fragment>
     <fragment
         android:id="@+id/supplementsFragment"
         android:name="com.example.onelook.ui.supplements.SupplementsFragment"

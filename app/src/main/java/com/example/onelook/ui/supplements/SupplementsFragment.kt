@@ -5,11 +5,12 @@ import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentSupplementsBinding
-import com.example.onelook.ui.supplements.SupplementAdapter
+import com.example.onelook.util.Constants
 import com.example.onelook.util.CustomResult
 import com.example.onelook.util.onCollect
 import com.google.android.material.snackbar.Snackbar
@@ -29,7 +30,9 @@ class SupplementsFragment : Fragment(R.layout.fragment_supplements) {
         _binding = FragmentSupplementsBinding.bind(view)
 
         // Populates supplements list recyclerView
-        val supplementsAdapter = SupplementAdapter()
+        val supplementsAdapter = SupplementAdapter { supplement ->
+            viewModel.onEditSupplementClicked(supplement)
+        }
         binding.recyclerViewSupplementsList.apply {
             setHasFixedSize(true)
             adapter = supplementsAdapter
@@ -78,8 +81,9 @@ class SupplementsFragment : Fragment(R.layout.fragment_supplements) {
             // Events
             onCollect(supplementsEvent) { event ->
                 when (event) {
-                    SupplementsViewModel.SupplementsEvent.NavigateToAddSupplementFragment -> {
-                        val action = SupplementsFragmentDirections.actionGlobalAddSupplementFragment()
+                    SupplementsViewModel.SupplementsEvent.NavigateToAddEditSupplementFragment -> {
+                        val action =
+                            SupplementsFragmentDirections.actionGlobalAddEditSupplementFragment(null)
                         findNavController().navigate(action)
                     }//NavigateToAddSupplementFragment
 
@@ -92,9 +96,29 @@ class SupplementsFragment : Fragment(R.layout.fragment_supplements) {
                             .setAnchorView(binding.buttonAddSupplement)
                             .show()
                     }//ShowRefreshFailedMessage
+
+                    is SupplementsViewModel.SupplementsEvent.NavigateToAddEditSupplementFragmentForEditing -> {
+                        val action =
+                            SupplementsFragmentDirections.actionGlobalAddEditSupplementFragment(
+                                event.supplement
+                            )
+                        findNavController().navigate(action)
+                    }//NavigateToAddEditSupplementFragmentForEditing
                 }
             }
         }//Observers
+
+        // Shows supplement updated successfully snackBar
+        setFragmentResultListener(Constants.UPDATE_SUPPLEMENT_REQ_KEY) { _, bundle ->
+            val supplementName = bundle.getString(Constants.SUPPLEMENT_NAME_KEY)
+            Snackbar.make(
+                view,
+                getString(R.string.supplement_updated, supplementName),
+                Snackbar.LENGTH_SHORT
+            )
+                .setAnchorView(binding.buttonAddSupplement)
+                .show()
+        }
     }
 
     override fun onDestroyView() {

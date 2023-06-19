@@ -35,7 +35,6 @@
     </style>
 
     <style name="CustomPrimaryButton">
-        <item name="android:layout_marginBottom">@dimen/xh_margin</item>
         <item name="android:paddingTop">@dimen/s_padding</item>
         <item name="android:paddingBottom">@dimen/s_padding</item>
         <item name="android:paddingStart">@dimen/m_padding</item>

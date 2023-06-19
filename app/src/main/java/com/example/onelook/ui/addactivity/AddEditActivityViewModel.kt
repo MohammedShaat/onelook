@@ -7,13 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.onelook.R
 import com.example.onelook.data.Repository
+import com.example.onelook.data.domain.DomainActivity
 import com.example.onelook.data.local.activities.LocalActivity
-import com.example.onelook.data.local.supplements.LocalSupplement
-import com.example.onelook.util.CustomResult
-import com.example.onelook.util.OperationSource
+import com.example.onelook.util.*
 import com.example.onelook.util.adapters.SelectableOvalWithText
 import com.example.onelook.util.adapters.SelectableRectWithText
-import com.example.onelook.util.toTimeString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
@@ -24,7 +22,7 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class AddActivityViewModel @Inject constructor(
+class AddEditActivityViewModel @Inject constructor(
     @ApplicationContext context: Context,
     state: SavedStateHandle,
     private val repository: Repository
@@ -51,31 +49,63 @@ class AddActivityViewModel @Inject constructor(
         SelectableRectWithText(context.getString(R.string.night), R.drawable.ic_night),
     )
 
-    private val _selectedType = state.getLiveData("selected_type", -1)
+    private val _activity = state.getLiveData<DomainActivity?>("activity", null)
+    val activity: LiveData<DomainActivity?>
+        get() = _activity
+
+    init {
+        Timber.i("activity:: ${activity.value}")
+    }
+
+    val updateActivity = _activity.value != null
+
+    private val _selectedType = state.getLiveData(
+        "selected_type",
+        typesList.indexOfFirst { it.text == _activity.value?.type })
     val selectedType: LiveData<Int>
         get() = _selectedType
 
-    private val _selectedTimeOfDay = state.getLiveData("selected_time_of_day", -1)
+    private val _selectedTimeOfDay = state.getLiveData(
+        "selected_time_of_day",
+        timesOfDayList.indexOfFirst { it.text == _activity.value?.timeOfDay })
     val selectedTimeOfDay: LiveData<Int>
         get() = _selectedTimeOfDay
 
-    private val _customTime = state.getLiveData<String?>("custom_time", null)
+    private val _customTime = state.getLiveData<String?>(
+        "custom_time",
+        _activity.value?.timeOfDay?.takeIf { it.contains(":") })
     val customTime: LiveData<String?>
         get() = _customTime
 
-    private val _hourDuration = state.getLiveData("hour_duration", 0)
+    private val _hourDuration = state.getLiveData(
+        "hour_duration",
+        _activity.value?.duration?.substringBefore(":")?.toInt() ?: 0
+    )
     val hourDuration: LiveData<Int>
         get() = _hourDuration
 
-    private val _minuteDuration = state.getLiveData("minute_duration", 0)
+    private val _minuteDuration = state.getLiveData(
+        "minute_duration",
+        _activity.value?.duration?.substringAfter(":")?.toInt() ?: 0
+    )
     val minuteDuration: LiveData<Int>
         get() = _minuteDuration
 
-    private val _reminderBefore = state.getLiveData<Boolean>("reminder_before", false)
-    private val _reminderAfter = state.getLiveData<Boolean>("reminder_after", false)
+    private val _reminderBefore = state.getLiveData(
+        "reminder_before", _activity.value?.reminder in listOf("before", "both")
+    )
+    val reminderBefore: LiveData<Boolean>
+        get() = _reminderBefore
 
-    private val _addActivityEvent = MutableSharedFlow<AddActivityEvent>()
-    val addActivityEvent = _addActivityEvent.asSharedFlow()
+    private val _reminderAfter = state.getLiveData(
+        "reminder_after",
+        _activity.value?.reminder in listOf("after", "both")
+    )
+    val reminderAfter: LiveData<Boolean>
+        get() = _reminderAfter
+
+    private val _addEditActivityEvent = MutableSharedFlow<AddEditActivityEvent>()
+    val addEditActivityEvent = _addEditActivityEvent.asSharedFlow()
 
     private var _errorFields = emptyList<Fields>()
     val errorFields: List<Fields>
@@ -85,7 +115,7 @@ class AddActivityViewModel @Inject constructor(
     val isLoading = _isLoading.asStateFlow()
 
     fun onButtonCloseClicked() = viewModelScope.launch {
-        _addActivityEvent.emit(AddActivityEvent.CloseDialog)
+        _addEditActivityEvent.emit(AddEditActivityEvent.CloseDialog)
     }
 
     fun onTypeSelected(newPosition: Int) {
@@ -98,7 +128,7 @@ class AddActivityViewModel @Inject constructor(
     }
 
     fun onButtonAddCustomTimeClicked() = viewModelScope.launch {
-        _addActivityEvent.emit(AddActivityEvent.ShowTimePicker)
+        _addEditActivityEvent.emit(AddEditActivityEvent.ShowTimePicker)
     }
 
     fun onCustomTimeAdded(newCustomTime: String?) {
@@ -122,33 +152,25 @@ class AddActivityViewModel @Inject constructor(
         _reminderAfter.value = isChecked
     }
 
-    fun onButtonAddSupplementClicked() = viewModelScope.launch {
+    fun onButtonAddEditActivityClicked() = viewModelScope.launch {
         _isLoading.emit(true)
         _errorFields = getEmptyRequiredFields()
         if (_errorFields.isNotEmpty()) {
             _isLoading.emit(false)
-            _addActivityEvent.emit(AddActivityEvent.ShowFillRequiredFieldsMessage)
+            _addEditActivityEvent.emit(AddEditActivityEvent.ShowFillRequiredFieldsMessage)
             return@launch
         }
 
-        createActivity().collect { result ->
-            if (result is CustomResult.Success) {
-                _addActivityEvent.emit(
-                    AddActivityEvent.NavigateBackAfterSupplementAdded(typesList[_selectedType.value!!].text)
-                )
-                _isLoading.emit(false)
-            }
-        }
+        createOrUpdateActivity()
     }
 
-    private fun createActivity(): Flow<CustomResult<OperationSource>> {
-        val creationDateTime = SimpleDateFormat(
-            "y-MM-dd HH:mm:ss",
-            Locale.getDefault()
-        ).format(Calendar.getInstance().time)
+    private fun createOrUpdateActivity() = viewModelScope.launch {
+        val formatter = SimpleDateFormat(Constants.DATE_TIME_FORMAT, Locale.getDefault())
+        val timeNow = Calendar.getInstance().time
+        val timeNowFormatted = formatter.format(timeNow)
 
         val localActivity = LocalActivity(
-            id = UUID.randomUUID(),
+            id = _activity.value?.id ?: UUID.randomUUID(),
             type = typesList[_selectedType.value!!].text.lowercase(),
             duration = "${_hourDuration.value!!.toTimeString()}:${_minuteDuration.value!!.toTimeString()}",
             timeOfDay = _customTime.value?.replace(" ", "")
@@ -158,11 +180,28 @@ class AddActivityViewModel @Inject constructor(
                 _reminderBefore.value!! -> "before"
                 else -> "after"
             },
-            createdAt = creationDateTime,
-            updatedAt = creationDateTime,
+            createdAt = _activity.value?.createdAt ?: timeNowFormatted,
+            updatedAt = timeNowFormatted,
         )
-        Timber.i(localActivity.toString())
-        return repository.createActivity(localActivity, creationDateTime)
+
+        if (_activity.value == null)
+            repository.createActivity(localActivity).collect { result ->
+                if (result is CustomResult.Success) {
+                    _addEditActivityEvent.emit(
+                        AddEditActivityEvent.NavigateBackAfterActivityAdded(localActivity.type)
+                    )
+                    _isLoading.emit(false)
+                }
+            }
+        else
+            repository.updateActivity(localActivity).collect { result ->
+                if (result is CustomResult.Success) {
+                    _addEditActivityEvent.emit(
+                        AddEditActivityEvent.NavigateBackAfterActivityUpdated(localActivity.type)
+                    )
+                    _isLoading.emit(false)
+                }
+            }
     }
 
     private fun getEmptyRequiredFields(): List<Fields> {
@@ -173,12 +212,13 @@ class AddActivityViewModel @Inject constructor(
         return fields
     }
 
-    sealed class AddActivityEvent {
-        object CloseDialog : AddActivityEvent()
-        object ShowTimePicker : AddActivityEvent()
-        object ShowCannotAddCustomTimeMessage : AddActivityEvent()
-        object ShowFillRequiredFieldsMessage : AddActivityEvent()
-        data class NavigateBackAfterSupplementAdded(val activityType: String) : AddActivityEvent()
+    sealed class AddEditActivityEvent {
+        object CloseDialog : AddEditActivityEvent()
+        object ShowTimePicker : AddEditActivityEvent()
+        object ShowCannotAddCustomTimeMessage : AddEditActivityEvent()
+        object ShowFillRequiredFieldsMessage : AddEditActivityEvent()
+        data class NavigateBackAfterActivityAdded(val activityType: String) : AddEditActivityEvent()
+        data class NavigateBackAfterActivityUpdated(val activityType: String) : AddEditActivityEvent()
     }
 
     enum class Fields {

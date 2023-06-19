@@ -12,13 +12,15 @@ import com.example.onelook.R
 import com.example.onelook.databinding.ItemSelectableNumberBinding
 import com.example.onelook.databinding.ItemSelectableOvalBinding
 import com.example.onelook.databinding.ItemSelectableRectBinding
+import com.example.onelook.util.capital
 
 class SelectableItemAdapter(
     private val items: List<SelectableItem>,
-    private var selectedItemPosition: Int = -1,
     private val onClickListener: (Int) -> Unit = { }
 ) :
     Adapter<ViewHolder>() {
+
+    private var selectedItemPosition: Int = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -109,7 +111,7 @@ class SelectableItemAdapter(
                 }
 
                 textViewName.apply {
-                    text = item.text
+                    text = item.text.capital
                     setTextColor(
                         ContextCompat.getColor(
                             context,
@@ -179,7 +181,7 @@ class SelectableItemAdapter(
                 }
 
                 textViewName.apply {
-                    text = item.text
+                    text = item.text.capital
                     setTextColor(
                         ContextCompat.getColor(
                             context,

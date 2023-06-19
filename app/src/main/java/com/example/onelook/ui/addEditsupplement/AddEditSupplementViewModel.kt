@@ -1,4 +1,4 @@
-package com.example.onelook.ui.addsupplement
+package com.example.onelook.ui.addEditsupplement
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -7,11 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.onelook.R
 import com.example.onelook.data.Repository
+import com.example.onelook.data.domain.Supplement
 import com.example.onelook.data.local.supplements.LocalSupplement
+import com.example.onelook.util.Constants.DATE_TIME_FORMAT
 import com.example.onelook.util.CustomResult
-import com.example.onelook.util.OperationSource
 import com.example.onelook.util.adapters.SelectableOvalNumber
 import com.example.onelook.util.adapters.SelectableRectWithText
+import com.example.onelook.util.capital
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
@@ -22,7 +24,7 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class AddSupplementViewModel @Inject constructor(
+class AddEditSupplementViewModel @Inject constructor(
     @ApplicationContext context: Context,
     state: SavedStateHandle,
     private val repository: Repository
@@ -67,40 +69,72 @@ class AddSupplementViewModel @Inject constructor(
         context.getString(R.string.during_meal),
     )
 
-    private val _name = state.getLiveData("selected_name", "")
+    private val _supplement = state.getLiveData<Supplement?>("supplement", null)
+    val supplement: LiveData<Supplement?>
+        get() = _supplement
+    init {
+        Timber.i("supplement:: ${supplement.value}")
+    }
+
+    val updateSupplement = _supplement.value != null
+
+    private val _name = state.getLiveData("selected_name", _supplement.value?.name ?: "")
     val name: LiveData<String>
         get() = _name
 
-    private val _selectedForm = state.getLiveData("selected_form", -1)
+    private val _selectedForm = state.getLiveData(
+        "selected_form",
+        formsList.indexOfFirst { it.text == _supplement.value?.form })
     val selectedForm: LiveData<Int>
         get() = _selectedForm
 
-    private val _selectedDosage = state.getLiveData("selected_dosage", -1)
+    private val _selectedDosage = state.getLiveData(
+        "selected_dosage",
+        dosagesList.indexOfFirst { it.number.toInt() == _supplement.value?.dosage })
     val selectedDosage: LiveData<Int>
         get() = _selectedDosage
 
-    private val _selectedFrequency = state.getLiveData("selected_frequency", 0)
+    private val _selectedFrequency = state.getLiveData(
+        "selected_frequency",
+        frequenciesList.indexOfFirst { it.text == _supplement.value?.frequency })
     val selectedFrequency: LiveData<Int>
         get() = _selectedFrequency
 
-    private val _selectedDuration = state.getLiveData("selected_duration", 0)
+    private val _selectedDuration = state.getLiveData(
+        "selected_duration",
+        durationsList.indexOfFirst { it.text == _supplement.value?.duration })
     val selectedDuration: LiveData<Int>
         get() = _selectedDuration
 
-    private val _selectedTimeOfDay = state.getLiveData("selected_time_of_day", -1)
+    private val _selectedTimeOfDay = state.getLiveData(
+        "selected_time_of_day",
+        timesOfDayList.indexOfFirst { it.text == _supplement.value?.timeOfDay })
     val selectedTimeOfDay: LiveData<Int>
         get() = _selectedTimeOfDay
 
-    private val _customTime = state.getLiveData<String?>("custom_time", null)
+    private val _customTime = state.getLiveData<String?>(
+        "custom_time",
+        _supplement.value?.timeOfDay?.takeIf { it.contains(":") })
     val customTime: LiveData<String?>
         get() = _customTime
 
-    private val _selectedTakingWithMeals = state.getLiveData("selected_taking_with_meals", -1)
+    private val _selectedTakingWithMeals = state.getLiveData("selected_taking_with_meals",
+        takingWithMealsList.indexOfFirst { it == _supplement.value?.takingWithMeals })
     val selectedTakingWithMeals: LiveData<Int>
         get() = _selectedTakingWithMeals
 
-    private val _reminderBefore = state.getLiveData<Boolean>("reminder_before", false)
-    private val _reminderAfter = state.getLiveData<Boolean>("reminder_after", false)
+    private val _reminderBefore = state.getLiveData(
+        "reminder_before", _supplement.value?.reminder in listOf("before", "both")
+    )
+    val reminderBefore: LiveData<Boolean>
+        get() = _reminderBefore
+
+    private val _reminderAfter = state.getLiveData(
+        "reminder_after",
+        _supplement.value?.reminder in listOf("after", "both")
+    )
+    val reminderAfter: LiveData<Boolean>
+        get() = _reminderAfter
 
     private val _addSupplementEvent = MutableSharedFlow<AddSupplementEvent>()
     val addSupplementEvent = _addSupplementEvent.asSharedFlow()
@@ -111,6 +145,7 @@ class AddSupplementViewModel @Inject constructor(
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
+
 
     fun onButtonCloseClicked() = viewModelScope.launch {
         _addSupplementEvent.emit(AddSupplementEvent.CloseDialog)
@@ -173,7 +208,7 @@ class AddSupplementViewModel @Inject constructor(
         _reminderAfter.value = isChecked
     }
 
-    fun onButtonAddSupplementClicked() = viewModelScope.launch {
+    fun onButtonAddEditSupplementClicked() = viewModelScope.launch {
         _isLoading.emit(true)
         _errorFields = getEmptyRequiredFields()
         if (_errorFields.isNotEmpty()) {
@@ -182,47 +217,63 @@ class AddSupplementViewModel @Inject constructor(
             return@launch
         }
 
-        createSupplement().collect { result ->
-            if (result is CustomResult.Success) {
-                _addSupplementEvent.emit(
-                    AddSupplementEvent.NavigateBackAfterSupplementAdded(
-                        formsList[_selectedForm.value!!].text
-                    )
-                )
-                _isLoading.emit(false)
-            }
-        }
+        createOrUpdateSupplement()
     }
 
-    private fun createSupplement(): Flow<CustomResult<OperationSource>> {
-        val creationDateTime = SimpleDateFormat(
-            "y-MM-dd HH:mm:ss",
-            Locale.getDefault()
-        ).format(Calendar.getInstance().time)
+    private fun createOrUpdateSupplement() = viewModelScope.launch {
+        val formatter = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
+        val timeNow = Calendar.getInstance().time
+        val timeNowFormatted = formatter.format(timeNow)
+        val timeAfterDuration =
+            formatter.parse(_supplement.value?.createdAt ?: timeNowFormatted).let { date ->
+                val amount =
+                    durationsList[_selectedDuration.value!!].text[0].digitToIntOrNull() ?: 0
+                Calendar.getInstance().run {
+                    time = date!!
+                    add(Calendar.DAY_OF_YEAR, amount)
+                    time
+                }
+            }
 
         val localSupplement = LocalSupplement(
-            id = UUID.randomUUID(),
+            id = _supplement.value?.id ?: UUID.randomUUID(),
             name = _name.value!!,
-            form = formsList[_selectedForm.value!!].text.lowercase(),
+            form = formsList[_selectedForm.value!!].text,
             dosage = dosagesList[_selectedDosage.value!!].number.toInt(),
-            frequency = frequenciesList[_selectedFrequency.value!!].text.lowercase(),
-            duration = durationsList[_selectedDuration.value!!].text.lowercase()
-                .takeIf { it != durationsList[0].text.lowercase() },
-            timeOfDay = timesOfDayList.getOrNull(_selectedTimeOfDay.value!!)?.text?.lowercase()
+            frequency = frequenciesList[_selectedFrequency.value!!].text,
+            duration = durationsList[_selectedDuration.value!!].text.takeIf { it != durationsList[0].text },
+            timeOfDay = timesOfDayList.getOrNull(_selectedTimeOfDay.value!!)?.text
                 ?: _customTime.value!!.replace(" ", ""),
-            takingWithMeals = takingWithMealsList[_selectedTakingWithMeals.value!!].lowercase()
-                .split(" ")[0],
+            takingWithMeals = takingWithMealsList[_selectedTakingWithMeals.value!!],
             reminder = when {
                 _reminderBefore.value!! && _reminderAfter.value!! -> "both"
                 _reminderBefore.value!! -> "before"
                 _reminderAfter.value!! -> "after"
                 else -> null
             },
-            completed = false,
-            createdAt = creationDateTime,
-            updatedAt = creationDateTime,
+            completed = timeNow >= timeAfterDuration,
+            createdAt = _supplement.value?.createdAt ?: timeNowFormatted,
+            updatedAt = timeNowFormatted,
         )
-        return repository.createSupplement(localSupplement, creationDateTime)
+
+        if (_supplement.value == null)
+            repository.createSupplement(localSupplement).collect { result ->
+                if (result is CustomResult.Success) {
+                    _addSupplementEvent.emit(
+                        AddSupplementEvent.NavigateBackAfterSupplementAdded(localSupplement.name.capital)
+                    )
+                    _isLoading.emit(false)
+                }
+            }
+        else
+            repository.updateSupplement(localSupplement).collect { result ->
+                if (result is CustomResult.Success) {
+                    _addSupplementEvent.emit(
+                        AddSupplementEvent.NavigateBackAfterSupplementUpdated(localSupplement.name.capital)
+                    )
+                    _isLoading.emit(false)
+                }
+            }
     }
 
     private fun getEmptyRequiredFields(): List<Fields> {
@@ -244,6 +295,9 @@ class AddSupplementViewModel @Inject constructor(
         object ShowCannotAddCustomTimeMessage : AddSupplementEvent()
         object ShowFillRequiredFieldsMessage : AddSupplementEvent()
         data class NavigateBackAfterSupplementAdded(val supplementName: String) :
+            AddSupplementEvent()
+
+        data class NavigateBackAfterSupplementUpdated(val supplementName: String) :
             AddSupplementEvent()
     }
 

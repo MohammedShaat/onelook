@@ -11,21 +11,24 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
-import com.example.onelook.databinding.FragmentAddActivityBinding
-import com.example.onelook.ui.addsupplement.AddSupplementViewModel
-import com.example.onelook.util.*
+import com.example.onelook.databinding.FragmentAddEditActivityBinding
+import com.example.onelook.util.Constants
 import com.example.onelook.util.Constants.ACTIVITY_NAME_KEY
 import com.example.onelook.util.Constants.ADD_ACTIVITY_REQ_KEY
+import com.example.onelook.util.Constants.UPDATE_ACTIVITY_REQ_KEY
 import com.example.onelook.util.adapters.SelectableItemAdapter
+import com.example.onelook.util.hideBottomNavigation
+import com.example.onelook.util.onCollect
+import com.example.onelook.util.toTimeString
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
+class AddEditActivityFragment : Fragment(R.layout.fragment_add_edit_activity) {
 
-    private val viewModel: AddActivityViewModel by viewModels()
-    private lateinit var binding: FragmentAddActivityBinding
+    private val viewModel: AddEditActivityViewModel by viewModels()
+    private lateinit var binding: FragmentAddEditActivityBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,12 +36,21 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
         hideBottomNavigation()
 
         // Binding
-        binding = FragmentAddActivityBinding.bind(view)
+        binding = FragmentAddEditActivityBinding.bind(view)
+
+        // Sets up the text of add/edit button and visibility of cancel button
+        binding.apply {
+            buttonAddEditActivity.setText(
+                if (viewModel.updateActivity) R.string.button_update_supplement
+                else R.string.button_add_supplement
+            )
+            buttonCancel.isVisible = viewModel.updateActivity
+        }
 
         // Populates types RecyclerView
         val typesAdapter =
-            SelectableItemAdapter(viewModel.typesList, viewModel.selectedType.value!!) { position ->
-                viewModel.onTypeSelected(position)
+            SelectableItemAdapter(viewModel.typesList) { newPosition ->
+                viewModel.onTypeSelected(newPosition)
             }
         binding.recyclerViewTypes.apply {
             setHasFixedSize(true)
@@ -46,11 +58,8 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
         }
 
         // Populates time of day RecyclerView
-        val timesOfDayAdapter = SelectableItemAdapter(
-            viewModel.timesOfDayList,
-            viewModel.selectedTimeOfDay.value!!
-        ) { position ->
-            viewModel.onTimeOfDaySelected(position)
+        val timesOfDayAdapter = SelectableItemAdapter(viewModel.timesOfDayList) { newPosition ->
+            viewModel.onTimeOfDaySelected(newPosition)
         }
         binding.recyclerViewTimeOfDay.apply {
             setHasFixedSize(true)
@@ -101,13 +110,17 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
                 viewModel.onSwitchReminderBeforeSwitched(isChecked)
             }
 
-            switchReminderBefore.setOnCheckedChangeListener { _, isChecked ->
+            switchReminderAfter.setOnCheckedChangeListener { _, isChecked ->
                 viewModel.onSwitchReminderAfterSwitched(isChecked)
             }
 
-            buttonAddActivity.setOnClickListener {
+            buttonAddEditActivity.setOnClickListener {
                 hideErrorFields()
-                viewModel.onButtonAddSupplementClicked()
+                viewModel.onButtonAddEditActivityClicked()
+            }
+
+            buttonCancel.setOnClickListener {
+                viewModel.onButtonCloseClicked()
             }
         }//Listeners
 
@@ -115,12 +128,26 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
         // Observers
         viewModel.apply {
 
-            selectedType.observe(viewLifecycleOwner) { position ->
-                typesAdapter.updateSelectedItem(position)
+            selectedType.observe(viewLifecycleOwner) { newPosition ->
+                typesAdapter.updateSelectedItem(newPosition)
             }
 
-            selectedTimeOfDay.observe(viewLifecycleOwner) { position ->
-                timesOfDayAdapter.updateSelectedItem(position)
+            selectedTimeOfDay.observe(viewLifecycleOwner) { newPosition ->
+                timesOfDayAdapter.updateSelectedItem(newPosition)
+            }
+
+            hourDuration.observe(viewLifecycleOwner) { newHour ->
+                binding.numberPickerHours.apply {
+                    if (newHour == value) return@observe
+                    value = newHour
+                }
+            }
+
+            minuteDuration.observe(viewLifecycleOwner) { newMinute ->
+                binding.numberPickerMinutes.apply {
+                    if (newMinute == value) return@observe
+                    value = newMinute
+                }
             }
 
             customTime.observe(viewLifecycleOwner) { time ->
@@ -128,41 +155,57 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
                     time ?: getString(R.string.button_add_custom_time)
             }
 
+            reminderBefore.observe(viewLifecycleOwner) { isChecked ->
+                binding.switchReminderBefore.isChecked = isChecked
+            }
+
+            reminderAfter.observe(viewLifecycleOwner) { isChecked ->
+                binding.switchReminderAfter.isChecked = isChecked
+            }
+
             onCollect(isLoading) { isLoading ->
                 binding.apply {
-                    buttonAddActivity.isEnabled = !isLoading
+                    buttonAddEditActivity.isEnabled = !isLoading
+                    buttonCancel.isEnabled = !isLoading
                     progressBar.isVisible = isLoading
                 }
             }
 
-            onCollect(addActivityEvent) { event ->
+            onCollect(addEditActivityEvent) { event ->
                 when (event) {
-                    is AddActivityViewModel.AddActivityEvent.CloseDialog -> {
+                    is AddEditActivityViewModel.AddEditActivityEvent.CloseDialog -> {
                         findNavController().popBackStack()
                     }//CloseDialog
 
-                    is AddActivityViewModel.AddActivityEvent.ShowTimePicker -> {
+                    is AddEditActivityViewModel.AddEditActivityEvent.ShowTimePicker -> {
                         showTimePicker()
                     }//ShowTimePicker
 
-                    is AddActivityViewModel.AddActivityEvent.ShowCannotAddCustomTimeMessage -> {
+                    is AddEditActivityViewModel.AddEditActivityEvent.ShowCannotAddCustomTimeMessage -> {
                         Snackbar.make(view, R.string.dosage_must_be_one, Snackbar.LENGTH_SHORT)
                             .show()
                     }//ShowCannotAddCustomTimeMessage
 
-                    is AddActivityViewModel.AddActivityEvent.ShowFillRequiredFieldsMessage -> {
+                    is AddEditActivityViewModel.AddEditActivityEvent.ShowFillRequiredFieldsMessage -> {
                         markErrorFields(viewModel.errorFields)
                         Snackbar.make(view, R.string.fill_required_fields, Snackbar.LENGTH_SHORT)
-                            .setAnchorView(binding.buttonAddActivity)
+                            .setAnchorView(binding.buttonAddEditActivity)
                             .show()
                     }//ShowFillRequiredFieldsMessage
 
-                    is AddActivityViewModel.AddActivityEvent.NavigateBackAfterSupplementAdded -> {
+                    is AddEditActivityViewModel.AddEditActivityEvent.NavigateBackAfterActivityAdded -> {
                         setFragmentResult(ADD_ACTIVITY_REQ_KEY, Bundle().apply {
                             putString(ACTIVITY_NAME_KEY, event.activityType)
                         })
                         findNavController().popBackStack()
                     }//SupplementCreationSucceeded
+
+                    is AddEditActivityViewModel.AddEditActivityEvent.NavigateBackAfterActivityUpdated -> {
+                        setFragmentResult(UPDATE_ACTIVITY_REQ_KEY, Bundle().apply {
+                            putString(Constants.SUPPLEMENT_NAME_KEY, event.activityType)
+                        })
+                        findNavController().popBackStack()
+                    }//NavigateBackAfterSupplementUpdated
                 }
             }
         }
@@ -189,14 +232,16 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
             .show()
     }
 
-    private fun markErrorFields(fields: List<AddActivityViewModel.Fields>) {
+    private fun markErrorFields(fields: List<AddEditActivityViewModel.Fields>) {
         val color = ContextCompat.getColor(requireContext(), R.color.alert)
         fields.forEach { field ->
             when (field) {
-                AddActivityViewModel.Fields.TYPE -> binding.textViewType.setTextColor(color)
-                AddActivityViewModel.Fields.TIME_OF_DAY ->
+                AddEditActivityViewModel.Fields.TYPE -> binding.textViewType.setTextColor(color)
+                AddEditActivityViewModel.Fields.TIME_OF_DAY ->
                     binding.textViewTimeOfDay.setTextColor(color)
-                AddActivityViewModel.Fields.DURATION -> binding.textViewDuration.setTextColor(color)
+                AddEditActivityViewModel.Fields.DURATION -> binding.textViewDuration.setTextColor(
+                    color
+                )
             }
         }//fields
     }
