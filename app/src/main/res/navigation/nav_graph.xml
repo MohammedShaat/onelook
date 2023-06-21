@@ -63,6 +63,9 @@
         <action
             android:id="@+id/action_homeFragment_to_addTaskDialog"
             app:destination="@id/addTaskDialog" />
+        <action
+            android:id="@+id/action_homeFragment_to_supplementHistoryDetails"
+            app:destination="@id/supplementHistoryDetails" />
     </fragment>
     <dialog
         android:id="@+id/addTaskDialog"
@@ -151,4 +154,12 @@
             android:name="activity"
             app:argType="com.example.onelook.data.domain.DomainActivity" />
     </dialog>
+    <fragment
+        android:id="@+id/supplementHistoryDetails"
+        android:name="com.example.onelook.ui.supplementhistorydetails.SupplementHistoryDetailsFragment"
+        android:label="SupplementHistoryDetails"
+        tools:layout="@layout/fragment_supplement_history_details">
+        <argument android:name="supplementHistory"
+            app:argType="com.example.onelook.data.domain.SupplementHistory" />
+    </fragment>
 </navigation>

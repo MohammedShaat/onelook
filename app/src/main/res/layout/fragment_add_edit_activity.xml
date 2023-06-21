@@ -227,7 +227,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/xh_margin"
-                android:text="@string/button_add_supplement" />
+                android:text="@string/button_add_activity" />
 
             <Button
                 android:id="@+id/button_cancel"

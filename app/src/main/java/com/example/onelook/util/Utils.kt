@@ -10,3 +10,10 @@ fun Int.toTimeString(): String {
 
 val String.capital: String
     get() = replaceFirstChar { it.uppercase() }
+
+fun getTimeFromDosagesNumber(dosageIdx: Int, dosagesNumber: Int): String {
+    val interval = 24 / dosagesNumber
+    val hour = interval * dosageIdx
+    val minute = 0
+    return "${hour.toTimeString()}:${minute.toTimeString()}"
+}

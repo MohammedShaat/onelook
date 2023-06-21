@@ -19,6 +19,7 @@ interface TodayTaskDao {
                 "supplements.name AS name, " +
                 "supplements.form AS form, " +
                 "supplements.dosage AS dosage, " +
+                "supplements.time_of_day AS timeOfDay, " +
                 "supplements.taking_with_meals AS takingWithMeals " +
                 "FROM supplements_history INNER JOIN supplements " +
                 "ON supplements_history.supplement_id=supplements.id " +

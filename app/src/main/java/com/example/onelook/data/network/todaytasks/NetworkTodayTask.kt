@@ -26,6 +26,7 @@ data class NetworkTodayTask(
             name = supplement!!.name,
             form = supplement.form,
             dosage = supplement.dosage,
+            timeOfDay = supplement.timeOfDay,
             takingWithMeals = supplement.takingWithMeals,
         )
     }

@@ -54,9 +54,21 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:progress="40"
         app:progressColor="?colorSecondary"
         app:ringColor="@color/light_grey"
-        app:textColor="?colorOnSurface" />
+        app:textColor="?colorOnSurface"
+        tools:progress="40" />
+
+    <ImageView
+        android:id="@+id/image_view_completed"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_task_completed"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

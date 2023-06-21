@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.onelook.R
 import com.example.onelook.data.domain.ActivityHistory
@@ -14,7 +15,10 @@ import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.databinding.ItemActivityHistoryBinding
 import com.example.onelook.databinding.ItemSupplementHistoryBinding
 
-class TodayTasksAdapter(private val resource: Resources) :
+class TodayTasksAdapter(
+    private val resource: Resources,
+    private val onSupplementHistoryClickListener: (SupplementHistory) -> Unit
+) :
     ListAdapter<TodayTask, ViewHolder>(TodayTaskDiffUtil()) {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -60,6 +64,13 @@ class TodayTasksAdapter(private val resource: Resources) :
     inner class SupplementHistoryViewHolder(private val binding: ItemSupplementHistoryBinding) :
         ViewHolder(binding.root) {
 
+        init {
+            binding.root.setOnClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+                onSupplementHistoryClickListener(getItem(adapterPosition) as SupplementHistory)
+            }
+        }
+
         fun bind(supplementHistory: SupplementHistory) {
             binding.apply {
                 textViewTaskName.text = supplementHistory.name
@@ -71,8 +82,12 @@ class TodayTasksAdapter(private val resource: Resources) :
                         supplementHistory.form,
                         supplementHistory.takingWithMeals
                     )
-                customSupplementProgressView.total = supplementHistory.dosage
-                customSupplementProgressView.progress = supplementHistory.progress
+                customSupplementProgressView.apply {
+                    isVisible = !supplementHistory.completed
+                    total = supplementHistory.dosage
+                    progress = supplementHistory.progress
+                }
+                imageViewCompleted.isVisible = supplementHistory.completed
             }
         }
     }
@@ -84,11 +99,15 @@ class TodayTasksAdapter(private val resource: Resources) :
             binding.apply {
                 textViewTaskName.text = activityHistory.type.replaceFirstChar { it.uppercase() }
                 imageViewIcon.activityIcon(activityHistory.formattedType)
-                customActivityProgressView.activityHistoryProgress(
-                    activityHistory.formattedProgress,
-                    activityHistory.formattedDuration
-                )
+                customActivityProgressView.apply {
+                    isVisible = !activityHistory.completed
+                    activityHistoryProgress(
+                        activityHistory.formattedProgress,
+                        activityHistory.formattedDuration
+                    )
+                }
                 buttonContinueExercise.isVisible = !activityHistory.completed
+                imageViewCompleted.isVisible = activityHistory.completed
             }
         }
     }

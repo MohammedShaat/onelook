@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.supplementhistorydetails.SupplementHistoryDetailsFragment">
+
+    <Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:navigationIcon="@drawable/ic_left_arrow_long"
+        tools:title="Omega 3" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="@dimen/h_padding">
+
+        <ImageView
+            android:id="@+id/image_view_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/supplement_history_details_image_view_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_supplement_pill" />
+
+        <TextView
+            android:id="@+id/text_view_dosages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/s_margin"
+            android:text="@string/supplement_history_details_text_view_dosages"
+            android:textColor="?colorOnSurface"
+            android:textStyle="bold"
+            android:textSize="22sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_view_icon" />
+
+        <TextView
+            android:id="@+id/text_view_dosages_explanation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/s_margin"
+            android:text="@string/supplement_history_details_text_view_dosages_explanation"
+            android:textColor="?colorPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_dosages" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/m_margin"
+            android:layout_marginBottom="@dimen/h_margin"
+            app:layout_constraintBottom_toTopOf="@+id/button_edit_supplement_history"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_dosages_explanation"
+            tools:layout_editor_absoluteX="24dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_dosages_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/text_view_your_supplements"
+                tools:listitem="@layout/item_dosage" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <Button
+            android:id="@+id/button_edit_supplement_history"
+            style="@style/CustomPrimaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/xh_margin"
+            android:text="@string/button_confirm_changes"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:indeterminateTint="?colorSecondary"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/swipeRefreshLayout"
+            app:layout_constraintEnd_toEndOf="@+id/swipeRefreshLayout"
+            app:layout_constraintStart_toStartOf="@+id/swipeRefreshLayout"
+            app:layout_constraintTop_toTopOf="@+id/swipeRefreshLayout"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

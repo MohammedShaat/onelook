@@ -47,8 +47,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.textViewGreeting.text =
             getString(R.string.home_text_view_greeting, viewModel.userFirstName)
 
-        // Sets up RecyclerView
-        val todayTasksAdapter = TodayTasksAdapter(resources)
+        // Sets up today tasks recyclerView
+        val todayTasksAdapter = TodayTasksAdapter(resources, viewModel::onSupplementHistoryClicked)
         binding.recyclerViewTodayTasks.apply {
             setHasFixedSize(true)
             adapter = todayTasksAdapter
@@ -112,6 +112,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         val action = HomeFragmentDirections.actionHomeFragmentToAddTaskDialog()
                         findNavController().navigate(action)
                     }//NavigateToAddTaskDialog
+
+                    is HomeViewModel.HomeEvent.NavigateToSupplementHistoryDetailsFragment -> {
+                        val action =
+                            HomeFragmentDirections.actionHomeFragmentToSupplementHistoryDetails(
+                                event.supplementHistory
+                            )
+                        findNavController().navigate(action)
+                    }//NavigateToSupplementHistoryDetailsFragment
                 }
             }//homeEvent
 

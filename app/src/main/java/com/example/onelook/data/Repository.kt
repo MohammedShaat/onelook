@@ -3,6 +3,7 @@ package com.example.onelook.data
 import com.example.onelook.GLOBAL_TAG
 import com.example.onelook.data.domain.DomainActivity
 import com.example.onelook.data.domain.Supplement
+import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.local.activities.ActivityDao
 import com.example.onelook.data.local.activities.LocalActivity
@@ -263,4 +264,19 @@ class Repository @Inject constructor(
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
     }
+
+    fun updateSupplementHistory(localSupplementHistory: LocalSupplementHistory) =
+        flow<CustomResult<OperationSource>> {
+            emit(CustomResult.Loading())
+            supplementHistoryDao.updateSupplementHistory(localSupplementHistory)
+
+            try {
+                supplementHistoryApi.updateSupplementHistory(localSupplementHistory.toNetworkModel())
+                Timber.i("SupplementHistory updated locally and remotely")
+                emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
+            } catch (exception: Exception) {
+                Timber.e("SupplementHistory updated locally only\n$exception")
+                emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
+            }
+        }
 }

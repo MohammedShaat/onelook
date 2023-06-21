@@ -41,8 +41,8 @@ class AddEditActivityFragment : Fragment(R.layout.fragment_add_edit_activity) {
         // Sets up the text of add/edit button and visibility of cancel button
         binding.apply {
             buttonAddEditActivity.setText(
-                if (viewModel.updateActivity) R.string.button_update_supplement
-                else R.string.button_add_supplement
+                if (viewModel.updateActivity) R.string.button_confirm_changes
+                else R.string.button_add_activity
             )
             buttonCancel.isVisible = viewModel.updateActivity
         }

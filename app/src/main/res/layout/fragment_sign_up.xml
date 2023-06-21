@@ -133,7 +133,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/m_margin"
-            android:button="@drawable/custom_checkbox"
+            android:button="@drawable/selector_primary_checkbox"
             android:gravity="clip_vertical"
             android:paddingStart="@dimen/s_margin"
             android:text="@string/sign_up_privacy_policy"

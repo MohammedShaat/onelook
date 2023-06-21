@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_item_task"
+    android:padding="12dp"
+    android:layout_marginBottom="@dimen/m_margin">
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/check_box_dosage_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/selector_secondary_checkbox"
+        android:paddingStart="@dimen/s_padding"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:useMaterialThemeColors="@null"
+        tools:checked="true"
+        tools:ignore="RtlSymmetry"
+        tools:text="Dosage 1" />
+
+    <TextView
+        android:id="@+id/text_view_dosage_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/m_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="09:00" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

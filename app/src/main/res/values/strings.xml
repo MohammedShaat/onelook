@@ -168,7 +168,7 @@
     <string name="meal">%s meal</string>
     <string name="supplement_updated">%s supplement updated successfully</string>
     <string name="button_cancel">Cancel</string>
-    <string name="button_update_supplement">Confirm changes</string>
+    <string name="button_confirm_changes">Confirm changes</string>
     <string name="activity_updated">%s activity updated successfully</string>
     <string name="dialog_title_delete">Delete</string>
     <string name="dialog_button_negative_cancel">Cancel</string>
@@ -176,4 +176,9 @@
     <string name="dialog_button_positive_delete">Delete</string>
     <string name="activity_deleted">%s activity deleted successfully</string>
     <string name="supplement_deleted">%s supplement deleted successfully</string>
+    <string name="supplement_history_details_text_view_dosages">Dosages</string>
+    <string name="supplement_history_details_image_view_icon">Icon of supplement form</string>
+    <string name="dosage_name">Dosage %d</string>
+    <string name="button_add_activity">Add activity</string>
+    <string name="supplement_history_details_text_view_dosages_explanation">Note: Checked dosages are saved respectively regardless of time</string>
 </resources>

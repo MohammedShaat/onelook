@@ -2,6 +2,7 @@ package com.example.onelook.util
 
 import com.example.onelook.data.domain.DomainActivity
 import com.example.onelook.data.domain.Supplement
+import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.local.activities.LocalActivity
 import com.example.onelook.data.local.activitieshistory.LocalActivityHistory
@@ -200,5 +201,16 @@ fun DomainActivity.toLocalModel(): LocalActivity {
         reminder = reminder,
         createdAt = createdAt,
         updatedAt = updatedAt
+    )
+}
+
+fun SupplementHistory.toLocalModel(): LocalSupplementHistory {
+    return LocalSupplementHistory(
+        id = id,
+        supplementId = supplementId,
+        progress = progress,
+        completed = completed,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 }

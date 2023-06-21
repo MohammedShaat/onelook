@@ -43,7 +43,7 @@ class AddEditSupplementFragment : Fragment(R.layout.fragment_add_edit_supplement
         // Sets up the text of add/edit button and visibility of cancel button
         binding.apply {
             buttonAddEditSupplement.setText(
-                if (viewModel.updateSupplement) R.string.button_update_supplement
+                if (viewModel.updateSupplement) R.string.button_confirm_changes
                 else R.string.button_add_supplement
             )
             buttonCancel.isVisible = viewModel.updateSupplement
@@ -251,7 +251,6 @@ class AddEditSupplementFragment : Fragment(R.layout.fragment_add_edit_supplement
         TimePickerDialog(
             context,
             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-                if (hourOfDay == 0 && minute == 0) return@OnTimeSetListener
                 viewModel.onCustomTimeAdded(
                     getString(
                         R.string.custom_time_text,
