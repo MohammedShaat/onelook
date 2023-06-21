@@ -20,7 +20,12 @@ class SettingsViewModel @Inject constructor(
         _settingsEvent.emit(SettingsEvent.NavigateToActivityManagerFragment)
     }
 
+    fun onPrivacyPolicyClicked() = viewModelScope.launch {
+        _settingsEvent.emit(SettingsEvent.OpenExternalLinkOfPrivacyPolicy)
+    }
+
     sealed class SettingsEvent {
         object NavigateToActivityManagerFragment : SettingsEvent()
+        object OpenExternalLinkOfPrivacyPolicy : SettingsEvent()
     }
 }

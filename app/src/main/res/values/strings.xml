@@ -181,4 +181,7 @@
     <string name="dosage_name">Dosage %d</string>
     <string name="button_add_activity">Add activity</string>
     <string name="supplement_history_details_text_view_dosages_explanation">Note: Checked dosages are saved respectively regardless of time</string>
+    <string name="timer_image_button_play">Play button to resume or pause the timer</string>
+    <string name="timer_image_view_activity_icon">The icon of the activity</string>
+    <string name="activity_already_finished">You already finished this activity</string>
 </resources>

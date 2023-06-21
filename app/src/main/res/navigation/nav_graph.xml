@@ -54,7 +54,7 @@
         android:id="@+id/passwordReminder1Fragment"
         android:name="com.example.onelook.ui.login.passwordreminder.PasswordReminderFragment"
         android:label="fragment_password_reminder_1"
-        tools:layout="@layout/fragment_password_reminder"></fragment>
+        tools:layout="@layout/fragment_password_reminder" />
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.onelook.ui.home.HomeFragment"
@@ -123,7 +123,7 @@
         android:id="@+id/activitiesFragment"
         android:name="com.example.onelook.ui.activities.ActivitiesFragment"
         android:label="fragment_activities"
-        tools:layout="@layout/fragment_activities" >
+        tools:layout="@layout/fragment_activities">
         <action
             android:id="@+id/action_activitiesFragment_to_deleteActivityDialogFragment"
             app:destination="@id/deleteActivityDialogFragment" />
@@ -141,8 +141,9 @@
         android:id="@+id/deleteSupplementDialogFragment"
         android:name="com.example.onelook.ui.deletesupplement.DeleteSupplementDialogFragment"
         android:label="DeleteSupplementDialogFragment"
-        tools:layout="@layout/dialog_confirmation" >
-        <argument android:name="supplement"
+        tools:layout="@layout/dialog_confirmation">
+        <argument
+            android:name="supplement"
             app:argType="com.example.onelook.data.domain.Supplement" />
     </dialog>
     <dialog
@@ -159,7 +160,23 @@
         android:name="com.example.onelook.ui.supplementhistorydetails.SupplementHistoryDetailsFragment"
         android:label="SupplementHistoryDetails"
         tools:layout="@layout/fragment_supplement_history_details">
-        <argument android:name="supplementHistory"
+        <argument
+            android:name="supplementHistory"
             app:argType="com.example.onelook.data.domain.SupplementHistory" />
     </fragment>
+    <fragment
+        android:id="@+id/timerFragment"
+        android:name="com.example.onelook.ui.timer.TimerFragment"
+        android:label="fragment_timer"
+        tools:layout="@layout/fragment_timer">
+        <argument
+            android:name="activityHistory"
+            app:argType="com.example.onelook.data.domain.ActivityHistory"
+            app:nullable="true" />
+    </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.example.onelook.ui.mainactivity.MainActivity"
+        android:label="main_activity"
+        tools:layout="@layout/activity_main" /><action android:id="@+id/action_global_timerFragment" app:destination="@id/timerFragment"/><action android:id="@+id/action_global_settingsFragment" app:destination="@id/settingsFragment"/><action android:id="@+id/action_global_homeFragment" app:destination="@id/homeFragment"/><action android:id="@+id/action_global_loginFragment" app:destination="@id/loginFragment"/>
 </navigation>

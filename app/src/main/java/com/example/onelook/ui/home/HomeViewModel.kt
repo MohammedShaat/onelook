@@ -3,6 +3,7 @@ package com.example.onelook.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.onelook.data.Repository
+import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.network.todaytasks.TodayTaskApi
@@ -79,10 +80,17 @@ class HomeViewModel @Inject constructor(
         _homeEvent.emit(HomeEvent.NavigateToSupplementHistoryDetailsFragment(supplementHistory))
     }
 
+    fun onActivityHistoryClicked(activityHistory: ActivityHistory) = viewModelScope.launch {
+        _homeEvent.emit(HomeEvent.NavigateToTimerFragment(activityHistory))
+    }
+
     sealed class HomeEvent {
         data class ShowRefreshFailedMessage(val exception: Exception) : HomeEvent()
         object NavigateToAddTaskDialog : HomeEvent()
         data class NavigateToSupplementHistoryDetailsFragment(val supplementHistory: SupplementHistory) :
             HomeEvent()
+
+        data class NavigateToTimerFragment(val activityHistory: ActivityHistory) :
+            HomeViewModel.HomeEvent()
     }
 }

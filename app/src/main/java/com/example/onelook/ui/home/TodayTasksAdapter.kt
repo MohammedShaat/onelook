@@ -17,7 +17,8 @@ import com.example.onelook.databinding.ItemSupplementHistoryBinding
 
 class TodayTasksAdapter(
     private val resource: Resources,
-    private val onSupplementHistoryClickListener: (SupplementHistory) -> Unit
+    private val onSupplementHistoryClickListener: (SupplementHistory) -> Unit,
+    private val onActivityHistoryClickListener: (ActivityHistory) -> Unit,
 ) :
     ListAdapter<TodayTask, ViewHolder>(TodayTaskDiffUtil()) {
 
@@ -94,6 +95,13 @@ class TodayTasksAdapter(
 
     inner class ActivityHistoryViewHolder(private val binding: ItemActivityHistoryBinding) :
         ViewHolder(binding.root) {
+
+        init {
+            binding.buttonContinueExercise.setOnClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+                onActivityHistoryClickListener(getItem(adapterPosition) as ActivityHistory)
+            }
+        }
 
         fun bind(activityHistory: ActivityHistory) {
             binding.apply {

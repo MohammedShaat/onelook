@@ -20,7 +20,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RetrofitModules {
+object RetrofitModule {
 
     @Provides
     @Singleton

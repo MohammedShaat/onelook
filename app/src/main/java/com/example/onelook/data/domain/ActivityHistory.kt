@@ -1,8 +1,11 @@
 package com.example.onelook.data.domain
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.util.*
 import kotlin.time.Duration
 
+@Parcelize
 data class ActivityHistory(
     override val id: UUID,
     val activityId: UUID,
@@ -12,7 +15,7 @@ data class ActivityHistory(
     val updatedAt: String,
     val type: String,
     val duration: String,
-) : TodayTask {
+) : TodayTask, Parcelable {
 
     val formattedProgress: Duration
         get() {

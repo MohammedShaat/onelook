@@ -279,4 +279,19 @@ class Repository @Inject constructor(
                 emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
             }
         }
+
+    fun updateActivityHistory(localActivityHistory: LocalActivityHistory) =
+        flow<CustomResult<OperationSource>> {
+            emit(CustomResult.Loading())
+            activityHistoryDao.updateActivityHistory(localActivityHistory)
+
+            try {
+                activityHistoryApi.updateActivityHistory(localActivityHistory.toNetworkModel())
+                Timber.i("ActivityHistory updated locally and remotely")
+                emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
+            } catch (exception: Exception) {
+                Timber.e("ActivityHistory updated locally only\n$exception")
+                emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
+            }
+        }
 }

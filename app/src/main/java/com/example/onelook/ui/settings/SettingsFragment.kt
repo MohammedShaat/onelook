@@ -1,5 +1,7 @@
 package com.example.onelook.ui.settings
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -7,11 +9,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentSettingsBinding
-import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.util.onCollect
 import com.example.onelook.util.showBottomNavigation
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
@@ -33,6 +33,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             textViewActivityManager.setOnClickListener {
                 viewModel.onActivityManagerClicked()
             }
+
+            textViewPrivacyPolicy.setOnClickListener {
+                viewModel.onPrivacyPolicyClicked()
+            }
         }//Listeners
 
         // Observers
@@ -44,6 +48,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                             SettingsFragmentDirections.actionSettingsFragmentToActivityManagerFragment()
                         findNavController().navigate(action)
                     }
+
+                    SettingsViewModel.SettingsEvent.OpenExternalLinkOfPrivacyPolicy -> {
+                        startPrivacyPolicyActivity()
+                    }
                 }
             }
         }//Observers
@@ -53,5 +61,14 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         super.onDestroyView()
 
         _binding = null
+    }
+
+    private fun startPrivacyPolicyActivity() {
+        val url = "https://www.termsfeed.com/live/f82740ca-2d0a-4ad6-b488-5149f19f142d"
+        val uri = Uri.parse(url)
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        if (intent.resolveActivity(requireActivity().packageManager) != null) {
+            startActivity(intent)
+        }
     }
 }

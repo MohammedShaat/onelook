@@ -8,12 +8,11 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.example.onelook.GLOBAL_TAG
 import com.example.onelook.R
+import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.util.onCollect
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -23,6 +22,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     var keepSplashScreen = true
     private lateinit var bottomNavigationView: BottomNavigationView
+
+    private var activityHistory: ActivityHistory? = null
 
     // Just for testing
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,11 +58,13 @@ class MainActivity : AppCompatActivity() {
                 when (event) {
                     is MainActivityViewModel.MainActivityEvent.NavigateToLoginFragment -> {
                         navController.popBackStack()
-                        navController.navigate(R.id.loginFragment)
+                        val action = MainActivityDirections.actionGlobalLoginFragment()
+                        navController.navigate(action)
                     }
                     is MainActivityViewModel.MainActivityEvent.NavigateToHomeFragment -> {
                         navController.popBackStack()
-                        navController.navigate(R.id.homeFragment)
+                        val action = MainActivityDirections.actionGlobalHomeFragment()
+                        navController.navigate(action)
                     }
                 }
             }
@@ -86,10 +89,16 @@ class MainActivity : AppCompatActivity() {
                     when (item.itemId) {
                         R.id.action_home -> {
                             navController.popBackStack()
-                            navController.navigate(R.id.homeFragment)
+                            val action = MainActivityDirections.actionGlobalHomeFragment()
+                            navController.navigate(action)
                             true
                         }
                         R.id.action_timer -> {
+                            navController.popBackStack()
+                            val action =
+                                MainActivityDirections.actionGlobalTimerFragment(activityHistory)
+                            activityHistory = null
+                            navController.navigate(action)
                             true
                         }
                         R.id.action_progress -> {
@@ -97,7 +106,8 @@ class MainActivity : AppCompatActivity() {
                         }
                         R.id.action_settings -> {
                             navController.popBackStack()
-                            navController.navigate(R.id.settingsFragment)
+                            val action = MainActivityDirections.actionGlobalSettingsFragment()
+                            navController.navigate(action)
                             true
                         }
                         else -> false
@@ -119,5 +129,10 @@ class MainActivity : AppCompatActivity() {
 
     fun hideBottomNavigation() {
         bottomNavigationView.isVisible = false
+    }
+
+    fun selectBottomNavigationSettingsItem(activityHistory: ActivityHistory) {
+        this.activityHistory = activityHistory
+        bottomNavigationView.selectedItemId = R.id.action_timer
     }
 }

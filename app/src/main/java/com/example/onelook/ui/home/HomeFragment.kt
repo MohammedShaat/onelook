@@ -48,7 +48,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             getString(R.string.home_text_view_greeting, viewModel.userFirstName)
 
         // Sets up today tasks recyclerView
-        val todayTasksAdapter = TodayTasksAdapter(resources, viewModel::onSupplementHistoryClicked)
+        val todayTasksAdapter = TodayTasksAdapter(
+            resources,
+            viewModel::onSupplementHistoryClicked,
+            viewModel::onActivityHistoryClicked
+        )
         binding.recyclerViewTodayTasks.apply {
             setHasFixedSize(true)
             adapter = todayTasksAdapter
@@ -120,6 +124,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             )
                         findNavController().navigate(action)
                     }//NavigateToSupplementHistoryDetailsFragment
+
+                    is HomeViewModel.HomeEvent.NavigateToTimerFragment -> {
+//                        val action =
+//                            HomeFragmentDirections.actionGlobalTimerFragment(event.activityHistory)
+//                        findNavController().navigate(action)
+                        (requireActivity() as MainActivity).selectBottomNavigationSettingsItem(event.activityHistory)
+                    }//NavigateToTimerFragment
                 }
             }//homeEvent
 
@@ -168,4 +179,5 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             )
         }
     }
+
 }
