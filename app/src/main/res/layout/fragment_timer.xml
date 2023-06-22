@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/image_button_play"
+        app:layout_constraintBottom_toTopOf="@+id/image_button_play_pause"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -46,16 +46,46 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/image_button_play"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:id="@+id/image_button_stop"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginEnd="@dimen/h_margin"
         android:layout_marginBottom="@dimen/xh_margin"
         android:background="@drawable/ic_timer_play_button"
-        android:contentDescription="@string/timer_image_button_play"
+        android:contentDescription="@string/timer_image_button_stop"
+        android:src="@drawable/ic_stop"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/image_button_play_pause"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@color/white"
+        tools:visibility="visible" />
+
+    <ImageButton
+        android:id="@+id/image_button_play_pause"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="@dimen/xh_margin"
+        android:background="@drawable/ic_timer_play_button"
+        android:contentDescription="@string/timer_image_button_play_pause"
         android:src="@drawable/ic_play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/image_button_stop"
         app:tint="@color/white" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/image_button_play_pause"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linear_layout_info"
+        tools:visibility="visible" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

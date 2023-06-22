@@ -21,16 +21,10 @@ data class Supplement(
     val updatedAt: String
 ) : Parcelable {
 
-    val formattedForm: Supplement.Form
-        get() = Supplement.Form.valueOf(form.uppercase())
-    val formattedTakingWithMeals: Supplement.TakingWithMeals
-        get() = Supplement.TakingWithMeals.valueOf(takingWithMeals.uppercase())
+    val parsedForm: Form
+        get() = Form.valueOf(form.uppercase())
 
     enum class Form {
         PILL, TABLET, SACHET, DROPS, SPOON
-    }
-
-    enum class TakingWithMeals {
-        BEFORE, AFTER, WITH
     }
 }

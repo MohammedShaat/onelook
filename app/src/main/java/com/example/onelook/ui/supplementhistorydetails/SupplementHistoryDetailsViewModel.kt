@@ -7,10 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.onelook.data.Repository
 import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.ui.addEditsupplement.AddEditSupplementViewModel
-import com.example.onelook.util.CustomResult
-import com.example.onelook.util.capital
-import com.example.onelook.util.getTimeFromDosagesNumber
-import com.example.onelook.util.toLocalModel
+import com.example.onelook.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +15,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -68,7 +67,11 @@ class SupplementHistoryDetailsViewModel @Inject constructor(
         val newProgress = _dosagesList.value.count { it.isChecked }
         val localSupplementHistory = _supplementHistory.value!!.toLocalModel().copy(
             progress = newProgress,
-            completed = newProgress == _supplementHistory.value!!.dosage
+            completed = newProgress == _supplementHistory.value!!.dosage,
+            updatedAt = SimpleDateFormat(
+                DATE_TIME_FORMAT,
+                Locale.getDefault()
+            ).format(Calendar.getInstance().time)
         )
 
         repository.updateSupplementHistory(localSupplementHistory).collect { result ->

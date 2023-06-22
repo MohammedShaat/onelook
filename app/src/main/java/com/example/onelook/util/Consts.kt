@@ -18,3 +18,9 @@ const val DELETE_ACTIVITY_REQ_KEY = "activity_deleted_successfully"
 const val ACTIVITIES_TIMER_CHANNEL_ID = "activities_timer"
 const val ACTIVITIES_TIMER_CHANNEL_NAME = "Activities timer"
 const val NOTIFICATION_ID = 0
+const val ONGOING_NOTIFICATION_ID = NOTIFICATION_ID + 1
+
+const val TIMER_PLAYING_ACTION = "TIMER_STATUS_ACTION"
+const val TIMER_VALUE_ACTION = "TIMER_UPDATES_ACTION"
+
+const val TIMER_FRAGMENT_REQ = ONE_TAP_REQ + 1

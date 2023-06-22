@@ -47,7 +47,7 @@ class ActivityAdapter(
 
         fun bind(activity: DomainActivity) {
             binding.apply {
-                imageViewIcon.activityIcon(activity.formattedType)
+                imageViewIcon.activityIcon(activity.parsedType)
                 textViewName.text = activity.type.replaceFirstChar { it.uppercase() }
             }
         }

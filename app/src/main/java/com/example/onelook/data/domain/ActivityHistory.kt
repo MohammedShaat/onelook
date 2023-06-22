@@ -17,14 +17,14 @@ data class ActivityHistory(
     val duration: String,
 ) : TodayTask, Parcelable {
 
-    val formattedProgress: Duration
+    val parsedProgress: Duration
         get() {
             val formattedString = progress.replace(":", "h ") + "m"
             return Duration.parse(formattedString)
         }
-    val formattedType: DomainActivity.ActivityType
+    val parsedType: DomainActivity.ActivityType
         get() = DomainActivity.ActivityType.valueOf(type.uppercase())
-    val formattedDuration: Duration
+    val parsedDuration: Duration
         get() {
             val formattedString = duration.replace(":", "h ") + "m"
             return Duration.parse(formattedString)

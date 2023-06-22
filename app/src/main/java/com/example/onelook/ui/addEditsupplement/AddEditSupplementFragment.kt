@@ -248,8 +248,8 @@ class AddEditSupplementFragment : Fragment(R.layout.fragment_add_edit_supplement
                 viewModel.onCustomTimeAdded(
                     getString(
                         R.string.custom_time_text,
-                        hourOfDay.toTimeString(),
-                        minute.toTimeString()
+                        hourOfDay.to24Format(),
+                        minute.to24Format()
                     )
                 )
             },

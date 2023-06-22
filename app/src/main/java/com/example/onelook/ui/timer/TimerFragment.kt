@@ -1,15 +1,16 @@
 package com.example.onelook.ui.timer
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentTimerBinding
 import com.example.onelook.ui.home.activityIcon
 import com.example.onelook.util.capital
+import com.example.onelook.util.hideSplashScreen
 import com.example.onelook.util.onCollect
 import com.example.onelook.util.showBottomNavigation
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,9 +31,9 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
 
         // Sets up the icon, text, and timer
         binding.apply {
-            val activityHistory = viewModel.activityHistory.value
+            val activityHistory = viewModel.activityHistory
             if (activityHistory != null) {
-                imageViewActivityIcon.activityIcon(activityHistory.formattedType)
+                imageViewActivityIcon.activityIcon(activityHistory.parsedType)
                 textViewActivityType.text = activityHistory.type.capital
             }
         }
@@ -40,8 +41,12 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
         // Listeners
         binding.apply {
 
-            imageButtonPlay.setOnClickListener {
+            imageButtonPlayPause.setOnClickListener {
                 viewModel.onButtonPlayClicked()
+            }
+
+            imageButtonStop.setOnClickListener {
+                viewModel.onButtonStopClicked()
             }
         }//Listeners
 
@@ -51,14 +56,28 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
 
             onCollect(isPlaying) { isPlaying ->
                 if (isPlaying) {
-                    binding.imageButtonPlay.setImageResource(R.drawable.ic_pause)
+                    binding.imageButtonPlayPause.setImageResource(R.drawable.ic_pause)
                 } else {
-                    binding.imageButtonPlay.setImageResource(R.drawable.ic_play)
+                    binding.imageButtonPlayPause.setImageResource(R.drawable.ic_play)
+                }
+            }
+
+            onCollect(isStoppable) { isStoppable ->
+                binding.imageButtonStop.isVisible = isStoppable
+            }
+
+            onCollect(isSaving) { isSaving ->
+                binding.apply {
+                    progressBar.isVisible = isSaving
+                    imageButtonPlayPause.isEnabled = !isSaving
+                    imageButtonStop.isEnabled = !isSaving
                 }
             }
 
             onCollect(timer) { time ->
-                binding.textViewTimer.text = time
+                binding.apply {
+                    textViewTimer.text = time
+                }
             }
 
             onCollect(timerEvent) { event ->
@@ -71,9 +90,9 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
         }//Observers
     }
 
-    override fun onStop() {
-        super.onStop()
-        viewModel.onFragmentStop()
+    override fun onResume() {
+        super.onResume()
+        hideSplashScreen()
     }
 
     override fun onDestroyView() {

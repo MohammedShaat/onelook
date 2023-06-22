@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.onelook.data.domain.Supplement
 import com.example.onelook.databinding.ItemSupplementActivityEditBinding
 import com.example.onelook.ui.home.supplementIcon
-import java.util.UUID
 
 class SupplementAdapter(
     private val onEditClickListener: (Supplement) -> Unit,
@@ -48,7 +47,7 @@ class SupplementAdapter(
 
         fun bind(supplement: Supplement) {
             binding.apply {
-                imageViewIcon.supplementIcon(supplement.formattedForm)
+                imageViewIcon.supplementIcon(supplement.parsedForm)
                 textViewName.text = supplement.name.replaceFirstChar { it.uppercase() }
             }
         }

@@ -63,7 +63,7 @@ class AddEditActivityFragment : Fragment(R.layout.fragment_add_edit_activity) {
         // Sets up duration number picker
         binding.apply {
             val formatter = NumberPicker.Formatter { num ->
-                num.toTimeString()
+                num.to24Format()
             }
             numberPickerHours.apply {
                 setFormatter(formatter)
@@ -214,8 +214,8 @@ class AddEditActivityFragment : Fragment(R.layout.fragment_add_edit_activity) {
                 viewModel.onCustomTimeAdded(
                     getString(
                         R.string.custom_time_text,
-                        hourOfDay.toTimeString(),
-                        minute.toTimeString()
+                        hourOfDay.to24Format(),
+                        minute.to24Format()
                     )
                 )
             },

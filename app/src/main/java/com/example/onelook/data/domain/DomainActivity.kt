@@ -15,7 +15,7 @@ data class DomainActivity(
     val createdAt: String,
     val updatedAt: String
 ) : Parcelable {
-    val formattedType: ActivityType
+    val parsedType: ActivityType
         get() = ActivityType.valueOf(type.uppercase())
 
     enum class ActivityType {

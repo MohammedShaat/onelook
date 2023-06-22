@@ -1,130 +1,141 @@
 package com.example.onelook.ui.timer
 
-import android.os.Handler
-import android.os.Looper
-import androidx.lifecycle.LiveData
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.onelook.data.Repository
 import com.example.onelook.data.domain.ActivityHistory
-import com.example.onelook.di.appmodules.ApplicationCoroutine
-import com.example.onelook.util.toLocalModel
-import com.example.onelook.util.toTimeString
+import com.example.onelook.services.TimerService
+import com.example.onelook.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.math.max
 
 @HiltViewModel
 class TimerViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     savedState: SavedStateHandle,
-    @ApplicationCoroutine private val coroutineScope: CoroutineScope,
-    private val repository: Repository
 ) : ViewModel() {
-
-
-    private val _activityHistory = savedState.getLiveData<ActivityHistory>("activityHistory")
-    val activityHistory: LiveData<ActivityHistory>
-        get() = _activityHistory
-
-    init {
-        Timber.i("activityHistory: ${_activityHistory.value}")
-    }
 
     private val _timerEvent = MutableSharedFlow<TimerEvent>()
     val timerEvent = _timerEvent.asSharedFlow()
 
-    private val _isPlaying = MutableStateFlow(false)
-    val isPlaying = _isPlaying.asStateFlow()
+    val activityHistory =
+        savedState.get<ActivityHistory>("activityHistory") ?: TimerService.currentActivityHistory
 
-    private val limitHour = _activityHistory.value?.formattedDuration?.inWholeHours?.toInt() ?: -1
-    private val limitMinute =
-        _activityHistory.value?.formattedDuration?.inWholeMinutes?.toInt() ?: -1
-    private var counterHour = _activityHistory.value?.formattedProgress?.inWholeHours?.toInt() ?: 0
-    private var counterMinute =
-        _activityHistory.value?.formattedProgress?.inWholeMinutes?.toInt() ?: -1
-    private var counterSecond = -1
-    private val interval = 1000L
-
-    private val _timer = MutableStateFlow(getFormattedTimer())
+    private val _timer = MutableStateFlow(
+        when {
+            TimerService.isRunning -> TimerService.timer
+            activityHistory != null ->
+                "${activityHistory.progress.getHours().to24Format()}:" +
+                        "${activityHistory.progress.getMinutes().to24Format()}:" +
+                        "00"
+            else -> "00:00:00"
+        }
+    )
     val timer = _timer.asStateFlow()
 
-    private val handler = Handler(Looper.getMainLooper())
-    private val runnable = object : Runnable {
-        override fun run() {
-            counterSecond += 1
-            // Increases minute every 60s
-            if (counterSecond == 60) {
-                counterMinute += 1
-                counterSecond = 0
-            }
-            // Increases hour every 60m
-            if (counterMinute == 60) {
-                counterHour += 1
-                counterMinute = 0
-            }
-            _timer.value = getFormattedTimer()
-            Timber.i(_timer.value)
-            // Stops when reaching the specified duration
-            if (isDurationAchieved()) {
-                _isPlaying.value = false
-                handler.removeCallbacks(this)
-            } else
-                handler.postDelayed(this, interval)
-        }
+    private var timerReceiver: BroadcastReceiver? = null
+
+    private val _isPlaying = MutableStateFlow(TimerService.isPlaying)
+    val isPlaying = _isPlaying.asStateFlow()
+
+    private val _isStoppable = MutableStateFlow(TimerService.isRunning && !TimerService.isSaving)
+    val isStoppable = _isStoppable.asStateFlow()
+
+    private val _isSaving = MutableStateFlow(TimerService.isSaving)
+    val isSaving = _isSaving.asStateFlow()
+
+    init {
+        Timber.i("activityHistory: $activityHistory")
+        registerTimerReceiver()
     }
 
-    private fun isDurationAchieved(): Boolean {
-        return counterHour == limitHour && counterMinute == limitMinute
-    }
-
-    private fun getFormattedTimer(): String {
-        val minute = max(counterMinute, 0)
-        val second = max(counterSecond, 0)
-        return "${counterHour.toTimeString()}:${minute.toTimeString()}:${second.toTimeString()}"
-    }
 
     fun onButtonPlayClicked() = viewModelScope.launch {
         if (isDurationAchieved()) {
+            Timber.i("isDurationAchieved()")
             _timerEvent.emit(TimerEvent.ShowActivityAlreadyFinishedMessage)
             return@launch
         }
 
-        if (_isPlaying.value) {
-            _isPlaying.value = false
-            handler.removeCallbacks(runnable)
+        if (!TimerService.isRunning) {
+            Timber.i("!isServiceAlreadyStarted()")
+            val timerServiceIntent = Intent(context, TimerService::class.java).apply {
+                putExtra("activity_history", activityHistory)
+            }
+            context.startService(timerServiceIntent)
         } else {
-            _isPlaying.value = true
-            handler.post(runnable)
+            Timber.i("Intent(PLAY_PAUSE_ACTION)")
+            val timerStatusIntent = Intent(TIMER_PLAYING_ACTION).apply {
+                val timerStatus =
+                    if (_isPlaying.value) TimerService.TimerPlayingStatus.PAUSE else TimerService.TimerPlayingStatus.PLAY
+                putExtra("timer_playing_status", timerStatus)
+            }
+            context.sendBroadcast(timerStatusIntent)
         }
+        _isPlaying.value = !_isPlaying.value
+        _isStoppable.value = true
     }
 
-    fun onFragmentStop () {
-        saveProgression()
+    fun onButtonStopClicked() {
+        _isSaving.value = true
+        _isStoppable.value = false
+        _isPlaying.value = false
+        val timerStatusIntent = Intent(TIMER_PLAYING_ACTION).apply {
+            putExtra("timer_playing_status", TimerService.TimerPlayingStatus.STOP)
+        }
+        context.sendBroadcast(timerStatusIntent)
+    }
+
+    private fun isDurationAchieved(): Boolean {
+        return timer.value.substringBeforeLast(":") == activityHistory?.duration
     }
 
     override fun onCleared() {
         super.onCleared()
-        handler.removeCallbacks(runnable)
+        unRegisterTimerReceiver()
     }
 
-    private fun saveProgression() {
-        if (_activityHistory.value == null) return
-        val newProgress = "${counterHour.toTimeString()}:${counterMinute.toTimeString()}"
-        val localActivityHistory = _activityHistory.value!!.toLocalModel().copy(
-            progress = newProgress,
-            completed = newProgress == _activityHistory.value!!.duration
-        )
-        coroutineScope.launch {
-            repository.updateActivityHistory(localActivityHistory).collect()
+    private fun registerTimerReceiver() {
+        timerReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action != TIMER_VALUE_ACTION) return
+
+                val status = intent.getParcelableExtra<TimerValueStatus>("timer_value_status")!!
+//                if (activityHistory != null)
+                _timer.value = intent.getStringExtra("timer_value") ?: _timer.value
+                _isPlaying.value = status is TimerValueStatus.NewValue
+                _isStoppable.value = status is TimerValueStatus.NewValue
+                _isSaving.value = status is TimerValueStatus.Save
+            }
+        }
+        context.registerReceiver(timerReceiver, IntentFilter(TIMER_VALUE_ACTION))
+    }
+
+    private fun unRegisterTimerReceiver() {
+        timerReceiver?.let {
+            context.unregisterReceiver(timerReceiver)
+            timerReceiver = null
         }
     }
 
     sealed class TimerEvent {
         object ShowActivityAlreadyFinishedMessage : TimerEvent()
+    }
+
+    @Parcelize
+    sealed class TimerValueStatus : Parcelable {
+        object NewValue : TimerValueStatus()
+        object Save : TimerValueStatus()
+        object Done : TimerValueStatus()
     }
 }

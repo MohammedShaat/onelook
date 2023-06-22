@@ -2,6 +2,7 @@ package com.example.onelook.ui.home
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -15,6 +16,7 @@ import com.example.onelook.util.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.net.UnknownHostException
 
 @AndroidEntryPoint
@@ -119,11 +121,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     }//NavigateToSupplementHistoryDetailsFragment
 
                     is HomeViewModel.HomeEvent.NavigateToTimerFragment -> {
-//                        val action =
-//                            HomeFragmentDirections.actionGlobalTimerFragment(event.activityHistory)
-//                        findNavController().navigate(action)
                         (requireActivity() as MainActivity).selectBottomNavigationSettingsItem(event.activityHistory)
                     }//NavigateToTimerFragment
+
+                    HomeViewModel.HomeEvent.ShowThereIsActivityRunningMessage -> {
+                        Toast.makeText(context, R.string.there_is_activity_running, Toast.LENGTH_SHORT).show()
+                    }//ShowThereIsActivityRunningMessage
                 }
             }//homeEvent
 
@@ -155,7 +158,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     override fun onResume() {
         super.onResume()
-        (requireActivity() as MainActivity).hideSplashScreen()
+        hideSplashScreen()
     }
 
     private fun setupToolbar() {
@@ -165,12 +168,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_notifications -> {
-                        // For testing
-                        getNotificationManager()?.sendNotification(
-                            context,
-                            "testing notification",
-                            ACTIVITIES_TIMER_CHANNEL_ID
-                        )
+
                         true
                     }
                     else -> false

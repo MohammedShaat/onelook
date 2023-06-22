@@ -20,6 +20,7 @@ import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentLoginBinding
 import com.example.onelook.util.PASSWORD_REST_EMAIL_REQ_KEY
+import com.example.onelook.util.hideSplashScreen
 import com.example.onelook.util.isInternetAvailable
 import com.example.onelook.util.onCollect
 import com.facebook.CallbackManager
@@ -219,7 +220,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onResume() {
         super.onResume()
         Timber.tag(GLOBAL_TAG).i("LoginFragment onResume()")
-        (requireActivity() as MainActivity).hideSplashScreen()
+        hideSplashScreen()
     }
 
     private fun sendInputsDataWhenChanged() {

@@ -1,16 +1,17 @@
 package com.example.onelook.ui.home
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.onelook.data.Repository
 import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.data.domain.TodayTask
-import com.example.onelook.data.network.todaytasks.TodayTaskApi
-import com.example.onelook.ui.activities.ActivitiesViewModel
+import com.example.onelook.services.TimerService
 import com.example.onelook.util.CustomResult
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -20,8 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     val auth: FirebaseAuth,
-    private val todayTaskApi: TodayTaskApi,
-    private val repository: Repository
+    private val repository: Repository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     val userFirstName: String?
@@ -81,12 +82,17 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onActivityHistoryClicked(activityHistory: ActivityHistory) = viewModelScope.launch {
-        _homeEvent.emit(HomeEvent.NavigateToTimerFragment(activityHistory))
+        if (TimerService.isRunning && TimerService.currentActivityHistory?.id != activityHistory.id)
+            _homeEvent.emit(HomeEvent.ShowThereIsActivityRunningMessage)
+        else
+            _homeEvent.emit(HomeEvent.NavigateToTimerFragment(activityHistory))
     }
 
     sealed class HomeEvent {
         data class ShowRefreshFailedMessage(val exception: Exception) : HomeEvent()
         object NavigateToAddTaskDialog : HomeEvent()
+        object ShowThereIsActivityRunningMessage : HomeViewModel.HomeEvent()
+
         data class NavigateToSupplementHistoryDetailsFragment(val supplementHistory: SupplementHistory) :
             HomeEvent()
 

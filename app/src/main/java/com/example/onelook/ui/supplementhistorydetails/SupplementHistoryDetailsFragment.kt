@@ -29,7 +29,7 @@ class SupplementHistoryDetailsFragment : Fragment(R.layout.fragment_supplement_h
 
         // Sets up icon and toolbar's title
         binding.apply {
-            imageViewIcon.supplementIcon(viewModel.supplementHistory.value!!.formattedForm)
+            imageViewIcon.supplementIcon(viewModel.supplementHistory.value!!.parsedForm)
             toolBar.title = viewModel.supplementHistory.value!!.name
         }
 

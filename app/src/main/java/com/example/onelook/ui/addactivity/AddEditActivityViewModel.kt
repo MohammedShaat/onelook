@@ -172,7 +172,7 @@ class AddEditActivityViewModel @Inject constructor(
         val localActivity = LocalActivity(
             id = _activity.value?.id ?: UUID.randomUUID(),
             type = typesList[_selectedType.value!!].text.lowercase(),
-            duration = "${_hourDuration.value!!.toTimeString()}:${_minuteDuration.value!!.toTimeString()}",
+            duration = "${_hourDuration.value!!.to24Format()}:${_minuteDuration.value!!.to24Format()}",
             timeOfDay = _customTime.value?.replace(" ", "")
                 ?: timesOfDayList[_selectedTimeOfDay.value!!].text.lowercase(),
             reminder = when {

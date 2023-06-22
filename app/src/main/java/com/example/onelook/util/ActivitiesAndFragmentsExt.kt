@@ -52,6 +52,6 @@ fun Fragment.showBottomNavigation() {
     (requireActivity() as MainActivity).showBottomNavigation()
 }
 
-fun Fragment.getNotificationManager(): NotificationManager? {
-    return ContextCompat.getSystemService(requireContext(), NotificationManager::class.java)
+fun Fragment.hideSplashScreen() {
+    (requireActivity() as MainActivity).hideSplashScreen()
 }

@@ -75,7 +75,7 @@ class TodayTasksAdapter(
         fun bind(supplementHistory: SupplementHistory) {
             binding.apply {
                 textViewTaskName.text = supplementHistory.name
-                imageViewSupplementIcon.supplementIcon(supplementHistory.formattedForm)
+                imageViewSupplementIcon.supplementIcon(supplementHistory.parsedForm)
                 textViewTakingWithMeals.text =
                     resource.getString(
                         R.string.item_supplement_history_text_view_task_name,
@@ -106,12 +106,12 @@ class TodayTasksAdapter(
         fun bind(activityHistory: ActivityHistory) {
             binding.apply {
                 textViewTaskName.text = activityHistory.type.replaceFirstChar { it.uppercase() }
-                imageViewIcon.activityIcon(activityHistory.formattedType)
+                imageViewIcon.activityIcon(activityHistory.parsedType)
                 customActivityProgressView.apply {
                     isVisible = !activityHistory.completed
                     activityHistoryProgress(
-                        activityHistory.formattedProgress,
-                        activityHistory.formattedDuration
+                        activityHistory.parsedProgress,
+                        activityHistory.parsedDuration
                     )
                 }
                 buttonContinueExercise.isVisible = !activityHistory.completed

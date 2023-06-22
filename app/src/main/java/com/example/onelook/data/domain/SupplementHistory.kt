@@ -1,7 +1,6 @@
 package com.example.onelook.data.domain
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
@@ -20,8 +19,6 @@ data class SupplementHistory(
     val takingWithMeals: String,
 ) : TodayTask, Parcelable {
 
-    val formattedForm: Supplement.Form
+    val parsedForm: Supplement.Form
         get() = Supplement.Form.valueOf(form.uppercase())
-    val formattedTakingWithMeals: Supplement.TakingWithMeals
-        get() = Supplement.TakingWithMeals.valueOf(takingWithMeals.uppercase())
 }

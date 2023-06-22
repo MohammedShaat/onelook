@@ -13,11 +13,13 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.onelook.R
 import com.example.onelook.data.domain.ActivityHistory
+import com.example.onelook.ui.timer.TimerFragment
 import com.example.onelook.util.ACTIVITIES_TIMER_CHANNEL_ID
 import com.example.onelook.util.ACTIVITIES_TIMER_CHANNEL_NAME
 import com.example.onelook.util.onCollect
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -30,17 +32,10 @@ class MainActivity : AppCompatActivity() {
 
     private var activityHistory: ActivityHistory? = null
 
-    // Just for testing
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.fragment_login)
-//        supportActionBar?.hide()
-//    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val checkAppLaunchStateAndSigningFlow = viewModel.onCheckAppLaunchStateAndSigning()
+        val checkAppLaunchStateAndSigningFlow = viewModel.onCheckAppLaunchStateAndSigning(intent)
         installSplashScreen().apply {
             setKeepOnScreenCondition {
                 keepSplashScreen
@@ -52,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         setupAndHandleBottomNavigation()
         hideBottomNavigation()
         createNotificationChannel()
+
 
         // Observers
         viewModel.apply {
@@ -66,12 +62,17 @@ class MainActivity : AppCompatActivity() {
                         navController.popBackStack()
                         val action = MainActivityDirections.actionGlobalLoginFragment()
                         navController.navigate(action)
-                    }
+                    }//NavigateToLoginFragment
+
                     is MainActivityViewModel.MainActivityEvent.NavigateToHomeFragment -> {
                         navController.popBackStack()
                         val action = MainActivityDirections.actionGlobalHomeFragment()
                         navController.navigate(action)
-                    }
+                    }//NavigateToHomeFragment
+
+                    is MainActivityViewModel.MainActivityEvent.NavigateToTimerFragment -> {
+                        selectBottomNavigationSettingsItem(event.activityHistory)
+                    }//NavigateToTimerFragment
                 }
             }
         }//Observers
@@ -103,8 +104,8 @@ class MainActivity : AppCompatActivity() {
                             navController.popBackStack()
                             val action =
                                 MainActivityDirections.actionGlobalTimerFragment(activityHistory)
-                            activityHistory = null
                             navController.navigate(action)
+                            activityHistory = null
                             true
                         }
                         R.id.action_progress -> {
@@ -125,10 +126,6 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    fun setSelectedItem(@IdRes id: Int) {
-        bottomNavigationView.selectedItemId = id
-    }
-
     fun showBottomNavigation() {
         bottomNavigationView.isVisible = true
     }
@@ -137,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.isVisible = false
     }
 
-    fun selectBottomNavigationSettingsItem(activityHistory: ActivityHistory) {
+    fun selectBottomNavigationSettingsItem(activityHistory: ActivityHistory?) {
         this.activityHistory = activityHistory
         bottomNavigationView.selectedItemId = R.id.action_timer
     }
@@ -147,7 +144,7 @@ class MainActivity : AppCompatActivity() {
             val channel = NotificationChannel(
                 ACTIVITIES_TIMER_CHANNEL_ID,
                 ACTIVITIES_TIMER_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
+                NotificationManager.IMPORTANCE_LOW
             )
 
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
