@@ -103,12 +103,16 @@ class TimerViewModel @Inject constructor(
         }
     }
 
+    fun onFragmentStop () {
+        saveProgression()
+    }
+
     override fun onCleared() {
         super.onCleared()
-
-        Timber.i("onCleared called")
         handler.removeCallbacks(runnable)
+    }
 
+    private fun saveProgression() {
         if (_activityHistory.value == null) return
         val newProgress = "${counterHour.toTimeString()}:${counterMinute.toTimeString()}"
         val localActivityHistory = _activityHistory.value!!.toLocalModel().copy(

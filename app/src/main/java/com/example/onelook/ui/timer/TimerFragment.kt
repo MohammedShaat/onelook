@@ -71,6 +71,11 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
         }//Observers
     }
 
+    override fun onStop() {
+        super.onStop()
+        viewModel.onFragmentStop()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -81,10 +86,6 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
             context,
             R.string.activity_already_finished,
             Toast.LENGTH_SHORT
-        )
-            .apply {
-                setGravity(Gravity.BOTTOM, 0, 0)
-            }
-            .show()
+        ).show()
     }
 }
