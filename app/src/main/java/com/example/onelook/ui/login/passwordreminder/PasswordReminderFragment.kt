@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentPasswordReminderBinding
-import com.example.onelook.util.Constants.PASSWORD_REST_EMAIL_REQ_KEY
+import com.example.onelook.util.PASSWORD_REST_EMAIL_REQ_KEY
 import com.example.onelook.util.onCollect
 import dagger.hilt.android.AndroidEntryPoint
 

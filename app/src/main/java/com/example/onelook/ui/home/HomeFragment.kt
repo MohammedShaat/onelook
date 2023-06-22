@@ -8,17 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentHomeBinding
-import com.example.onelook.util.Constants.ACTIVITY_TYPE_KEY
-import com.example.onelook.util.Constants.ADD_ACTIVITY_REQ_KEY
-import com.example.onelook.util.Constants.ADD_SUPPLEMENT_REQ_KEY
-import com.example.onelook.util.Constants.SUPPLEMENT_NAME_KEY
-import com.example.onelook.util.CustomResult
-import com.example.onelook.util.capital
-import com.example.onelook.util.onCollect
-import com.example.onelook.util.showBottomNavigation
+import com.example.onelook.ui.mainactivity.MainActivity
+import com.example.onelook.util.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -168,6 +161,21 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun setupToolbar() {
         binding.toolbar.apply {
             inflateMenu(R.menu.menu_fragment_home)
+
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_notifications -> {
+                        // For testing
+                        getNotificationManager()?.sendNotification(
+                            context,
+                            "testing notification",
+                            ACTIVITIES_TIMER_CHANNEL_ID
+                        )
+                        true
+                    }
+                    else -> false
+                }
+            }
         }
     }
 

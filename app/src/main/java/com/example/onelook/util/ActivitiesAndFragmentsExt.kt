@@ -1,20 +1,18 @@
 package com.example.onelook.util
 
+import android.app.NotificationManager
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Build.VERSION_CODES
-import android.widget.Toast
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.onelook.R
 import com.example.onelook.ui.mainactivity.MainActivity
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -54,6 +52,6 @@ fun Fragment.showBottomNavigation() {
     (requireActivity() as MainActivity).showBottomNavigation()
 }
 
-fun Fragment.showToast(text: String, length: Int = Toast.LENGTH_SHORT) {
-    Toast.makeText(context, text, length).show()
+fun Fragment.getNotificationManager(): NotificationManager? {
+    return ContextCompat.getSystemService(requireContext(), NotificationManager::class.java)
 }

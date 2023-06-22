@@ -8,8 +8,8 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import com.example.onelook.R
 import com.example.onelook.databinding.DialogConfirmationBinding
-import com.example.onelook.util.Constants
-import com.example.onelook.util.Constants.DELETE_SUPPLEMENT_REQ_KEY
+import com.example.onelook.util.DELETE_SUPPLEMENT_REQ_KEY
+import com.example.onelook.util.SUPPLEMENT_NAME_KEY
 import com.example.onelook.util.onCollect
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -72,7 +72,7 @@ class DeleteSupplementDialogFragment : DialogFragment(R.layout.dialog_confirmati
 
                     is DeleteSupplementViewModel.DeleteSupplementEvent.NavigateBackAfterSupplementDeleted -> {
                         setFragmentResult(DELETE_SUPPLEMENT_REQ_KEY, Bundle().apply {
-                            putString(Constants.SUPPLEMENT_NAME_KEY, event.supplementName)
+                            putString(SUPPLEMENT_NAME_KEY, event.supplementName)
                         })
                         dismiss()
                     }//NavigateBackAfterSupplementDeleted

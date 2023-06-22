@@ -1,5 +1,8 @@
 package com.example.onelook.ui.mainactivity
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
@@ -10,6 +13,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.onelook.R
 import com.example.onelook.data.domain.ActivityHistory
+import com.example.onelook.util.ACTIVITIES_TIMER_CHANNEL_ID
+import com.example.onelook.util.ACTIVITIES_TIMER_CHANNEL_NAME
 import com.example.onelook.util.onCollect
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         setupNavController()
         setupAndHandleBottomNavigation()
         hideBottomNavigation()
+        createNotificationChannel()
 
         // Observers
         viewModel.apply {
@@ -134,5 +140,17 @@ class MainActivity : AppCompatActivity() {
     fun selectBottomNavigationSettingsItem(activityHistory: ActivityHistory) {
         this.activityHistory = activityHistory
         bottomNavigationView.selectedItemId = R.id.action_timer
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                ACTIVITIES_TIMER_CHANNEL_ID,
+                ACTIVITIES_TIMER_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+
+            getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
+        }
     }
 }

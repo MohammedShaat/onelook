@@ -10,11 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentSupplementsBinding
-import com.example.onelook.util.Constants
-import com.example.onelook.util.Constants.DELETE_SUPPLEMENT_REQ_KEY
-import com.example.onelook.util.CustomResult
-import com.example.onelook.util.capital
-import com.example.onelook.util.onCollect
+import com.example.onelook.util.*
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.net.UnknownHostException
@@ -120,8 +116,8 @@ class SupplementsFragment : Fragment(R.layout.fragment_supplements) {
         }//Observers
 
         // Shows supplement created successfully snackBar
-        setFragmentResultListener(Constants.ADD_SUPPLEMENT_REQ_KEY) { _, bundle ->
-            val supplementName = bundle.getString(Constants.SUPPLEMENT_NAME_KEY)?.capital
+        setFragmentResultListener(ADD_SUPPLEMENT_REQ_KEY) { _, bundle ->
+            val supplementName = bundle.getString(SUPPLEMENT_NAME_KEY)?.capital
             Snackbar.make(
                 view,
                 getString(R.string.supplement_added, supplementName),
@@ -132,8 +128,8 @@ class SupplementsFragment : Fragment(R.layout.fragment_supplements) {
         }
 
         // Shows supplement updated successfully snackBar
-        setFragmentResultListener(Constants.UPDATE_SUPPLEMENT_REQ_KEY) { _, bundle ->
-            val supplementName = bundle.getString(Constants.SUPPLEMENT_NAME_KEY)?.capital
+        setFragmentResultListener(UPDATE_SUPPLEMENT_REQ_KEY) { _, bundle ->
+            val supplementName = bundle.getString(SUPPLEMENT_NAME_KEY)?.capital
             Snackbar.make(
                 view,
                 getString(R.string.supplement_updated, supplementName),
@@ -145,7 +141,7 @@ class SupplementsFragment : Fragment(R.layout.fragment_supplements) {
 
         // Shows supplement deleted successfully snackBar
         setFragmentResultListener(DELETE_SUPPLEMENT_REQ_KEY) { _, bundle ->
-            val supplementName = bundle.getString(Constants.SUPPLEMENT_NAME_KEY)?.capital
+            val supplementName = bundle.getString(SUPPLEMENT_NAME_KEY)?.capital
             Snackbar.make(
                 view,
                 getString(R.string.supplement_deleted, supplementName),

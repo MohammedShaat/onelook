@@ -1,19 +1,16 @@
 package com.example.onelook.ui.activities
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentActivitiesBinding
 import com.example.onelook.util.*
-import com.example.onelook.util.Constants.ACTIVITY_TYPE_KEY
-import com.example.onelook.util.Constants.DELETE_ACTIVITY_REQ_KEY
-import com.example.onelook.util.Constants.UPDATE_ACTIVITY_REQ_KEY
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.net.UnknownHostException
@@ -117,8 +114,8 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
         }//Observers
 
         // Shows activity created successfully snackBar
-        setFragmentResultListener(Constants.ADD_ACTIVITY_REQ_KEY) { _, bundle ->
-            val activityName = bundle.getString(Constants.ACTIVITY_TYPE_KEY)?.capital
+        setFragmentResultListener(ADD_ACTIVITY_REQ_KEY) { _, bundle ->
+            val activityName = bundle.getString(ACTIVITY_TYPE_KEY)?.capital
             Snackbar.make(
                 view,
                 getString(R.string.activity_added, activityName),
@@ -130,7 +127,7 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
 
         // Shows activity updated successfully snackBar
         setFragmentResultListener(UPDATE_ACTIVITY_REQ_KEY) { _, bundle ->
-            val supplementName = bundle.getString(Constants.SUPPLEMENT_NAME_KEY)?.capital
+            val supplementName = bundle.getString(SUPPLEMENT_NAME_KEY)?.capital
             Snackbar.make(
                 view,
                 getString(R.string.activity_updated, supplementName),

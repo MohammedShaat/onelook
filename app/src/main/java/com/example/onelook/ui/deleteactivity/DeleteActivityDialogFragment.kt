@@ -8,9 +8,8 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import com.example.onelook.R
 import com.example.onelook.databinding.DialogConfirmationBinding
-import com.example.onelook.util.Constants
-import com.example.onelook.util.Constants.ACTIVITY_TYPE_KEY
-import com.example.onelook.util.Constants.DELETE_ACTIVITY_REQ_KEY
+import com.example.onelook.util.ACTIVITY_TYPE_KEY
+import com.example.onelook.util.DELETE_ACTIVITY_REQ_KEY
 import com.example.onelook.util.onCollect
 import dagger.hilt.android.AndroidEntryPoint
 

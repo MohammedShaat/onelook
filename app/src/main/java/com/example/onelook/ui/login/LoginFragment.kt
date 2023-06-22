@@ -19,7 +19,7 @@ import com.example.onelook.GLOBAL_TAG
 import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentLoginBinding
-import com.example.onelook.util.Constants
+import com.example.onelook.util.PASSWORD_REST_EMAIL_REQ_KEY
 import com.example.onelook.util.isInternetAvailable
 import com.example.onelook.util.onCollect
 import com.facebook.CallbackManager
@@ -206,7 +206,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
         }//Observers
 
-        setFragmentResultListener(Constants.PASSWORD_REST_EMAIL_REQ_KEY) { _, bundle ->
+        setFragmentResultListener(PASSWORD_REST_EMAIL_REQ_KEY) { _, bundle ->
             val receivedEmail = bundle.getString("email") ?: return@setFragmentResultListener
             Snackbar.make(
                 view,

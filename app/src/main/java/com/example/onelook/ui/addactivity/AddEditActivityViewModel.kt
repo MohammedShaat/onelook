@@ -165,7 +165,7 @@ class AddEditActivityViewModel @Inject constructor(
     }
 
     private fun createOrUpdateActivity() = viewModelScope.launch {
-        val formatter = SimpleDateFormat(Constants.DATE_TIME_FORMAT, Locale.getDefault())
+        val formatter = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
         val timeNow = Calendar.getInstance().time
         val timeNowFormatted = formatter.format(timeNow)
 

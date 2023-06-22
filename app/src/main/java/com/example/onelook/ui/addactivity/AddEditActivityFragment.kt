@@ -12,14 +12,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentAddEditActivityBinding
-import com.example.onelook.util.Constants
-import com.example.onelook.util.Constants.ACTIVITY_TYPE_KEY
-import com.example.onelook.util.Constants.ADD_ACTIVITY_REQ_KEY
-import com.example.onelook.util.Constants.UPDATE_ACTIVITY_REQ_KEY
+import com.example.onelook.util.*
 import com.example.onelook.util.adapters.SelectableItemAdapter
-import com.example.onelook.util.hideBottomNavigation
-import com.example.onelook.util.onCollect
-import com.example.onelook.util.toTimeString
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -202,7 +196,7 @@ class AddEditActivityFragment : Fragment(R.layout.fragment_add_edit_activity) {
 
                     is AddEditActivityViewModel.AddEditActivityEvent.NavigateBackAfterActivityUpdated -> {
                         setFragmentResult(UPDATE_ACTIVITY_REQ_KEY, Bundle().apply {
-                            putString(Constants.SUPPLEMENT_NAME_KEY, event.activityType)
+                            putString(SUPPLEMENT_NAME_KEY, event.activityType)
                         })
                         findNavController().popBackStack()
                     }//NavigateBackAfterSupplementUpdated

@@ -14,14 +14,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.ChipTakingWithMealsBinding
 import com.example.onelook.databinding.FragmentAddEditSupplementBinding
-import com.example.onelook.util.Constants.ADD_SUPPLEMENT_REQ_KEY
-import com.example.onelook.util.Constants.SUPPLEMENT_NAME_KEY
-import com.example.onelook.util.Constants.UPDATE_SUPPLEMENT_REQ_KEY
+import com.example.onelook.util.*
 import com.example.onelook.util.adapters.SelectableItemAdapter
-import com.example.onelook.util.capital
-import com.example.onelook.util.hideBottomNavigation
-import com.example.onelook.util.onCollect
-import com.example.onelook.util.toTimeString
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*

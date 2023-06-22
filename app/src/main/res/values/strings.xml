@@ -184,4 +184,5 @@
     <string name="timer_image_button_play">Play button to resume or pause the timer</string>
     <string name="timer_image_view_activity_icon">The icon of the activity</string>
     <string name="activity_already_finished">You already finished this activity</string>
+    <string name="notification_title">OneLook</string>
 </resources>
