@@ -7,7 +7,7 @@ import java.util.*
 @Dao
 interface ActivityDao {
 
-    @Query("SELECT * FROM activities")
+    @Query("SELECT * FROM activities ORDER BY created_at DESC")
     fun getActivities(): Flow<List<LocalActivity>>
 
     @Query("SELECT * FROM activities WHERE id=:id")

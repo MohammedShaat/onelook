@@ -68,7 +68,7 @@ class SupplementDaoTest {
     }
 
     @Test
-    fun getSupplements_userId_returnsListOfSupplements() = runBlocking {
+    fun getSupplements_returnsListOfSupplements() = runBlocking {
         supplementDao.insertSupplements(supplements)
         // WHEN call getSupplements()
         val supplementsResult = supplementDao.getSupplements().first()

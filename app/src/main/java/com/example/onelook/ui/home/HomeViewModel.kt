@@ -30,16 +30,12 @@ class HomeViewModel @Inject constructor(
             return auth.currentUser!!.displayName?.substringBefore(" ")
         }
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
-
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing = _isRefreshing.asStateFlow()
-
     private val _todayTasks = MutableSharedFlow<Flow<CustomResult<List<TodayTask>>>>()
     val todayTasks = _todayTasks.flatMapLatest { flowResult ->
         flowResult
     }.stateIn(viewModelScope, SharingStarted.Eagerly, CustomResult.Loading())
+
+    val isRefreshing = todayTasks.map { it is CustomResult.Loading }
 
     private val _homeEvent = MutableSharedFlow<HomeEvent>()
     val homeEvent = _homeEvent.asSharedFlow()
@@ -51,18 +47,8 @@ class HomeViewModel @Inject constructor(
     private fun fetchTodayTasks(forceRefresh: Boolean = false) = viewModelScope.launch {
         _todayTasks.emit(
             repository.getTodayTasks(
-                onLoading = {
-                    _isLoading.emit(true)
-                },
-                onForceRefresh = {
-                    _isRefreshing.emit(true)
-                },
                 onForceRefreshFailed = { exception ->
                     _homeEvent.emit(HomeEvent.ShowRefreshFailedMessage(exception))
-                },
-                onFinish = {
-                    _isLoading.emit(false)
-                    _isRefreshing.emit(false)
                 },
                 forceRefresh = forceRefresh
             )

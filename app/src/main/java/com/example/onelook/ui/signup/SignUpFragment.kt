@@ -149,7 +149,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                                 textViewErrorMessage.setText(R.string.existing_email)
                             }
                             SignUpViewModel.CreationWithEmailExceptions.NETWORK_ISSUE -> {
-                                textViewErrorMessage.setText(R.string.no_internet_connection)
+                                textViewErrorMessage.setText(R.string.no_connection)
                             }
                             SignUpViewModel.CreationWithEmailExceptions.OTHER_EXCEPTIONS -> {
                                 textViewErrorMessage.text =
@@ -174,7 +174,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     is SignUpViewModel.SignUpEvent.ShowCreationWithProviderFailedMessage -> {
                         val msg = when (event.exception) {
                             SignUpViewModel.CreationWithProviderExceptions.NETWORK_ISSUE ->
-                                getString(R.string.no_internet_connection)
+                                getString(R.string.no_connection)
                             SignUpViewModel.CreationWithProviderExceptions.OTHER_EXCEPTIONS ->
                                 event.message ?: getString(R.string.unexpected_error)
                         }
@@ -259,7 +259,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 Timber.e("Sign in request failed\n $e")
                 if (!isInternetAvailable()) {
                     Timber.e("No internet connection")
-                    viewModel.onErrorOccurred(getString(R.string.no_internet_connection))
+                    viewModel.onErrorOccurred(getString(R.string.no_connection))
                 } else {
                     viewModel.onErrorOccurred(e.localizedMessage)
                 }
@@ -303,7 +303,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     Timber.i("Facebook login canceled")
                     if (!isInternetAvailable()) {
                         Timber.e("No internet connection")
-                        viewModel.onErrorOccurred(getString(R.string.no_internet_connection))
+                        viewModel.onErrorOccurred(getString(R.string.no_connection))
                     }
                 }
 
@@ -311,7 +311,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     Timber.e("Facebook login failed\n $error")
                     if (!isInternetAvailable()) {
                         Timber.e("No internet connection")
-                        viewModel.onErrorOccurred(getString(R.string.no_internet_connection))
+                        viewModel.onErrorOccurred(getString(R.string.no_connection))
                     } else {
                         viewModel.onErrorOccurred(error.localizedMessage)
                     }

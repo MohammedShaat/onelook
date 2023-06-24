@@ -34,8 +34,12 @@ class AddEditSupplementFragment : Fragment(R.layout.fragment_add_edit_supplement
         // Binding
         binding = FragmentAddEditSupplementBinding.bind(view)
 
-        // Sets up the text of add/edit button and visibility of cancel button
+        // Sets up the title and buttons according to viewModel.updateSupplement
         binding.apply {
+            textViewHeader.setText(
+                if (viewModel.updateSupplement) R.string.text_view_header_update
+                else R.string.add_supplement_text_view_header
+            )
             buttonAddEditSupplement.setText(
                 if (viewModel.updateSupplement) R.string.button_confirm_changes
                 else R.string.button_add_supplement

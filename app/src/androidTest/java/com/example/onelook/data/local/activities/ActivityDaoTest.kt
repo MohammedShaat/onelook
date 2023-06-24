@@ -65,7 +65,7 @@ class ActivityDaoTest {
     }
 
     @Test
-    fun getActivities_userId_returnsListOfActivities() = runBlocking {
+    fun getActivities_returnsListOfActivities() = runBlocking {
         activityDao.insertActivities(activities)
         // GIVEN a user id
         val userId = user.id
@@ -84,14 +84,14 @@ class ActivityDaoTest {
         val id = activities[0].id
 
         // WHEN call getActivityById()
-        val supplementResult = activityDao.getActivityById(id).first()
+        val activityResult = activityDao.getActivityById(id).first()
 
         // THEN the activity is retrieved
-        assertThat(supplementResult, equalTo(activities[0]))
+        assertThat(activityResult, equalTo(activities[0]))
     }
 
     @Test
-    fun insertActivity_supplement_insertsActivity() = runBlocking {
+    fun insertActivity_activity_insertsActivity() = runBlocking {
         // GIVEN an Activity
         val activity = activities[0]
 
@@ -99,8 +99,8 @@ class ActivityDaoTest {
         activityDao.insertActivity(activity)
 
         // THEN the activity is inserted
-        val supplementResult = activityDao.getActivityById(activity.id).first()
-        assertThat(supplementResult, equalTo(activity))
+        val activityResult = activityDao.getActivityById(activity.id).first()
+        assertThat(activityResult, equalTo(activity))
     }
 
     @Test
@@ -117,7 +117,7 @@ class ActivityDaoTest {
     }
 
     @Test
-    fun updateActivity_supplement_updatesActivity() = runBlocking {
+    fun updateActivity_activity_updatesActivity() = runBlocking {
         activityDao.insertActivities(activities)
         // GIVEN an Activity
         val activity = activities[0].copy(type = "Updated Activity")
@@ -131,7 +131,7 @@ class ActivityDaoTest {
     }
 
     @Test
-    fun deleteActivity_supplement_deletesActivity() = runBlocking {
+    fun deleteActivity_activity_deletesActivity() = runBlocking {
         activityDao.insertActivities(activities)
         // GIVEN an Activity
         val activity = activities[0]

@@ -67,7 +67,7 @@ class PasswordReminderFragment : Fragment(R.layout.fragment_password_reminder) {
                                 textViewMessage.setText(R.string.not_exist_email_reset_password)
                             }
                             PasswordReminderViewModel.SendPasswordResetEmailExceptions.NETWORK_ISSUE -> {
-                                textViewMessage.setText(R.string.no_internet_connection)
+                                textViewMessage.setText(R.string.no_connection)
                             }
                             PasswordReminderViewModel.SendPasswordResetEmailExceptions.OTHER_EXCEPTIONS -> {
                                 textViewMessage.text =

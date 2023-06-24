@@ -1,9 +1,7 @@
 package com.example.onelook.data
 
-import com.example.onelook.GLOBAL_TAG
 import com.example.onelook.data.domain.DomainActivity
 import com.example.onelook.data.domain.Supplement
-import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.local.activities.ActivityDao
 import com.example.onelook.data.local.activities.LocalActivity
@@ -24,6 +22,7 @@ import com.example.onelook.data.network.todaytasks.TodayTaskApi
 import com.example.onelook.util.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
+import java.lang.Integer.min
 import java.util.*
 import javax.inject.Inject
 
@@ -47,24 +46,14 @@ class Repository @Inject constructor(
     }
 
     fun getTodayTasks(
-        onLoading: suspend () -> Unit,
-        onForceRefresh: suspend () -> Unit,
-        onForceRefreshFailed: suspend (Exception) -> Unit,
-        onFinish: suspend () -> Unit,
+        onForceRefreshFailed: suspend (Exception) -> Unit = {},
         forceRefresh: Boolean = false,
     ) = flow<CustomResult<List<TodayTask>>> {
-        // Tries to fetch initial cached data if operation is not force refresh
-        if (!forceRefresh) {
-            val localTodayTasks = (todayTaskDao.getTodaySupplementTasks().first() +
-                    todayTaskDao.getTodayActivityTasks().first()).sortByDate()
-            emit(CustomResult.Loading(localTodayTasks))
-            // Indicates that is loading if there is no cached data
-            if (localTodayTasks.isEmpty()) {
-                onLoading()
-            }
-        } else {
-            onForceRefresh()
-        }
+        // Tries to fetch initial cached data
+        val localTodayTasks = (todayTaskDao.getTodaySupplementTasks().first() +
+                todayTaskDao.getTodayActivityTasks().first()).sortByDate()
+        emit(CustomResult.Loading(localTodayTasks))
+
         // Tries to fetch data from network and store it in cache
         try {
             val networkTodayTasks = todayTaskApi.getTodayTasks()
@@ -84,7 +73,6 @@ class Repository @Inject constructor(
                 supplementTodayTasks.combine(activityTodayTasks) { tasks1, tasks2 ->
                     CustomResult.Success((tasks1 + tasks2).sortByDate())
                 }
-            onFinish()
             emitAll(sortedTodayTasks)
         }
     }
@@ -138,22 +126,12 @@ class Repository @Inject constructor(
     }
 
     fun getActivities(
-        onLoading: suspend () -> Unit,
-        onForceRefresh: suspend () -> Unit,
-        onForceRefreshFailed: suspend (Exception) -> Unit,
-        onFinish: suspend () -> Unit,
+        onForceRefreshFailed: suspend (Exception) -> Unit = {},
         forceRefresh: Boolean = false,
     ) = flow<CustomResult<List<DomainActivity>>> {
         // Tries to fetch initial cached data if operation is not force refresh
-        if (!forceRefresh) {
-            val localActivities = activityDao.getActivities().first()
-            emit(CustomResult.Loading(localActivities.map { it.toDomainModel() }))
-            // Indicates that is loading if there is no cached data
-            if (localActivities.isEmpty())
-                onLoading()
-        } else {
-            onForceRefresh()
-        }
+        val localActivities = activityDao.getActivities().first()
+        emit(CustomResult.Loading(localActivities.map { it.toDomainModel() }))
 
         // Tries to fetch data from network and store it in cache
         try {
@@ -165,31 +143,19 @@ class Repository @Inject constructor(
                 onForceRefreshFailed(exception)
         } finally {
             // Fetches final cached data that will be collected
-            val activities = activityDao.getActivities().map { localActivities ->
-                CustomResult.Success(localActivities.map { it.toDomainModel() })
+            val activities = activityDao.getActivities().map { list ->
+                CustomResult.Success(list.map { it.toDomainModel() })
             }
-            onFinish()
             emitAll(activities)
         }
     }
 
     fun getSupplements(
-        onLoading: suspend () -> Unit,
-        onForceRefresh: suspend () -> Unit,
-        onForceRefreshFailed: suspend (Exception) -> Unit,
-        onFinish: suspend () -> Unit,
+        onForceRefreshFailed: suspend (Exception) -> Unit = {},
         forceRefresh: Boolean = false,
     ) = flow<CustomResult<List<Supplement>>> {
-        // Tries to fetch initial cached data if operation is not force refresh
-        if (!forceRefresh) {
-            val localSupplements = supplementDao.getSupplements().first()
-            emit(CustomResult.Loading(localSupplements.map { it.toDomainModel() }))
-            // Indicates that is loading if there is no cached data
-            if (localSupplements.isEmpty())
-                onLoading()
-        } else {
-            onForceRefresh()
-        }
+        val localSupplements = supplementDao.getSupplements().first()
+        emit(CustomResult.Loading(localSupplements.map { it.toDomainModel() }))
 
         // Tries to fetch data from network and store it in cache
         try {
@@ -201,10 +167,9 @@ class Repository @Inject constructor(
                 onForceRefreshFailed(exception)
         } finally {
             // Fetches final cached data that will be collected
-            val activities = supplementDao.getSupplements().map { localSupplements ->
-                CustomResult.Success(localSupplements.map { it.toDomainModel() })
+            val activities = supplementDao.getSupplements().map { list ->
+                CustomResult.Success(list.map { it.toDomainModel() })
             }
-            onFinish()
             emitAll(activities)
         }
     }
@@ -212,6 +177,17 @@ class Repository @Inject constructor(
     fun updateSupplement(localSupplement: LocalSupplement) = flow<CustomResult<OperationSource>> {
         emit(CustomResult.Loading())
         supplementDao.updateSupplement(localSupplement)
+
+        supplementHistoryDao.getSupplementsHistory(localSupplement.id).first().firstOrNull()
+            ?.let { localSupplementHistory ->
+                val newProgress = min(localSupplementHistory.progress, localSupplement.dosage)
+                supplementHistoryDao.updateSupplementHistory(
+                    localSupplementHistory.copy(
+                        progress = newProgress,
+                        completed = newProgress == localSupplement.dosage
+                    )
+                )
+            }
 
         try {
             supplementApi.updateSupplement(localSupplement.toNetworkModel())
@@ -227,6 +203,17 @@ class Repository @Inject constructor(
         emit(CustomResult.Loading())
         activityDao.updateActivity(localActivity)
 
+        activityHistoryDao.getActivitiesHistory(localActivity.id).first().firstOrNull()
+            ?.let { localActivityHistory ->
+                val newProgress = minOf(localActivityHistory.progress, localActivity.duration)
+                activityHistoryDao.updateActivityHistory(
+                    localActivityHistory.copy(
+                        progress = newProgress,
+                        completed = newProgress == localActivity.duration
+                    )
+                )
+            }
+
         try {
             activityApi.updateActivity(localActivity.toNetworkModel())
             Timber.i("Activity updated locally and remotely")
@@ -241,6 +228,11 @@ class Repository @Inject constructor(
         emit(CustomResult.Loading())
         supplementDao.deleteSupplement(localSupplement)
 
+        supplementHistoryDao.getSupplementsHistory(localSupplement.id).first()
+            .forEach { localActivityHistory ->
+                supplementHistoryDao.deleteSupplementHistory(localActivityHistory)
+            }
+
         try {
             supplementApi.deleteSupplement(localSupplement.id)
             Timber.i("Supplement deleted locally and remotely")
@@ -254,6 +246,11 @@ class Repository @Inject constructor(
     fun deleteActivity(localActivity: LocalActivity) = flow<CustomResult<OperationSource>> {
         emit(CustomResult.Loading())
         activityDao.deleteActivity(localActivity)
+
+        activityHistoryDao.getActivitiesHistory(localActivity.id).first()
+            .forEach { localActivityHistory ->
+                activityHistoryDao.deleteActivityHistory(localActivityHistory)
+            }
 
         try {
             activityApi.deleteActivity(localActivity.id)

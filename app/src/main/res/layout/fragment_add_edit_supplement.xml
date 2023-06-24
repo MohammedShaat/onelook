@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
-                android:text="@string/add_task_text_view_header" />
+                android:text="@string/add_supplement_text_view_header" />
 
             <TextView
                 android:id="@+id/text_view_name"

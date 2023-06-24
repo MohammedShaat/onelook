@@ -26,11 +26,7 @@ class SupplementsViewModel @Inject constructor(
         it
     }.stateIn(viewModelScope, SharingStarted.Eagerly, CustomResult.Loading())
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
-
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing = _isRefreshing.asStateFlow()
+    val isRefreshing = supplements.map { it is CustomResult.Loading }
 
     init {
         fetchSupplements()
@@ -43,18 +39,8 @@ class SupplementsViewModel @Inject constructor(
     private fun fetchSupplements(forceRefresh: Boolean = false) = viewModelScope.launch {
         _supplements.emit(
             repository.getSupplements(
-                onLoading = {
-                    _isLoading.emit(true)
-                },
-                onForceRefresh = {
-                    _isRefreshing.emit(true)
-                },
                 onForceRefreshFailed = { exception ->
                     _supplementsEvent.emit(SupplementsEvent.ShowRefreshFailedMessage(exception))
-                },
-                onFinish = {
-                    _isLoading.emit(false)
-                    _isRefreshing.emit(false)
                 },
                 forceRefresh = forceRefresh
             )
@@ -83,6 +69,7 @@ class SupplementsViewModel @Inject constructor(
         data class NavigateToAddEditSupplementFragmentForEditing(val supplement: Supplement) :
             SupplementsEvent()
 
-        data class NavigateToDeleteSupplementDialogFragment(val supplement: Supplement) : SupplementsEvent()
+        data class NavigateToDeleteSupplementDialogFragment(val supplement: Supplement) :
+            SupplementsEvent()
     }
 }

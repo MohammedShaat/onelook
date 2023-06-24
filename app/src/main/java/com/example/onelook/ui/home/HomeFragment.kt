@@ -16,7 +16,6 @@ import com.example.onelook.util.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.net.UnknownHostException
 
 @AndroidEntryPoint
@@ -84,11 +83,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             }
 
-            // ProgressBar of loading
-            onCollect(isLoading) { isLoading ->
-                binding.progressBar.isVisible = isLoading
-            }
-
             // ProgressBar of refreshing
             onCollect(isRefreshing) { isRefreshing ->
                 binding.swipeRefreshLayout.isRefreshing = isRefreshing
@@ -99,7 +93,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 when (event) {
                     is HomeViewModel.HomeEvent.ShowRefreshFailedMessage -> {
                         val msg = when (event.exception) {
-                            is UnknownHostException -> R.string.you_are_offline
+                            is UnknownHostException -> R.string.no_connection
                             else -> R.string.unexpected_error
                         }
                         Snackbar.make(view, msg, Snackbar.LENGTH_LONG)

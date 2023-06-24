@@ -25,11 +25,7 @@ class ActivitiesViewModel @Inject constructor(
         it
     }.stateIn(viewModelScope, SharingStarted.Eagerly, CustomResult.Loading())
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
-
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing = _isRefreshing.asStateFlow()
+    val isRefreshing = activities.map { it is CustomResult.Loading }
 
     init {
         fetchActivities()
@@ -42,18 +38,8 @@ class ActivitiesViewModel @Inject constructor(
     private fun fetchActivities(forceRefresh: Boolean = false) = viewModelScope.launch {
         _activities.emit(
             repository.getActivities(
-                onLoading = {
-                    _isLoading.emit(true)
-                },
-                onForceRefresh = {
-                    _isRefreshing.emit(true)
-                },
                 onForceRefreshFailed = { exception ->
                     _activitiesEvent.emit(ActivitiesEvent.ShowRefreshFailedMessage(exception))
-                },
-                onFinish = {
-                    _isLoading.emit(false)
-                    _isRefreshing.emit(false)
                 },
                 forceRefresh = forceRefresh
             )

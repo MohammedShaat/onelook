@@ -65,11 +65,6 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
                     result.data.isNullOrEmpty() && result is CustomResult.Success
             }
 
-            // Loading indicator
-            onCollect(isLoading) { isLoading ->
-                binding.progressBar.isVisible = isLoading
-            }
-
             // Refreshing indicator
             onCollect(isRefreshing) { isRefreshing ->
                 binding.swipeRefreshLayout.isRefreshing = isRefreshing
@@ -86,7 +81,7 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
 
                     is ActivitiesViewModel.ActivitiesEvent.ShowRefreshFailedMessage -> {
                         val msg = when (event.exception) {
-                            is UnknownHostException -> R.string.you_are_offline
+                            is UnknownHostException -> R.string.no_connection
                             else -> R.string.unexpected_error
                         }
                         Snackbar.make(view, msg, Snackbar.LENGTH_LONG)

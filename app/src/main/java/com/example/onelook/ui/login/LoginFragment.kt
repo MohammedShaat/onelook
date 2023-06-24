@@ -16,7 +16,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.GLOBAL_TAG
-import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentLoginBinding
 import com.example.onelook.util.PASSWORD_REST_EMAIL_REQ_KEY
@@ -168,7 +167,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                 textViewErrorMessage.setText(R.string.too_many_requests)
                             }
                             LoginViewModel.SigningWithEmailExceptions.NETWORK_ISSUE -> {
-                                textViewErrorMessage.setText(R.string.no_internet_connection)
+                                textViewErrorMessage.setText(R.string.no_connection)
                             }
                             LoginViewModel.SigningWithEmailExceptions.OTHER_EXCEPTIONS -> {
                                 textViewErrorMessage.text =
@@ -180,7 +179,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     is LoginViewModel.LoginEvent.ShowSigningWithProviderFailedMessage -> {
                         val msg = when (event.exception) {
                             LoginViewModel.SigningWithProviderExceptions.NETWORK_ISSUE ->
-                                getString(R.string.no_internet_connection)
+                                getString(R.string.no_connection)
 
                             LoginViewModel.SigningWithProviderExceptions.OTHER_EXCEPTIONS ->
                                 event.message ?: getString(R.string.unexpected_error)
@@ -271,7 +270,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 Timber.e("Login with Google failed\n $e")
                 if (!isInternetAvailable()) {
                     Timber.e("No internet connection")
-                    viewModel.onErrorOccurred(getString(R.string.no_internet_connection))
+                    viewModel.onErrorOccurred(getString(R.string.no_connection))
                 } else {
                     viewModel.onErrorOccurred(getString(R.string.no_registered_accounts))
                 }
@@ -315,7 +314,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     Timber.e("Signing with Facebook canceled")
                     if (!isInternetAvailable()) {
                         Timber.e("No internet connection")
-                        viewModel.onErrorOccurred(getString(R.string.no_internet_connection))
+                        viewModel.onErrorOccurred(getString(R.string.no_connection))
                     }
                 }
 
@@ -323,7 +322,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     Timber.e("Signing with Facebook failed\n $error")
                     if (!isInternetAvailable()) {
                         Timber.e("No internet connection")
-                        viewModel.onErrorOccurred(getString(R.string.no_internet_connection))
+                        viewModel.onErrorOccurred(getString(R.string.no_connection))
                     } else {
                         viewModel.onErrorOccurred(error.localizedMessage)
                     }

@@ -1,6 +1,7 @@
 package com.example.onelook
 
 import android.app.Application
+import com.facebook.stetho.Stetho
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -16,6 +17,7 @@ class OneLookApplication : Application() {
         }
 
         FirebaseApp.initializeApp(this)
+        Stetho.initializeWithDefaults(this);
     }
 }
 

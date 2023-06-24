@@ -86,14 +86,17 @@ class ActivityHistoryDaoTest {
     }
 
     @Test
-    fun getActivitiesHistory_userId_returnsListOfActivitiesHistory() = runBlocking {
+    fun getActivitiesHistory_activityId_returnsListOfActivitiesHistory() = runBlocking {
         activityHistoryDao.insertActivitiesHistory(activitiesHistory)
+        // Given an id of Activity
+        val id = activities[0].id
+
         // WHEN call getActivitiesHistory()
         val activitiesHistoryResult =
-            activityHistoryDao.getActivitiesHistory().first()
+            activityHistoryDao.getActivitiesHistory(id).first()
 
         // THEN there is a list of ActivitiesHistory
-        assertThat(activitiesHistoryResult, hasSize(3))
+        assertThat(activitiesHistoryResult, hasSize(2))
     }
 
     @Test
@@ -126,13 +129,16 @@ class ActivityHistoryDaoTest {
     @Test
     fun insertActivitiesHistory_listOfActivitiesHistory_insertsActivitiesHistory() =
         runBlocking {
+            // Given an id of Activity
+            val id = activities[0].id
+
             // WHEN call insertActivitiesHistory()
             activityHistoryDao.insertActivitiesHistory(activitiesHistory)
 
             // THEN the ActivitiesHistory objects are inserted
             val activitiesHistoryResult =
-                activityHistoryDao.getActivitiesHistory().first()
-            assertThat(activitiesHistoryResult, hasSize(3))
+                activityHistoryDao.getActivitiesHistory(id).first()
+            assertThat(activitiesHistoryResult, hasSize(2))
         }
 
     @Test

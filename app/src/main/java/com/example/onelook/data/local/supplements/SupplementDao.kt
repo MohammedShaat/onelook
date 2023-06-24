@@ -7,7 +7,7 @@ import java.util.UUID
 @Dao
 interface SupplementDao {
 
-    @Query("SELECT * FROM supplements")
+    @Query("SELECT * FROM supplements ORDER BY created_at DESC")
     fun getSupplements(): Flow<List<LocalSupplement>>
 
     @Query("SELECT * FROM supplements WHERE id=:id")

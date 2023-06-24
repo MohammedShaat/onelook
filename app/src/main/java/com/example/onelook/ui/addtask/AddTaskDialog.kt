@@ -21,10 +21,10 @@ class AddTaskDialog : DialogFragment(R.layout.dialog_add_task) {
         // Sets up the width and background of dialog window
         dialog?.window?.apply {
             setBackgroundDrawableResource(R.drawable.bg_dialog)
-            setLayout(
-                (resources.displayMetrics.widthPixels * .8).toInt(),
-                LayoutParams.WRAP_CONTENT
-            )
+//            setLayout(
+//                (resources.displayMetrics.widthPixels * .8).toInt(),
+//                LayoutParams.WRAP_CONTENT
+//            )
         }
 
         binding = DialogAddTaskBinding.bind(view)
