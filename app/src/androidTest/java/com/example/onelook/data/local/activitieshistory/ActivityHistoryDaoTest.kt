@@ -113,6 +113,18 @@ class ActivityHistoryDaoTest {
     }
 
     @Test
+    fun getAllActivitiesHistory_returnsListOfActivitiesHistory() = runBlocking {
+        activityHistoryDao.insertActivitiesHistory(activitiesHistory)
+
+        // WHEN call getActivitiesHistory()
+        val activitiesHistoryResult =
+            activityHistoryDao.getAllActivitiesHistory().first()
+
+        // THEN there is a list of ActivityHistory
+        assertThat(activitiesHistoryResult, hasSize(3))
+    }
+
+    @Test
     fun insertActivityHistory_activityHistory_insertsActivityHistory() = runBlocking {
         // GIVEN an ActivityHistory
         val activityHistory = activitiesHistory[0]

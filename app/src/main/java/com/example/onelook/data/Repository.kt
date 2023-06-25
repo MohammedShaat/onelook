@@ -20,13 +20,19 @@ import com.example.onelook.data.network.supplements.SupplementApi
 import com.example.onelook.data.network.supplementshistory.SupplementHistoryApi
 import com.example.onelook.data.network.todaytasks.TodayTaskApi
 import com.example.onelook.util.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.Integer.min
 import java.util.*
 import javax.inject.Inject
 
 class Repository @Inject constructor(
+//    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     private val appState: AppStateManager,
     private val todayTaskApi: TodayTaskApi,
     private val todayTaskDao: TodayTaskDao,
@@ -40,6 +46,7 @@ class Repository @Inject constructor(
     private val supplementHistoryDao: SupplementHistoryDao,
     private val activityHistoryDao: ActivityHistoryDao,
 ) {
+
 
     suspend fun loginUserInDatabase(user: LocalUser) {
         userDao.insertUser(user)
@@ -291,4 +298,9 @@ class Repository @Inject constructor(
                 emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
             }
         }
+
+//    suspend fun sync() = scope.launch {
+//        val differedLocalSupplements = async { supplementDao.getSupplements().first() }
+//        val differedLocalActivities = async { activityDao.getActivities().first() }
+//    }
 }

@@ -113,6 +113,17 @@ class SupplementHistoryDaoTest {
     }
 
     @Test
+    fun getAllSupplementsHistory_returnsListOfSupplementsHistory() = runBlocking {
+        supplementHistoryDao.insertSupplementsHistory(supplementsHistory)
+        // WHEN call getSupplementsHistory()
+        val supplementsHistoryResult =
+            supplementHistoryDao.getAllSupplementsHistory().first()
+
+        // THEN there is a list of SupplementsHistory
+        assertThat(supplementsHistoryResult, hasSize(3))
+    }
+
+    @Test
     fun insertSupplementHistory_supplementHistory_insertsSupplementHistory() = runBlocking {
         // GIVEN an SupplementHistory
         val supplementHistory = supplementsHistory[0]
