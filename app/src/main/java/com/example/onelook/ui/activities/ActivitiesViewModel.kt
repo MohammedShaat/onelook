@@ -3,6 +3,7 @@ package com.example.onelook.ui.activities
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.onelook.data.Repository
+import com.example.onelook.data.SharedData
 import com.example.onelook.data.domain.DomainActivity
 import com.example.onelook.util.CustomResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +26,9 @@ class ActivitiesViewModel @Inject constructor(
         it
     }.stateIn(viewModelScope, SharingStarted.Eagerly, CustomResult.Loading())
 
-    val isRefreshing = activities.map { it is CustomResult.Loading }
+    val isRefreshing = activities.combine(SharedData.isSyncing) { result, isRunning ->
+        result is CustomResult.Loading || isRunning
+    }
 
     init {
         fetchActivities()
@@ -63,6 +66,7 @@ class ActivitiesViewModel @Inject constructor(
         class ShowRefreshFailedMessage(val exception: Exception) : ActivitiesEvent()
         data class NavigateToAddEditActivityFragmentForEditing(val activity: DomainActivity) :
             ActivitiesEvent()
+
         data class NavigateToDeleteActivityDialogFragment(val activity: DomainActivity) :
             ActivitiesEvent()
     }

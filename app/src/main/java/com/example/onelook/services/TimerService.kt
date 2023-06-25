@@ -178,7 +178,7 @@ class TimerService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
         startForeground(
-            ONGOING_NOTIFICATION_ID,
+            TIMER_ONGOING_NOTIFICATION_ID,
             getNotification(context, timer, ACTIVITIES_TIMER_CHANNEL_ID, pendingIntent)
         )
     }

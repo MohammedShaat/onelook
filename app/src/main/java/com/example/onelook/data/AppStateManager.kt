@@ -6,6 +6,7 @@ import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.emptyPreferences
 import androidx.datastore.preferences.preferencesKey
 import com.example.onelook.GLOBAL_TAG
+import com.example.onelook.util.DATE_SEVENTIES
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -20,6 +21,7 @@ class AppStateManager @Inject constructor(@ApplicationContext context: Context) 
     private val appStateKey =
         preferencesKey<String>("app_state")
     private val accessTokenKey = preferencesKey<String>("access_token")
+    private val lastSyncDateKey = preferencesKey<String>("last_sync_date")
 
     private val preferencesFlow = dataStore.data.catch { exception ->
         Timber.e(exception)
@@ -46,6 +48,16 @@ class AppStateManager @Inject constructor(@ApplicationContext context: Context) 
     suspend fun setAccessToken(accessToken: String) {
         dataStore.edit { preferences ->
             preferences[accessTokenKey] = accessToken
+        }
+    }
+
+    suspend fun getLastSyncDate(): String {
+        return preferencesFlow.first()[lastSyncDateKey] ?: DATE_SEVENTIES
+    }
+
+    suspend fun setLastSyncDate(date: String) {
+        dataStore.edit { preferences ->
+            preferences[lastSyncDateKey] = date
         }
     }
 }

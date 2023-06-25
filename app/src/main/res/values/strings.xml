@@ -187,4 +187,5 @@
     <string name="timer_image_button_stop">Button to stop the timer</string>
     <string name="there_is_activity_running">There is an activity running</string>
     <string name="text_view_header_update">Make Changes</string>
+    <string name="syncing">Syncing</string>
 </resources>

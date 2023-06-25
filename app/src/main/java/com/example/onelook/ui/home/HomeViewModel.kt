@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.onelook.data.Repository
+import com.example.onelook.data.SharedData
 import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.data.domain.TodayTask
@@ -35,7 +36,9 @@ class HomeViewModel @Inject constructor(
         flowResult
     }.stateIn(viewModelScope, SharingStarted.Eagerly, CustomResult.Loading())
 
-    val isRefreshing = todayTasks.map { it is CustomResult.Loading }
+    val isRefreshing = todayTasks.combine(SharedData.isSyncing) { result, isRunning ->
+        result is CustomResult.Loading || isRunning
+    }
 
     private val _homeEvent = MutableSharedFlow<HomeEvent>()
     val homeEvent = _homeEvent.asSharedFlow()

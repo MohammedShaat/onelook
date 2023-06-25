@@ -3,6 +3,7 @@ package com.example.onelook.ui.supplements
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.onelook.data.Repository
+import com.example.onelook.data.SharedData
 import com.example.onelook.data.domain.Supplement
 import com.example.onelook.util.CustomResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +27,9 @@ class SupplementsViewModel @Inject constructor(
         it
     }.stateIn(viewModelScope, SharingStarted.Eagerly, CustomResult.Loading())
 
-    val isRefreshing = supplements.map { it is CustomResult.Loading }
+    val isRefreshing = supplements.combine(SharedData.isSyncing) { result, isRunning ->
+        result is CustomResult.Loading || isRunning
+    }
 
     init {
         fetchSupplements()

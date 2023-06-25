@@ -1,7 +1,5 @@
 package com.example.onelook.data
 
-import com.example.onelook.data.domain.DomainActivity
-import com.example.onelook.data.domain.Supplement
 import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.local.activities.ActivityDao
 import com.example.onelook.data.local.activities.LocalActivity
@@ -19,20 +17,23 @@ import com.example.onelook.data.network.activitieshistory.ActivityHistoryApi
 import com.example.onelook.data.network.supplements.SupplementApi
 import com.example.onelook.data.network.supplementshistory.SupplementHistoryApi
 import com.example.onelook.data.network.todaytasks.TodayTaskApi
-import com.example.onelook.util.*
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import com.example.onelook.util.CustomResult
+import com.example.onelook.util.OperationSource
+import com.example.onelook.util.parse
+import com.example.onelook.util.timeNowString
+import com.example.onelook.util.toDomainModel
+import com.example.onelook.util.toLocalModel
+import com.example.onelook.util.toNetworkModel
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.last
 import timber.log.Timber
 import java.lang.Integer.min
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class Repository @Inject constructor(
-//    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     private val appState: AppStateManager,
     private val todayTaskApi: TodayTaskApi,
     private val todayTaskDao: TodayTaskDao,
@@ -56,59 +57,31 @@ class Repository @Inject constructor(
         onForceRefreshFailed: suspend (Exception) -> Unit = {},
         forceRefresh: Boolean = false,
     ) = flow<CustomResult<List<TodayTask>>> {
-        // Tries to fetch initial cached data
-        val localTodayTasks = (todayTaskDao.getTodaySupplementTasks().first() +
-                todayTaskDao.getTodayActivityTasks().first()).sortByDate()
-        emit(CustomResult.Loading(localTodayTasks))
+        val todayTasks = todayTaskDao.getTodaySupplementTasks()
+            .combine(todayTaskDao.getTodayActivityTasks()) { list1, list2 -> list1 + list2 }
 
-        // Tries to fetch data from network and store it in cache
-        try {
-            val networkTodayTasks = todayTaskApi.getTodayTasks()
-            activityDao.insertActivities(networkTodayTasks.mapNotNull { it.activity?.toLocalModel() })
-            supplementDao.insertSupplements(networkTodayTasks.mapNotNull { it.supplement?.toLocalModel() })
-            supplementHistoryDao.insertSupplementsHistory(networkTodayTasks.mapNotNull { it.supplementHistory?.toLocalModel() })
-            activityHistoryDao.insertActivitiesHistory(networkTodayTasks.mapNotNull { it.activityHistory?.toLocalModel() })
-        } catch (exception: Exception) {
-            Timber.e(exception)
-            if (forceRefresh)
-                onForceRefreshFailed(exception)
-        } finally {
-            // Fetches final cached data that will be collected
-            val supplementTodayTasks = todayTaskDao.getTodaySupplementTasks()
-            val activityTodayTasks = todayTaskDao.getTodayActivityTasks()
-            val sortedTodayTasks =
-                supplementTodayTasks.combine(activityTodayTasks) { tasks1, tasks2 ->
-                    CustomResult.Success((tasks1 + tasks2).sortByDate())
+        if (forceRefresh) {
+            emit(CustomResult.Loading(todayTasks.first()))
+            val refresh = sync().last()
+            if (refresh is CustomResult.Success) {
+                todayTasks.collect { list ->
+                    emit(CustomResult.Success(list))
                 }
-            emitAll(sortedTodayTasks)
+            } else if (refresh is CustomResult.Failure) {
+                Timber.e(refresh.exception)
+                onForceRefreshFailed(refresh.exception!!)
+                todayTasks.collect { list ->
+                    emit(CustomResult.Failure(refresh.exception, list))
+                }
+            }
+        } else {
+            todayTasks.collect {
+                emit(CustomResult.Success(it))
+            }
         }
     }
 
-    fun createSupplement(localSupplement: LocalSupplement) = flow<CustomResult<OperationSource>> {
-        emit(CustomResult.Loading())
-        supplementDao.insertSupplement(localSupplement)
-        val localSupplementHistory = LocalSupplementHistory(
-            id = UUID.randomUUID(),
-            supplementId = localSupplement.id,
-            progress = 0,
-            completed = false,
-            createdAt = localSupplement.createdAt,
-            updatedAt = localSupplement.updatedAt,
-        )
-        supplementHistoryDao.insertSupplementHistory(localSupplementHistory)
-
-        try {
-            supplementApi.createSupplement(localSupplement.toNetworkModel())
-            supplementHistoryApi.createSupplementHistory(localSupplementHistory.toNetworkModel())
-            Timber.i("Supplement and SupplementHistory created locally and remotely")
-            emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
-        } catch (exception: Exception) {
-            Timber.e("Supplement and SupplementHistory created locally only\n$exception")
-            emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
-        }
-    }
-
-    fun createActivity(localActivity: LocalActivity) = flow<CustomResult<OperationSource>> {
+    fun createActivity(localActivity: LocalActivity) = flow {
         emit(CustomResult.Loading())
         activityDao.insertActivity(localActivity)
         val localActivityHistory = LocalActivityHistory(
@@ -132,81 +105,84 @@ class Repository @Inject constructor(
         }
     }
 
+    fun createSupplement(localSupplement: LocalSupplement) = flow {
+        emit(CustomResult.Loading())
+        supplementDao.insertSupplement(localSupplement)
+        val localSupplementHistory = LocalSupplementHistory(
+            id = UUID.randomUUID(),
+            supplementId = localSupplement.id,
+            progress = 0,
+            completed = false,
+            createdAt = localSupplement.createdAt,
+            updatedAt = localSupplement.updatedAt,
+        )
+        supplementHistoryDao.insertSupplementHistory(localSupplementHistory)
+
+        try {
+            supplementApi.createSupplement(localSupplement.toNetworkModel())
+            supplementHistoryApi.createSupplementHistory(localSupplementHistory.toNetworkModel())
+            Timber.i("Supplement and SupplementHistory created locally and remotely")
+            emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
+        } catch (exception: Exception) {
+            Timber.e("Supplement and SupplementHistory created locally only\n$exception")
+            emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
+        }
+    }
+
     fun getActivities(
         onForceRefreshFailed: suspend (Exception) -> Unit = {},
         forceRefresh: Boolean = false,
-    ) = flow<CustomResult<List<DomainActivity>>> {
-        // Tries to fetch initial cached data if operation is not force refresh
-        val localActivities = activityDao.getActivities().first()
-        emit(CustomResult.Loading(localActivities.map { it.toDomainModel() }))
+    ) = flow {
+        val activities = activityDao.getActivities()
 
-        // Tries to fetch data from network and store it in cache
-        try {
-            val networkActivities = activityApi.getActivities()
-            activityDao.insertActivities(networkActivities.map { it.toLocalModel() })
-        } catch (exception: Exception) {
-            Timber.e(exception)
-            if (forceRefresh)
-                onForceRefreshFailed(exception)
-        } finally {
-            // Fetches final cached data that will be collected
-            val activities = activityDao.getActivities().map { list ->
-                CustomResult.Success(list.map { it.toDomainModel() })
+        if (forceRefresh) {
+            emit(CustomResult.Loading(activities.first().map { it.toDomainModel() }))
+            val refresh = sync().last()
+            if (refresh is CustomResult.Success) {
+                activities.collect { list ->
+                    emit(CustomResult.Success(list.map { it.toDomainModel() }))
+                }
+            } else if (refresh is CustomResult.Failure) {
+                Timber.e(refresh.exception)
+                onForceRefreshFailed(refresh.exception!!)
+                activities.collect { list ->
+                    emit(CustomResult.Failure(refresh.exception, list.map { it.toDomainModel() }))
+                }
             }
-            emitAll(activities)
+        } else {
+            activities.collect { list ->
+                emit(CustomResult.Success(list.map { it.toDomainModel() }))
+            }
         }
     }
 
     fun getSupplements(
         onForceRefreshFailed: suspend (Exception) -> Unit = {},
         forceRefresh: Boolean = false,
-    ) = flow<CustomResult<List<Supplement>>> {
-        val localSupplements = supplementDao.getSupplements().first()
-        emit(CustomResult.Loading(localSupplements.map { it.toDomainModel() }))
+    ) = flow {
+        val supplements = supplementDao.getSupplements()
 
-        // Tries to fetch data from network and store it in cache
-        try {
-            val networkSupplements = supplementApi.getSupplements()
-            supplementDao.insertSupplements(networkSupplements.map { it.toLocalModel() })
-        } catch (exception: Exception) {
-            Timber.e(exception)
-            if (forceRefresh)
-                onForceRefreshFailed(exception)
-        } finally {
-            // Fetches final cached data that will be collected
-            val activities = supplementDao.getSupplements().map { list ->
-                CustomResult.Success(list.map { it.toDomainModel() })
+        if (forceRefresh) {
+            val refresh = sync().last()
+            if (refresh is CustomResult.Success) {
+                supplements.collect { list ->
+                    emit(CustomResult.Success(list.map { it.toDomainModel() }))
+                }
+            } else if (refresh is CustomResult.Failure) {
+                Timber.e(refresh.exception)
+                onForceRefreshFailed(refresh.exception!!)
+                supplements.collect { list ->
+                    emit(CustomResult.Failure(refresh.exception, list.map { it.toDomainModel() }))
+                }
             }
-            emitAll(activities)
+        } else {
+            supplements.collect { list ->
+                emit(CustomResult.Success(list.map { it.toDomainModel() }))
+            }
         }
     }
 
-    fun updateSupplement(localSupplement: LocalSupplement) = flow<CustomResult<OperationSource>> {
-        emit(CustomResult.Loading())
-        supplementDao.updateSupplement(localSupplement)
-
-        supplementHistoryDao.getSupplementsHistory(localSupplement.id).first().firstOrNull()
-            ?.let { localSupplementHistory ->
-                val newProgress = min(localSupplementHistory.progress, localSupplement.dosage)
-                supplementHistoryDao.updateSupplementHistory(
-                    localSupplementHistory.copy(
-                        progress = newProgress,
-                        completed = newProgress == localSupplement.dosage
-                    )
-                )
-            }
-
-        try {
-            supplementApi.updateSupplement(localSupplement.toNetworkModel())
-            Timber.i("Supplement updated locally and remotely")
-            emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
-        } catch (exception: Exception) {
-            Timber.e("Supplement updated locally only\n$exception")
-            emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
-        }
-    }
-
-    fun updateActivity(localActivity: LocalActivity) = flow<CustomResult<OperationSource>> {
+    fun updateActivity(localActivity: LocalActivity) = flow {
         emit(CustomResult.Loading())
         activityDao.updateActivity(localActivity)
 
@@ -231,26 +207,32 @@ class Repository @Inject constructor(
         }
     }
 
-    fun deleteSupplement(localSupplement: LocalSupplement) = flow<CustomResult<OperationSource>> {
+    fun updateSupplement(localSupplement: LocalSupplement) = flow {
         emit(CustomResult.Loading())
-        supplementDao.deleteSupplement(localSupplement)
+        supplementDao.updateSupplement(localSupplement)
 
-        supplementHistoryDao.getSupplementsHistory(localSupplement.id).first()
-            .forEach { localActivityHistory ->
-                supplementHistoryDao.deleteSupplementHistory(localActivityHistory)
+        supplementHistoryDao.getSupplementsHistory(localSupplement.id).first().firstOrNull()
+            ?.let { localSupplementHistory ->
+                val newProgress = min(localSupplementHistory.progress, localSupplement.dosage)
+                supplementHistoryDao.updateSupplementHistory(
+                    localSupplementHistory.copy(
+                        progress = newProgress,
+                        completed = newProgress == localSupplement.dosage
+                    )
+                )
             }
 
         try {
-            supplementApi.deleteSupplement(localSupplement.id)
-            Timber.i("Supplement deleted locally and remotely")
+            supplementApi.updateSupplement(localSupplement.toNetworkModel())
+            Timber.i("Supplement updated locally and remotely")
             emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
         } catch (exception: Exception) {
-            Timber.e("Supplement deleted locally only\n$exception")
+            Timber.e("Supplement updated locally only\n$exception")
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
     }
 
-    fun deleteActivity(localActivity: LocalActivity) = flow<CustomResult<OperationSource>> {
+    fun deleteActivity(localActivity: LocalActivity) = flow {
         emit(CustomResult.Loading())
         activityDao.deleteActivity(localActivity)
 
@@ -269,23 +251,27 @@ class Repository @Inject constructor(
         }
     }
 
-    fun updateSupplementHistory(localSupplementHistory: LocalSupplementHistory) =
-        flow<CustomResult<OperationSource>> {
-            emit(CustomResult.Loading())
-            supplementHistoryDao.updateSupplementHistory(localSupplementHistory)
+    fun deleteSupplement(localSupplement: LocalSupplement) = flow {
+        emit(CustomResult.Loading())
+        supplementDao.deleteSupplement(localSupplement)
 
-            try {
-                supplementHistoryApi.updateSupplementHistory(localSupplementHistory.toNetworkModel())
-                Timber.i("SupplementHistory updated locally and remotely")
-                emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
-            } catch (exception: Exception) {
-                Timber.e("SupplementHistory updated locally only\n$exception")
-                emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
+        supplementHistoryDao.getSupplementsHistory(localSupplement.id).first()
+            .forEach { localActivityHistory ->
+                supplementHistoryDao.deleteSupplementHistory(localActivityHistory)
             }
+
+        try {
+            supplementApi.deleteSupplement(localSupplement.id)
+            Timber.i("Supplement deleted locally and remotely")
+            emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
+        } catch (exception: Exception) {
+            Timber.e("Supplement deleted locally only\n$exception")
+            emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
+    }
 
     fun updateActivityHistory(localActivityHistory: LocalActivityHistory) =
-        flow<CustomResult<OperationSource>> {
+        flow {
             emit(CustomResult.Loading())
             activityHistoryDao.updateActivityHistory(localActivityHistory)
 
@@ -299,8 +285,201 @@ class Repository @Inject constructor(
             }
         }
 
-//    suspend fun sync() = scope.launch {
-//        val differedLocalSupplements = async { supplementDao.getSupplements().first() }
-//        val differedLocalActivities = async { activityDao.getActivities().first() }
-//    }
+    fun updateSupplementHistory(localSupplementHistory: LocalSupplementHistory) =
+        flow {
+            emit(CustomResult.Loading())
+            supplementHistoryDao.updateSupplementHistory(localSupplementHistory)
+
+            try {
+                supplementHistoryApi.updateSupplementHistory(localSupplementHistory.toNetworkModel())
+                Timber.i("SupplementHistory updated locally and remotely")
+                emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
+            } catch (exception: Exception) {
+                Timber.e("SupplementHistory updated locally only\n$exception")
+                emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
+            }
+        }
+
+    fun sync() = flow {
+        try {
+            Timber.i("sync started")
+            SharedData.isSyncing.value = true
+            val lastSyncDate = appState.getLastSyncDate().parse
+
+            // Fetches changes after last sync
+            // Local data
+            val localSupplements = supplementDao.getSupplements().first()
+            val localActivities = activityDao.getActivities().first()
+            val localSupplementsHistory = supplementHistoryDao.getAllSupplementsHistory().first()
+            val localActivitiesHistory = activityHistoryDao.getAllActivitiesHistory().first()
+            // Network data
+            val networkSupplements = supplementApi.getSupplements()
+            val networkActivities = activityApi.getActivities()
+            val networkSupplementsHistory = supplementHistoryApi.getSupplementsHistory()
+            val networkActivitiesHistory = activityHistoryApi.getActivitiesHistory()
+
+
+            // Performs syncing
+            //
+            localActivities.forEach { localActivity ->
+                // Checks if update, add, or delete
+                val networkActivity =
+                    networkActivities.firstOrNull { it.id == localActivity.id }
+                when {
+                    // Updated on local or network
+                    networkActivity != null -> {
+                        if (localActivity.updatedAt > networkActivity.updatedAt)
+                            activityApi.updateActivity(localActivity.toNetworkModel())
+                        else
+                            activityDao.updateActivity(networkActivity.toLocalModel())
+                    }
+                    // Added on local
+                    localActivity.createdAt.parse > lastSyncDate -> {
+                        activityApi.createActivity(localActivity.toNetworkModel())
+                    }
+                    // Deleted on network
+                    else -> {
+                        activityDao.deleteActivity(localActivity)
+                    }
+                }
+            }//localActivities
+
+            //
+            localSupplements.forEach { localSupplement ->
+                // Checks if update, add, or delete
+                val networkSupplement =
+                    networkSupplements.firstOrNull { it.id == localSupplement.id }
+                when {
+                    // Updated on local or network
+                    networkSupplement != null -> {
+                        if (localSupplement.updatedAt > networkSupplement.updatedAt)
+                            supplementApi.updateSupplement(localSupplement.toNetworkModel())
+                        else
+                            supplementDao.updateSupplement(networkSupplement.toLocalModel())
+                        return@forEach
+                    }
+                    // Added on local
+                    localSupplement.createdAt.parse > lastSyncDate -> {
+                        supplementApi.createSupplement(localSupplement.toNetworkModel())
+                    }
+                    // Deleted on network
+                    else -> {
+                        supplementDao.deleteSupplement(localSupplement)
+                    }
+                }
+            }//localSupplements
+
+            //
+            localActivitiesHistory.forEach { localActivityHistory ->
+                // Checks if update, add, or delete
+                val networkActivityHistory =
+                    networkActivitiesHistory.firstOrNull { it.id == localActivityHistory.id }
+                when {
+                    // Updated on local or network
+                    networkActivityHistory != null -> {
+                        if (localActivityHistory.updatedAt > networkActivityHistory.updatedAt)
+                            activityHistoryApi.updateActivityHistory(localActivityHistory.toNetworkModel())
+                        else
+                            activityHistoryDao.updateActivityHistory(networkActivityHistory.toLocalModel())
+                    }
+                    // Added on local
+                    localActivityHistory.createdAt.parse > lastSyncDate -> {
+                        activityHistoryApi.createActivityHistory(localActivityHistory.toNetworkModel())
+                    }
+                    // Deleted on network
+                    else -> {
+                        activityHistoryDao.deleteActivityHistory(localActivityHistory)
+                    }
+                }
+            }//localActivitiesHistory
+
+            //
+            localSupplementsHistory.forEach { localSupplementHistory ->
+                // Checks if update, add, or delete
+                val networkSupplementHistory =
+                    networkSupplementsHistory.firstOrNull { it.id == localSupplementHistory.id }
+                when {
+                    // Updated on local or network
+                    networkSupplementHistory != null -> {
+                        if (localSupplementHistory.updatedAt > networkSupplementHistory.updatedAt)
+                            supplementHistoryApi.updateSupplementHistory(localSupplementHistory.toNetworkModel())
+                        else
+                            supplementHistoryDao.updateSupplementHistory(
+                                networkSupplementHistory.toLocalModel()
+                            )
+                    }
+                    // Added on local
+                    localSupplementHistory.createdAt.parse > lastSyncDate -> {
+                        supplementHistoryApi.createSupplementHistory(localSupplementHistory.toNetworkModel())
+                    }
+                    // Deleted on network
+                    else -> {
+                        supplementHistoryDao.deleteSupplementHistory(localSupplementHistory)
+                    }
+                }
+            }//localSupplementsHistory
+
+            //
+            networkActivities.forEach { networkActivity ->
+                // Checks only if add or delete since we already checked updates
+                localActivities.firstOrNull { it.id == networkActivity.id }
+                    ?:
+                    // Added on network
+                    if (networkActivity.createdAt.parse > lastSyncDate)
+                        activityDao.insertActivity(networkActivity.toLocalModel())
+                    // Deleted on local
+                    else
+                        activityApi.deleteActivity(networkActivity.id)
+            }//networkActivities
+
+            //
+            networkSupplements.forEach { networkSupplement ->
+                // Checks only if add or delete since we already checked updates
+                localSupplements.firstOrNull { it.id == networkSupplement.id }
+                    ?:
+                    // Added on network
+                    if (networkSupplement.createdAt.parse > lastSyncDate)
+                        supplementDao.insertSupplement(networkSupplement.toLocalModel())
+                    // Deleted on local
+                    else
+                        supplementApi.deleteSupplement(networkSupplement.id)
+            }//networkSupplements
+
+            //
+            networkActivitiesHistory.forEach { networkActivityHistory ->
+                // Checks only if add or delete since we already checked updates
+                localActivitiesHistory.firstOrNull { it.id == networkActivityHistory.id }
+                    ?:
+                    // Added on network
+                    if (networkActivityHistory.createdAt.parse > lastSyncDate)
+                        activityHistoryDao.insertActivityHistory(networkActivityHistory.toLocalModel())
+                    // Deleted on local
+                    else
+                        activityHistoryApi.deleteActivityHistory(networkActivityHistory.id)
+            }//networkActivitiesHistory
+
+            //
+            networkSupplementsHistory.forEach { networkSupplementHistory ->
+                // Checks only if add or delete since we already checked updates
+                localSupplementsHistory.firstOrNull { it.id == networkSupplementHistory.id }
+                    ?:
+                    // Added on network
+                    if (networkSupplementHistory.createdAt.parse > lastSyncDate)
+                        supplementHistoryDao.insertSupplementHistory(networkSupplementHistory.toLocalModel())
+                    // Deleted on local
+                    else
+                        supplementHistoryApi.deleteSupplementHistory(networkSupplementHistory.id)
+            }//networkSupplementsHistory
+
+            appState.setLastSyncDate(timeNowString())
+
+            Timber.i("sync succeeded")
+            emit(CustomResult.Success(Unit))
+        } catch (exception: Exception) {
+            Timber.i("sync failed\n$exception")
+            emit(CustomResult.Failure(exception))
+        } finally {
+            SharedData.isSyncing.value = false
+        }
+    }
 }

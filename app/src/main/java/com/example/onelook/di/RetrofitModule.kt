@@ -1,4 +1,4 @@
-package com.example.onelook.di.appmodules
+package com.example.onelook.di
 
 import com.example.onelook.data.network.HeaderInterceptor
 import com.example.onelook.data.network.activities.ActivityApi
@@ -7,7 +7,6 @@ import com.example.onelook.data.network.supplements.SupplementApi
 import com.example.onelook.data.network.supplementshistory.SupplementHistoryApi
 import com.example.onelook.data.network.todaytasks.TodayTaskApi
 import com.example.onelook.data.network.users.UserApi
-import com.facebook.stetho.Stetho
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import dagger.Module
 import dagger.Provides

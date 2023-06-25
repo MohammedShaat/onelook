@@ -78,8 +78,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 todayTasksAdapter.submitList(result.data)
                 binding.apply {
 //                    recyclerViewTodayTasks.scrollToPosition(0)
-                    imageViewNotData.isVisible =
-                        result.data.isNullOrEmpty() && result is CustomResult.Success
+                    imageViewNotData.isVisible = result.data.isNullOrEmpty() &&
+                            (result !is CustomResult.Loading || imageViewNotData.isVisible)
                 }
             }
 
@@ -119,7 +119,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     }//NavigateToTimerFragment
 
                     HomeViewModel.HomeEvent.ShowThereIsActivityRunningMessage -> {
-                        Toast.makeText(context, R.string.there_is_activity_running, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            R.string.there_is_activity_running,
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }//ShowThereIsActivityRunningMessage
                 }
             }//homeEvent
@@ -165,6 +169,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                         true
                     }
+
                     else -> false
                 }
             }

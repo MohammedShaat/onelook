@@ -1,4 +1,4 @@
-package com.example.onelook.di.appmodules
+package com.example.onelook.di
 
 import android.content.Context
 import androidx.room.Room

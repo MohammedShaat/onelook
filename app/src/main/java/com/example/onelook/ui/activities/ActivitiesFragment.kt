@@ -29,7 +29,8 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
         _binding = FragmentActivitiesBinding.bind(view)
 
         // Populates activities list recyclerView
-        val activitiesAdapter = ActivityAdapter(viewModel::onEditActivityClicked, viewModel::onDeleteActivityClicked)
+        val activitiesAdapter =
+            ActivityAdapter(viewModel::onEditActivityClicked, viewModel::onDeleteActivityClicked)
         binding.recyclerViewActivitiesList.apply {
             setHasFixedSize(true)
             adapter = activitiesAdapter
@@ -61,8 +62,8 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
             // Activities list
             onCollect(activities) { result ->
                 activitiesAdapter.submitList(result.data)
-                binding.imageViewNotData.isVisible =
-                    result.data.isNullOrEmpty() && result is CustomResult.Success
+                binding.imageViewNotData.isVisible = result.data.isNullOrEmpty() &&
+                        (result !is CustomResult.Loading || binding.imageViewNotData.isVisible)
             }
 
             // Refreshing indicator
