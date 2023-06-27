@@ -178,7 +178,8 @@ class AddEditActivityViewModel @Inject constructor(
             reminder = when {
                 _reminderBefore.value!! && _reminderAfter.value!! -> "both"
                 _reminderBefore.value!! -> "before"
-                else -> "after"
+                _reminderAfter.value!! -> "after"
+                else -> null
             },
             createdAt = _activity.value?.createdAt ?: timeNowFormatted,
             updatedAt = timeNowFormatted,

@@ -55,10 +55,12 @@ class MainActivityViewModel @Inject constructor(
             appState == AppState.LOGGED_OUT -> emit(MainActivityEvent.NavigateToLoginFragment)
         }
 
-        // Sync
-        repository.sync().collect()
-
         hasBeenChecked.value = true
+
+        // Sync
+        if (appState == AppState.LOGGED_IN) {
+            repository.sync().collect()
+        }
     }
 
     sealed class MainActivityEvent {

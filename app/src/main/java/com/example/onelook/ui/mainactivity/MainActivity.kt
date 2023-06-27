@@ -5,7 +5,7 @@ import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.annotation.IdRes
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
@@ -13,13 +13,11 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.onelook.R
 import com.example.onelook.data.domain.ActivityHistory
-import com.example.onelook.ui.timer.TimerFragment
 import com.example.onelook.util.ACTIVITIES_TIMER_CHANNEL_ID
-import com.example.onelook.util.ACTIVITIES_TIMER_CHANNEL_NAME
+import com.example.onelook.util.REMINDERS_CHANNEL_ID
 import com.example.onelook.util.onCollect
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -31,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
 
     private var activityHistory: ActivityHistory? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +45,20 @@ class MainActivity : AppCompatActivity() {
         setupNavController()
         setupAndHandleBottomNavigation()
         hideBottomNavigation()
-        createNotificationChannel()
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            createNotificationChannel(
+                ACTIVITIES_TIMER_CHANNEL_ID,
+                applicationContext.getString(R.string.activities_timer_channel_name),
+                NotificationManager.IMPORTANCE_LOW
+            )
+            createNotificationChannel(
+                REMINDERS_CHANNEL_ID,
+                applicationContext.getString(R.string.reminders_channel_name),
+                NotificationManager.IMPORTANCE_HIGH
+            )
+        }
 
 
         // Observers
@@ -100,6 +112,7 @@ class MainActivity : AppCompatActivity() {
                             navController.navigate(action)
                             true
                         }
+
                         R.id.action_timer -> {
                             navController.popBackStack()
                             val action =
@@ -108,15 +121,18 @@ class MainActivity : AppCompatActivity() {
                             activityHistory = null
                             true
                         }
+
                         R.id.action_progress -> {
                             true
                         }
+
                         R.id.action_settings -> {
                             navController.popBackStack()
                             val action = MainActivityDirections.actionGlobalSettingsFragment()
                             navController.navigate(action)
                             true
                         }
+
                         else -> false
                     }
                 }
@@ -139,12 +155,12 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.selectedItemId = R.id.action_timer
     }
 
-    private fun createNotificationChannel() {
+    private fun createNotificationChannel(id: String, name: String, importance: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                ACTIVITIES_TIMER_CHANNEL_ID,
-                ACTIVITIES_TIMER_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_LOW
+                id,
+                name,
+                importance
             )
 
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)

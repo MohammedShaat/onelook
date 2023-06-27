@@ -1,5 +1,6 @@
 package com.example.onelook.data
 
+import android.content.Context
 import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.local.activities.ActivityDao
 import com.example.onelook.data.local.activities.LocalActivity
@@ -17,6 +18,7 @@ import com.example.onelook.data.network.activitieshistory.ActivityHistoryApi
 import com.example.onelook.data.network.supplements.SupplementApi
 import com.example.onelook.data.network.supplementshistory.SupplementHistoryApi
 import com.example.onelook.data.network.todaytasks.TodayTaskApi
+import com.example.onelook.util.AlarmManagerHelper
 import com.example.onelook.util.CustomResult
 import com.example.onelook.util.OperationSource
 import com.example.onelook.util.parse
@@ -24,6 +26,7 @@ import com.example.onelook.util.timeNowString
 import com.example.onelook.util.toDomainModel
 import com.example.onelook.util.toLocalModel
 import com.example.onelook.util.toNetworkModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -32,7 +35,9 @@ import timber.log.Timber
 import java.lang.Integer.min
 import java.util.UUID
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class Repository @Inject constructor(
     private val appState: AppStateManager,
     private val todayTaskApi: TodayTaskApi,
@@ -46,6 +51,8 @@ class Repository @Inject constructor(
     private val supplementDao: SupplementDao,
     private val supplementHistoryDao: SupplementHistoryDao,
     private val activityHistoryDao: ActivityHistoryDao,
+    @ApplicationContext private val context: Context,
+    private val alarmManagerHelper: AlarmManagerHelper
 ) {
 
 
@@ -103,6 +110,8 @@ class Repository @Inject constructor(
             Timber.e("Activity and ActivityHistory created locally only\n$exception")
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
+
+        alarmManagerHelper.setAlarmForActivity(localActivity)
     }
 
     fun createSupplement(localSupplement: LocalSupplement) = flow {
@@ -127,6 +136,8 @@ class Repository @Inject constructor(
             Timber.e("Supplement and SupplementHistory created locally only\n$exception")
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
+
+        alarmManagerHelper.setAlarmForSupplement(localSupplement)
     }
 
     fun getActivities(
@@ -160,6 +171,7 @@ class Repository @Inject constructor(
         onForceRefreshFailed: suspend (Exception) -> Unit = {},
         forceRefresh: Boolean = false,
     ) = flow {
+        Timber.i("getSupplements")
         val supplements = supplementDao.getSupplements()
 
         if (forceRefresh) {
@@ -205,6 +217,8 @@ class Repository @Inject constructor(
             Timber.e("Activity updated locally only\n$exception")
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
+
+        alarmManagerHelper.setAlarmForActivity(localActivity)
     }
 
     fun updateSupplement(localSupplement: LocalSupplement) = flow {
@@ -230,6 +244,8 @@ class Repository @Inject constructor(
             Timber.e("Supplement updated locally only\n$exception")
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
+
+        alarmManagerHelper.setAlarmForSupplement(localSupplement)
     }
 
     fun deleteActivity(localActivity: LocalActivity) = flow {
@@ -249,6 +265,8 @@ class Repository @Inject constructor(
             Timber.e("Activity deleted locally only\n$exception")
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
+
+        alarmManagerHelper.cancelAlarmOfActivity(localActivity)
     }
 
     fun deleteSupplement(localSupplement: LocalSupplement) = flow {
@@ -268,6 +286,8 @@ class Repository @Inject constructor(
             Timber.e("Supplement deleted locally only\n$exception")
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
+
+        alarmManagerHelper.cancelAlarmOfSupplement(localSupplement)
     }
 
     fun updateActivityHistory(localActivityHistory: LocalActivityHistory) =

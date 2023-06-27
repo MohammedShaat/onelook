@@ -10,7 +10,7 @@ data class DomainActivity(
     val type: String,
     val timeOfDay: String,
     val duration: String,
-    val reminder: String,
+    val reminder: String?,
     val userId: Int,
     val createdAt: String,
     val updatedAt: String

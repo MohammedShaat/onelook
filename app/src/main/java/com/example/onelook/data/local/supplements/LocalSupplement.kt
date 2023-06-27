@@ -2,9 +2,7 @@ package com.example.onelook.data.local.supplements
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.example.onelook.data.local.users.LocalUser
 import java.util.*
 
 @Entity("supplements")

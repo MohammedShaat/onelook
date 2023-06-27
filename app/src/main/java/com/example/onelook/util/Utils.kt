@@ -57,3 +57,13 @@ fun timeNowString(): String {
     return SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
         .format(Calendar.getInstance().time)
 }
+
+fun String.dayPartTo24Format(): String {
+    return when (this) {
+        "morning" -> "07:00"
+        "afternoon" -> "12:00"
+        "evening" -> "18:00"
+        "night" -> "21:00"
+        else -> "00:00"
+    }
+}

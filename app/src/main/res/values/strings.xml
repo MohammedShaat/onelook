@@ -188,4 +188,8 @@
     <string name="there_is_activity_running">There is an activity running</string>
     <string name="text_view_header_update">Make Changes</string>
     <string name="syncing">Syncing</string>
+    <string name="activities_timer_channel_name">Activities timer</string>
+    <string name="reminders_channel_name">Reminders</string>
+    <string name="time_to_take_supplement">It\'s time to take %s</string>
+    <string name="time_to_exercise">It\'s time to exercise %s</string>
 </resources>
