@@ -125,8 +125,8 @@
     <string name="after_meal">after</string>
     <string name="during_meal">with</string>
     <string name="add_supplement_text_view_set_reminder">Set Reminder</string>
-    <string name="text_view_reminder_before">Before</string>
-    <string name="text_view_reminder_after">After</string>
+    <string name="text_view_reminder_before">%d minutes before the time</string>
+    <string name="text_view_reminder_after">%d minutes after the time</string>
     <string name="button_add_supplement">Add supplement</string>
     <string name="add_activity_image_button_close">Close fragment of add activity</string>
     <string name="add_activity_text_view_header">Add Activity</string>
@@ -190,6 +190,8 @@
     <string name="syncing">Syncing</string>
     <string name="activities_timer_channel_name">Activities timer</string>
     <string name="reminders_channel_name">Reminders</string>
-    <string name="time_to_take_supplement">It\'s time to take %s</string>
-    <string name="time_to_exercise">It\'s time to exercise %s</string>
+    <string name="dont_forget_take_supplement">Don\'t forget to take %s</string>
+    <string name="dont_forget_exercise_activity">Don\'t forget to exercise %s</string>
+    <string name="time_remaining_for_supplement">%d minutes remaining for %s supplement</string>
+    <string name="time_remaining_for_activity">%d minutes remaining for %s activity</string>
 </resources>

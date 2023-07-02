@@ -34,7 +34,7 @@ class AddEditSupplementFragment : Fragment(R.layout.fragment_add_edit_supplement
         // Binding
         binding = FragmentAddEditSupplementBinding.bind(view)
 
-        // Sets up the title and buttons according to viewModel.updateSupplement
+        // Sets up views
         binding.apply {
             textViewHeader.setText(
                 if (viewModel.updateSupplement) R.string.text_view_header_update
@@ -45,6 +45,11 @@ class AddEditSupplementFragment : Fragment(R.layout.fragment_add_edit_supplement
                 else R.string.button_add_supplement
             )
             buttonCancel.isVisible = viewModel.updateSupplement
+
+            switchReminderBefore.text =
+                getString(R.string.text_view_reminder_before, REMINDER_TIME_ADDITION)
+            switchReminderAfter.text =
+                getString(R.string.text_view_reminder_after, REMINDER_TIME_ADDITION)
         }
 
         // Populates forms RecyclerView
@@ -273,8 +278,10 @@ class AddEditSupplementFragment : Fragment(R.layout.fragment_add_edit_supplement
                 AddEditSupplementViewModel.Fields.DOSAGE -> binding.textViewDosage.setTextColor(
                     color
                 )
+
                 AddEditSupplementViewModel.Fields.TIME_OF_DAY ->
                     binding.textViewTimeOfDay.setTextColor(color)
+
                 AddEditSupplementViewModel.Fields.TAKING_WITH_MEALS ->
                     binding.textViewTakingWithMeals.setTextColor(color)
             }

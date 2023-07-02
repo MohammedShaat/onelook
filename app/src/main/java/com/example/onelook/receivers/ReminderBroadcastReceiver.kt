@@ -19,29 +19,17 @@ class ReminderBroadcastReceiver : BroadcastReceiver() {
         if (context == null || intent == null) return
 
         val type = intent.getStringExtra("type") ?: return
-        val name = intent.getStringExtra("name") ?: return
         val id = intent.getStringExtra("id") ?: return
-
-        val message = context.getString(
-            if (type == "supplement") R.string.time_to_take_supplement
-            else R.string.time_to_exercise, name
-        )
-        getNotificationManager(context)?.sendNotification(
-            context,
-            UUID.fromString(id).hashCode(),
-            message,
-            REMINDERS_CHANNEL_ID,
-        )
+        val reminder = intent.getStringExtra("reminder") ?: return
 
         val inputData = Data.Builder().apply {
             putString("type", type)
             putString("id", id)
+            putString("reminder", reminder)
         }.build()
         val workRequest = OneTimeWorkRequest.Builder(ReminderWorker::class.java)
             .setInputData(inputData)
             .build()
         WorkManager.getInstance(context).enqueue(workRequest)
-
-
     }
 }

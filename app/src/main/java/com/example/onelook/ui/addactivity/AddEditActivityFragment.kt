@@ -32,7 +32,7 @@ class AddEditActivityFragment : Fragment(R.layout.fragment_add_edit_activity) {
         // Binding
         binding = FragmentAddEditActivityBinding.bind(view)
 
-        // Sets up the title and buttons according to viewModel.updateActivity
+        // Sets up views
         binding.apply {
             textViewHeader.setText(
                 if (viewModel.updateActivity) R.string.text_view_header_update
@@ -43,6 +43,12 @@ class AddEditActivityFragment : Fragment(R.layout.fragment_add_edit_activity) {
                 else R.string.button_add_activity
             )
             buttonCancel.isVisible = viewModel.updateActivity
+
+            switchReminderBefore.text =
+                getString(R.string.text_view_reminder_before, REMINDER_TIME_ADDITION)
+            switchReminderAfter.text =
+                getString(R.string.text_view_reminder_after, REMINDER_TIME_ADDITION)
+
         }
 
         // Populates types RecyclerView
@@ -237,6 +243,7 @@ class AddEditActivityFragment : Fragment(R.layout.fragment_add_edit_activity) {
                 AddEditActivityViewModel.Fields.TYPE -> binding.textViewType.setTextColor(color)
                 AddEditActivityViewModel.Fields.TIME_OF_DAY ->
                     binding.textViewTimeOfDay.setTextColor(color)
+
                 AddEditActivityViewModel.Fields.DURATION -> binding.textViewDuration.setTextColor(
                     color
                 )

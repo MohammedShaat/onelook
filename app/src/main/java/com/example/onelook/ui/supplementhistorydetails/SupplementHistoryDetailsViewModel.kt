@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.onelook.data.Repository
 import com.example.onelook.data.domain.SupplementHistory
-import com.example.onelook.ui.addEditsupplement.AddEditSupplementViewModel
 import com.example.onelook.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -48,7 +47,7 @@ class SupplementHistoryDetailsViewModel @Inject constructor(
                 id = idx,
                 isChecked = idx < _supplementHistory.value!!.progress,
                 time = _supplementHistory.value!!.timeOfDay
-                    ?: getTimeFromDosagesNumber(idx, _supplementHistory.value!!.dosage)
+                    ?: getTimeOfDosage(idx, _supplementHistory.value!!.dosage)
             )
         }
 

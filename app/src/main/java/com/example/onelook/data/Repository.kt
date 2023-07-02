@@ -22,7 +22,7 @@ import com.example.onelook.util.AlarmManagerHelper
 import com.example.onelook.util.CustomResult
 import com.example.onelook.util.OperationSource
 import com.example.onelook.util.parse
-import com.example.onelook.util.timeNowString
+import com.example.onelook.util.dateStr
 import com.example.onelook.util.toDomainModel
 import com.example.onelook.util.toLocalModel
 import com.example.onelook.util.toNetworkModel
@@ -111,7 +111,7 @@ class Repository @Inject constructor(
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
 
-        alarmManagerHelper.setAlarmForActivity(localActivity)
+        alarmManagerHelper.setAlarm(localActivity)
     }
 
     fun createSupplement(localSupplement: LocalSupplement) = flow {
@@ -137,7 +137,7 @@ class Repository @Inject constructor(
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
 
-        alarmManagerHelper.setAlarmForSupplement(localSupplement)
+        alarmManagerHelper.setAlarm(localSupplement)
     }
 
     fun getActivities(
@@ -171,7 +171,6 @@ class Repository @Inject constructor(
         onForceRefreshFailed: suspend (Exception) -> Unit = {},
         forceRefresh: Boolean = false,
     ) = flow {
-        Timber.i("getSupplements")
         val supplements = supplementDao.getSupplements()
 
         if (forceRefresh) {
@@ -218,7 +217,7 @@ class Repository @Inject constructor(
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
 
-        alarmManagerHelper.setAlarmForActivity(localActivity)
+        alarmManagerHelper.setAlarm(localActivity)
     }
 
     fun updateSupplement(localSupplement: LocalSupplement) = flow {
@@ -245,7 +244,7 @@ class Repository @Inject constructor(
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
 
-        alarmManagerHelper.setAlarmForSupplement(localSupplement)
+        alarmManagerHelper.setAlarm(localSupplement)
     }
 
     fun deleteActivity(localActivity: LocalActivity) = flow {
@@ -266,7 +265,7 @@ class Repository @Inject constructor(
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
 
-        alarmManagerHelper.cancelAlarmOfActivity(localActivity)
+        alarmManagerHelper.cancelAlarm(localActivity)
     }
 
     fun deleteSupplement(localSupplement: LocalSupplement) = flow {
@@ -287,7 +286,7 @@ class Repository @Inject constructor(
             emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
         }
 
-        alarmManagerHelper.cancelAlarmOfSupplement(localSupplement)
+        alarmManagerHelper.cancelAlarm(localSupplement)
     }
 
     fun updateActivityHistory(localActivityHistory: LocalActivityHistory) =
@@ -491,7 +490,7 @@ class Repository @Inject constructor(
                         supplementHistoryApi.deleteSupplementHistory(networkSupplementHistory.id)
             }//networkSupplementsHistory
 
-            appState.setLastSyncDate(timeNowString())
+            appState.setLastSyncDate(dateStr())
 
             Timber.i("sync succeeded")
             emit(CustomResult.Success(Unit))
@@ -500,6 +499,18 @@ class Repository @Inject constructor(
             emit(CustomResult.Failure(exception))
         } finally {
             SharedData.isSyncing.value = false
+        }
+    }
+
+    fun getLocalSupplementsHistory(supplementId: UUID) = flow {
+        supplementHistoryDao.getSupplementsHistory(supplementId).collect {
+            emit(CustomResult.Success(it))
+        }
+    }
+
+    fun getLocalActivitiesHistory(activityId: UUID) = flow {
+        activityHistoryDao.getActivitiesHistory(activityId).collect {
+            emit(CustomResult.Success(it))
         }
     }
 }

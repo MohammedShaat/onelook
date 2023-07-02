@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ui.addEditsupplement.AddEditSupplementFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -11,14 +12,13 @@
         android:background="?colorSurface"
         android:paddingHorizontal="@dimen/h_padding"
         android:paddingTop="@dimen/m_padding"
-        tools:context=".ui.addEditsupplement.AddEditSupplementFragment"
-        tools:scrollY="000px">
+        tools:scrollY="3000px">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/xxh_padding"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/xxh_padding">
 
             <ImageButton
                 android:id="@+id/image_button_close"
@@ -273,9 +273,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/m_margin"
                 android:drawableEnd="@drawable/ic_cancel"
+                android:text="@string/button_cancel"
                 android:visibility="gone"
-                tools:visibility="visible"
-                android:text="@string/button_cancel" />
+                tools:visibility="visible" />
 
         </LinearLayout>
     </ScrollView>
