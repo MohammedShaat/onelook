@@ -52,7 +52,7 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
                 calendarBefore.timeInMillis,
                 pendingIntent
             )
-            Timber.i("set reminder before:: ${calendarBefore.time}")
+            Timber.i("set supplement reminder before:: ${calendarBefore.time}")
         }
 
         // "Reminder after"
@@ -76,7 +76,7 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
                 calendarAfter.timeInMillis,
                 pendingIntent
             )
-            Timber.i("set reminder after:: ${calendarAfter.time}")
+            Timber.i("set supplement reminder after:: ${calendarAfter.time}")
         }
     }
 
@@ -130,7 +130,7 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
                 calendarBefore.timeInMillis,
                 pendingIntent
             )
-            Timber.i("set reminder before:: ${calendarBefore.time}")
+            Timber.i("set activity reminder before:: ${calendarBefore.time}")
         }
 
         // "Reminder after"
@@ -154,7 +154,7 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
                 calendarAfter.timeInMillis,
                 pendingIntent
             )
-            Timber.i("set reminder after:: ${calendarAfter.time}")
+            Timber.i("set activity reminder after:: ${calendarAfter.time}")
         }
     }
 
@@ -178,13 +178,8 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
     }
 
     private fun getCalendar(localSupplement: LocalSupplement): Calendar? {
-        val expirationCalendar = Calendar.getInstance().run {
-            time = localSupplement.createdAt.parse
-            val amount = Regex("""\d+""").find(localSupplement.duration ?: "")?.value?.toInt() ?: 0
-            add(Calendar.DAY_OF_YEAR, amount)
-            if (time == localSupplement.createdAt.parse) null
-            else this
-        }
+        val expirationCalendar =
+            getExpirationCalendar(localSupplement.createdAt.parse, localSupplement.duration)
 
         // When target time is today
         val targetTimeStr = when (val it = localSupplement.timeOfDay) {

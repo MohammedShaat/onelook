@@ -7,13 +7,13 @@ import java.util.*
 @Dao
 interface SupplementHistoryDao {
 
-    @Query("SELECT * FROM supplements_history WHERE supplement_id=:supplementId")
+    @Query("SELECT * FROM supplements_history WHERE supplement_id=:supplementId ORDER BY created_at DESC")
     fun getSupplementsHistory(supplementId: UUID): Flow<List<LocalSupplementHistory>>
 
     @Query("SELECT * FROM supplements_history WHERE id=:id")
     fun getSupplementHistoryById(id: UUID): Flow<LocalSupplementHistory>
 
-    @Query("SELECT * FROM supplements_history")
+    @Query("SELECT * FROM supplements_history ORDER BY created_at DESC")
     fun getAllSupplementsHistory(): Flow<List<LocalSupplementHistory>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

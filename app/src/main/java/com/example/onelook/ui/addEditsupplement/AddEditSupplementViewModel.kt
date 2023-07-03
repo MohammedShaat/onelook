@@ -10,10 +10,12 @@ import com.example.onelook.data.Repository
 import com.example.onelook.data.domain.Supplement
 import com.example.onelook.data.local.supplements.LocalSupplement
 import com.example.onelook.util.CustomResult
-import com.example.onelook.util.DATE_TIME_FORMAT
 import com.example.onelook.util.adapters.SelectableOvalNumber
 import com.example.onelook.util.adapters.SelectableRectWithText
 import com.example.onelook.util.capital
+import com.example.onelook.util.dateStr
+import com.example.onelook.util.isExpired
+import com.example.onelook.util.parse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,7 +24,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -75,6 +76,7 @@ class AddEditSupplementViewModel @Inject constructor(
     private val _supplement = state.getLiveData<Supplement?>("supplement", null)
     val supplement: LiveData<Supplement?>
         get() = _supplement
+
     init {
         Timber.i("supplement:: ${supplement.value}")
     }
@@ -224,19 +226,11 @@ class AddEditSupplementViewModel @Inject constructor(
     }
 
     private fun createOrUpdateSupplement() = viewModelScope.launch {
-        val formatter = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
-        val timeNow = Calendar.getInstance().time
-        val timeNowFormatted = formatter.format(timeNow)
-        val timeAfterDuration =
-            formatter.parse(_supplement.value?.createdAt ?: timeNowFormatted).let { date ->
-                val amount =
-                    durationsList[_selectedDuration.value!!].text[0].digitToIntOrNull() ?: 0
-                Calendar.getInstance().run {
-                    time = date!!
-                    add(Calendar.DAY_OF_YEAR, amount)
-                    time
-                }
-            }
+        val dateStr = dateStr()
+        val isExpired = isExpired(
+            _supplement.value?.createdAt?.parse ?: Date(),
+            durationsList[_selectedDuration.value!!].text.takeIf { _selectedDuration.value != 0 }
+        )
 
         val localSupplement = LocalSupplement(
             id = _supplement.value?.id ?: UUID.randomUUID(),
@@ -254,9 +248,9 @@ class AddEditSupplementViewModel @Inject constructor(
                 _reminderAfter.value!! -> "after"
                 else -> null
             },
-            completed = timeNow >= timeAfterDuration,
-            createdAt = _supplement.value?.createdAt ?: timeNowFormatted,
-            updatedAt = timeNowFormatted,
+            completed = isExpired,
+            createdAt = _supplement.value?.createdAt ?: dateStr,
+            updatedAt = dateStr,
         )
         Timber.i("local supplement ready")
 

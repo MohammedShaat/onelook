@@ -2,6 +2,8 @@ package com.example.onelook.util
 
 import android.app.Activity
 
+const val GLOBAL_TAG = "GlobalTag"
+
 const val ONE_TAP_REQ = Activity.RESULT_FIRST_USER
 const val PASSWORD_REST_EMAIL_REQ_KEY = "password_reset_email"
 
@@ -32,4 +34,4 @@ const val ACTION_OPEN_ACTIVITY_NOTIFICATION = "ACTION_OPEN_ACTIVITY_NOTIFICATION
 const val OPEN_TIMER_REQ = ONE_TAP_REQ + 1
 const val NOTIFICATION_TASK_REQ = OPEN_TIMER_REQ + 1
 
-const val REMINDER_TIME_ADDITION = 10    // 10
+const val REMINDER_TIME_ADDITION = 1    // 10

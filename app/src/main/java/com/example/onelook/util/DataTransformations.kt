@@ -1,6 +1,11 @@
 package com.example.onelook.util
 
-import com.example.onelook.data.domain.*
+import com.example.onelook.data.domain.ActivityHistory
+import com.example.onelook.data.domain.DomainActivity
+import com.example.onelook.data.domain.Notification
+import com.example.onelook.data.domain.Supplement
+import com.example.onelook.data.domain.SupplementHistory
+import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.local.activities.LocalActivity
 import com.example.onelook.data.local.activitieshistory.LocalActivityHistory
 import com.example.onelook.data.local.notifications.LocalNotification
@@ -263,3 +268,4 @@ fun LocalNotification.toDomainModel(history: TodayTask): Notification {
         history = history,
     )
 }
+

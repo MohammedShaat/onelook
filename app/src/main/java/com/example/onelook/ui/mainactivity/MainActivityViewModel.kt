@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.onelook.data.AppState
 import com.example.onelook.data.AppStateManager
 import com.example.onelook.data.Repository
+import com.example.onelook.data.SharedData
 import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.util.ACTION_OPEN_ACTIVITY_NOTIFICATION
@@ -77,7 +78,7 @@ class MainActivityViewModel @Inject constructor(
         hasBeenChecked.value = true
 
         // Sync
-        if (appState == AppState.LOGGED_IN) {
+        if (appState == AppState.LOGGED_IN && !SharedData.isSyncing.value) {
             repository.sync().collect()
         }
     }

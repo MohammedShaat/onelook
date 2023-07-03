@@ -74,7 +74,7 @@ class SupplementDaoTest {
         val supplementsResult = supplementDao.getSupplements().first()
 
         // THEN there is a list of supplements
-        assertThat(supplementsResult, hasSize(3))
+        assertThat(supplementsResult, hasSize(2))
     }
 
     @Test

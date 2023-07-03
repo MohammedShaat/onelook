@@ -1,6 +1,5 @@
 package com.example.onelook.data
 
-import android.content.Context
 import com.example.onelook.data.domain.DomainActivity
 import com.example.onelook.data.domain.Supplement
 import com.example.onelook.data.domain.SupplementHistory
@@ -26,12 +25,11 @@ import com.example.onelook.data.network.todaytasks.TodayTaskApi
 import com.example.onelook.util.AlarmManagerHelper
 import com.example.onelook.util.CustomResult
 import com.example.onelook.util.OperationSource
-import com.example.onelook.util.parse
 import com.example.onelook.util.dateStr
+import com.example.onelook.util.parse
 import com.example.onelook.util.toDomainModel
 import com.example.onelook.util.toLocalModel
 import com.example.onelook.util.toNetworkModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -354,8 +352,10 @@ class Repository @Inject constructor(
                     networkActivity != null -> {
                         if (localActivity.updatedAt > networkActivity.updatedAt)
                             activityApi.updateActivity(localActivity.toNetworkModel())
-                        else
+                        else if (networkActivity.updatedAt > localActivity.updatedAt) {
                             activityDao.updateActivity(networkActivity.toLocalModel())
+                            alarmManagerHelper.setAlarm(networkActivity.toLocalModel())
+                        }
                     }
                     // Added on local
                     localActivity.createdAt.parse > lastSyncDate -> {
@@ -364,6 +364,7 @@ class Repository @Inject constructor(
                     // Deleted on network
                     else -> {
                         activityDao.deleteActivity(localActivity)
+                        alarmManagerHelper.cancelAlarm(localActivity)
                     }
                 }
             }//localActivities
@@ -378,8 +379,10 @@ class Repository @Inject constructor(
                     networkSupplement != null -> {
                         if (localSupplement.updatedAt > networkSupplement.updatedAt)
                             supplementApi.updateSupplement(localSupplement.toNetworkModel())
-                        else
+                        else if (networkSupplement.updatedAt > localSupplement.updatedAt) {
                             supplementDao.updateSupplement(networkSupplement.toLocalModel())
+                            alarmManagerHelper.setAlarm(networkSupplement.toLocalModel())
+                        }
                         return@forEach
                     }
                     // Added on local
@@ -389,6 +392,7 @@ class Repository @Inject constructor(
                     // Deleted on network
                     else -> {
                         supplementDao.deleteSupplement(localSupplement)
+                        alarmManagerHelper.cancelAlarm(localSupplement)
                     }
                 }
             }//localSupplements
@@ -403,7 +407,7 @@ class Repository @Inject constructor(
                     networkActivityHistory != null -> {
                         if (localActivityHistory.updatedAt > networkActivityHistory.updatedAt)
                             activityHistoryApi.updateActivityHistory(localActivityHistory.toNetworkModel())
-                        else
+                        else if (networkActivityHistory.updatedAt > localActivityHistory.updatedAt)
                             activityHistoryDao.updateActivityHistory(networkActivityHistory.toLocalModel())
                     }
                     // Added on local
@@ -427,7 +431,7 @@ class Repository @Inject constructor(
                     networkSupplementHistory != null -> {
                         if (localSupplementHistory.updatedAt > networkSupplementHistory.updatedAt)
                             supplementHistoryApi.updateSupplementHistory(localSupplementHistory.toNetworkModel())
-                        else
+                        else if (networkSupplementHistory.updatedAt > localSupplementHistory.updatedAt)
                             supplementHistoryDao.updateSupplementHistory(
                                 networkSupplementHistory.toLocalModel()
                             )
@@ -449,8 +453,10 @@ class Repository @Inject constructor(
                 localActivities.firstOrNull { it.id == networkActivity.id }
                     ?:
                     // Added on network
-                    if (networkActivity.createdAt.parse > lastSyncDate)
+                    if (networkActivity.createdAt.parse > lastSyncDate) {
                         activityDao.insertActivity(networkActivity.toLocalModel())
+                        alarmManagerHelper.setAlarm(networkActivity.toLocalModel())
+                    }
                     // Deleted on local
                     else
                         activityApi.deleteActivity(networkActivity.id)
@@ -462,8 +468,10 @@ class Repository @Inject constructor(
                 localSupplements.firstOrNull { it.id == networkSupplement.id }
                     ?:
                     // Added on network
-                    if (networkSupplement.createdAt.parse > lastSyncDate)
+                    if (networkSupplement.createdAt.parse > lastSyncDate) {
                         supplementDao.insertSupplement(networkSupplement.toLocalModel())
+                        alarmManagerHelper.setAlarm(networkSupplement.toLocalModel())
+                    }
                     // Deleted on local
                     else
                         supplementApi.deleteSupplement(networkSupplement.id)
@@ -554,5 +562,34 @@ class Repository @Inject constructor(
         emit(CustomResult.Loading())
         notificationDao.insertNotification(localNotification)
         emit(CustomResult.Success(Unit))
+    }
+
+    fun createSupplementHistory(localSupplementHistory: LocalSupplementHistory) = flow {
+        emit(CustomResult.Loading())
+        supplementHistoryDao.insertSupplementHistory(localSupplementHistory)
+
+        try {
+            supplementHistoryApi.createSupplementHistory(localSupplementHistory.toNetworkModel())
+            Timber.i("SupplementHistory created locally and remotely")
+            emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
+        } catch (exception: Exception) {
+            Timber.e("SupplementHistory created locally only\n$exception")
+            emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
+        }
+    }
+
+    fun createActivityHistory(localActivityHistory: LocalActivityHistory) = flow {
+        emit(CustomResult.Loading())
+        activityHistoryDao.insertActivityHistory(localActivityHistory)
+
+        try {
+            activityHistoryApi.createActivityHistory(localActivityHistory.toNetworkModel())
+            Timber.i("ActivityHistory created locally and remotely")
+            emit(CustomResult.Success(OperationSource.LOCAL_AND_REMOTE))
+        } catch (exception: Exception) {
+            Timber.e("ActivityHistory created locally only\n$exception")
+            emit(CustomResult.Success(OperationSource.LOCAL_ONLY))
+        }
+
     }
 }

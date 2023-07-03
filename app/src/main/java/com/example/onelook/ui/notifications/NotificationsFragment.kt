@@ -1,23 +1,17 @@
 package com.example.onelook.ui.notifications
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
-import com.example.onelook.data.SharedData
 import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.data.domain.Notification
 import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.databinding.FragmentNotificationsBinding
-import com.example.onelook.ui.activities.ActivityAdapter
 import com.example.onelook.ui.mainactivity.MainActivity
-import com.example.onelook.util.ACTION_OPEN_ACTIVITY_NOTIFICATION
-import com.example.onelook.util.ACTION_OPEN_SUPPLEMENT_NOTIFICATION
 import com.example.onelook.util.CustomResult
 import com.example.onelook.util.hideBottomNavigation
 import com.example.onelook.util.onCollect

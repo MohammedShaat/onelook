@@ -24,14 +24,18 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentSettingsBinding.bind(view)
         showBottomNavigation()
+        _binding = FragmentSettingsBinding.bind(view)
 
         // Listeners
         binding.apply {
 
             textViewActivityManager.setOnClickListener {
                 viewModel.onActivityManagerClicked()
+            }
+
+            textViewContactUs.setOnClickListener {
+                viewModel.onContactUsClicked()
             }
 
             textViewPrivacyPolicy.setOnClickListener {
@@ -47,11 +51,16 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                         val action =
                             SettingsFragmentDirections.actionSettingsFragmentToActivityManagerFragment()
                         findNavController().navigate(action)
-                    }
+                    }//NavigateToActivityManagerFragment
 
                     SettingsViewModel.SettingsEvent.OpenExternalLinkOfPrivacyPolicy -> {
                         startPrivacyPolicyActivity()
-                    }
+                    }//OpenExternalLinkOfPrivacyPolicy
+
+                    SettingsViewModel.SettingsEvent.NavigateToContactUsFragment -> {
+                        val action = SettingsFragmentDirections.actionSettingsFragmentToContactUsFragment()
+                        findNavController().navigate(action)
+                    }//NavigateToContactUsFragment
                 }
             }
         }//Observers

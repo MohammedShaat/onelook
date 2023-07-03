@@ -55,7 +55,7 @@ class ReminderWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
-            Timber.i("doWork()")
+            Timber.i("doWork() started")
 
             type = inputData.getString("type") ?: return@withContext Result.failure()
             id = inputData.getString("id") ?: return@withContext Result.failure()
@@ -68,6 +68,7 @@ class ReminderWorker @AssistedInject constructor(
             sendNotification()
             setNextAlarm()
 
+            Timber.i("doWork() finished")
             return@withContext Result.success()
         }
     }
@@ -83,6 +84,7 @@ class ReminderWorker @AssistedInject constructor(
         if ((supplementHistory?.completed ?: activityHistory?.completed) == true)
             return
 
+        Timber.i("sendNotification() ${supplement?.let { "supplement" } ?: "activity"}")
         val message =
             if (reminder == "before") context.getString(
                 supplement?.let { R.string.time_remaining_for_supplement }
@@ -97,7 +99,8 @@ class ReminderWorker @AssistedInject constructor(
             )
 
         val taskIntent = Intent(context, MainActivity::class.java).apply {
-            action = supplement?.let { ACTION_OPEN_SUPPLEMENT_NOTIFICATION } ?: ACTION_OPEN_ACTIVITY_NOTIFICATION
+            action = supplement?.let { ACTION_OPEN_SUPPLEMENT_NOTIFICATION }
+                ?: ACTION_OPEN_ACTIVITY_NOTIFICATION
             putExtra("supplement_history", supplementHistory)
             putExtra("activity_history", activityHistory)
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -108,6 +111,7 @@ class ReminderWorker @AssistedInject constructor(
             taskIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
+
         getNotificationManager(context)?.sendNotification(
             context,
             UUID.fromString(id).hashCode(),

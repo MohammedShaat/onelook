@@ -109,6 +109,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_activityManagerFragment"
             app:destination="@id/activityManagerFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_contactUsFragment"
+            app:destination="@id/contactUsFragment" />
     </fragment>
     <fragment
         android:id="@+id/activityManagerFragment"
@@ -188,4 +191,9 @@
         android:name="com.example.onelook.ui.notifications.NotificationsFragment"
         android:label="fragment_notifications"
         tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/contactUsFragment"
+        android:name="com.example.onelook.ui.contactus.ContactUsFragment"
+        android:label="fragment_contact_us"
+        tools:layout="@layout/fragment_contact_us" />
 </navigation>

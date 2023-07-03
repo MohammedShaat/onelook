@@ -24,8 +24,13 @@ class SettingsViewModel @Inject constructor(
         _settingsEvent.emit(SettingsEvent.OpenExternalLinkOfPrivacyPolicy)
     }
 
+    fun onContactUsClicked() = viewModelScope.launch {
+        _settingsEvent.emit(SettingsEvent.NavigateToContactUsFragment)
+    }
+
     sealed class SettingsEvent {
         object NavigateToActivityManagerFragment : SettingsEvent()
         object OpenExternalLinkOfPrivacyPolicy : SettingsEvent()
+        object NavigateToContactUsFragment : SettingsEvent()
     }
 }

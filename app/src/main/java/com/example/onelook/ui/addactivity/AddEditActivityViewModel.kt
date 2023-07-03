@@ -17,7 +17,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -165,9 +164,7 @@ class AddEditActivityViewModel @Inject constructor(
     }
 
     private fun createOrUpdateActivity() = viewModelScope.launch {
-        val formatter = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
-        val timeNow = Calendar.getInstance().time
-        val timeNowFormatted = formatter.format(timeNow)
+        val dateStr = dateStr()
 
         val localActivity = LocalActivity(
             id = _activity.value?.id ?: UUID.randomUUID(),
@@ -181,8 +178,8 @@ class AddEditActivityViewModel @Inject constructor(
                 _reminderAfter.value!! -> "after"
                 else -> null
             },
-            createdAt = _activity.value?.createdAt ?: timeNowFormatted,
-            updatedAt = timeNowFormatted,
+            createdAt = _activity.value?.createdAt ?: dateStr,
+            updatedAt = dateStr,
         )
 
         if (_activity.value == null)

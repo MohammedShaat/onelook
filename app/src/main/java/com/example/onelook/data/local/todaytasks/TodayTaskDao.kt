@@ -23,7 +23,7 @@ interface TodayTaskDao {
                 "supplements.taking_with_meals AS takingWithMeals " +
                 "FROM supplements_history INNER JOIN supplements " +
                 "ON supplements_history.supplement_id=supplements.id " +
-                "WHERE strftime('%Y-%m-%d', supplements_history.created_at)=date('now')"
+                "WHERE supplements.completed=0 AND strftime('%Y-%m-%d', supplements_history.created_at)=date('now')"
     )
     fun getTodaySupplementTasks(): Flow<List<SupplementHistory>>
 

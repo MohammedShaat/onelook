@@ -196,4 +196,11 @@
     <string name="time_remaining_for_activity">%d minutes remaining for %s activity</string>
     <string name="notifications_tool_bar_title">Notifications</string>
     <string name="item_notification_image_view_activity_icon">Image represents the task</string>
+    <string name="onelook_phone_number">+42 564 342 786</string>
+    <string name="onelook_email">contact@onelook.com</string>
+    <string name="contact_us_text_view_location">One Look Corp.</string>
+    <string name="onelook_location">1277 Saige Point Apt. 140\n65479 West Shaun,\nOklahoma</string>
+    <string name="contact_us_tool_bar_title">Contact Us</string>
+    <string name="contact_us_text_view_logo">One Look</string>
+    <string name="copied_to_clipbaord">%s copied to clipboard</string>
 </resources>
