@@ -1,18 +1,21 @@
 package com.example.onelook.ui.home
 
-import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.onelook.data.AppStateManager
 import com.example.onelook.data.Repository
 import com.example.onelook.data.SharedData
 import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.data.domain.TodayTask
+import com.example.onelook.di.ApplicationCoroutine
 import com.example.onelook.services.TimerService
 import com.example.onelook.util.CustomResult
+import com.example.onelook.util.DATE_SEVENTIES
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -23,7 +26,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     val auth: FirebaseAuth,
     private val repository: Repository,
-    @ApplicationContext private val context: Context
+    private val appStateManager: AppStateManager,
+    @ApplicationCoroutine private val applicationCoroutine: CoroutineScope
 ) : ViewModel() {
 
     val userFirstName: String?
@@ -44,6 +48,12 @@ class HomeViewModel @Inject constructor(
     val homeEvent = _homeEvent.asSharedFlow()
 
     init {
+        // Sync data
+        applicationCoroutine.launch {
+            if (appStateManager.getLastSyncDate() == DATE_SEVENTIES && !SharedData.isSyncing.value)
+                repository.sync().collect()
+        }
+
         fetchTodayTasks()
     }
 

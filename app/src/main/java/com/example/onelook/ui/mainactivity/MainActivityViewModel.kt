@@ -9,6 +9,7 @@ import com.example.onelook.data.AppStateManager
 import com.example.onelook.data.Repository
 import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.ui.timer.TimerFragment
+import com.example.onelook.util.ACTION_OPEN_TIMER
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,18 +38,12 @@ class MainActivityViewModel @Inject constructor(
         }
 
         val appState = appStateManager.getAppState()
-        val fragmentToOpen = intent.getStringExtra("fragment_to_open")
         when {
             appState == AppState.FIRST_LAUNCH -> _isChecking.emit(false)
 
-            fragmentToOpen != null && fragmentToOpen == TimerFragment::class.java.name ->
-                emit(
-                    MainActivityEvent.NavigateToTimerFragment(
-                        intent.getParcelableExtra(
-                            "activity_history"
-                        )
-                    )
-                )
+            intent.action == ACTION_OPEN_TIMER -> emit(
+                MainActivityEvent.NavigateToTimerFragment(intent.getParcelableExtra("activity_history"))
+            )
 
             appState == AppState.LOGGED_IN -> emit(MainActivityEvent.NavigateToHomeFragment)
 

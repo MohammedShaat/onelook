@@ -75,7 +75,7 @@ class TimerViewModel @Inject constructor(
             context.startService(timerServiceIntent)
         } else {
             Timber.i("Intent(PLAY_PAUSE_ACTION)")
-            val timerStatusIntent = Intent(TIMER_PLAYING_ACTION).apply {
+            val timerStatusIntent = Intent(ACTION_TIMER_PLAYING).apply {
                 val timerStatus =
                     if (_isPlaying.value) TimerService.TimerPlayingStatus.PAUSE else TimerService.TimerPlayingStatus.PLAY
                 putExtra("timer_playing_status", timerStatus)
@@ -90,7 +90,7 @@ class TimerViewModel @Inject constructor(
         _isSaving.value = true
         _isStoppable.value = false
         _isPlaying.value = false
-        val timerStatusIntent = Intent(TIMER_PLAYING_ACTION).apply {
+        val timerStatusIntent = Intent(ACTION_TIMER_PLAYING).apply {
             putExtra("timer_playing_status", TimerService.TimerPlayingStatus.STOP)
         }
         context.sendBroadcast(timerStatusIntent)
@@ -108,7 +108,7 @@ class TimerViewModel @Inject constructor(
     private fun registerTimerReceiver() {
         timerReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action != TIMER_VALUE_ACTION) return
+                if (intent?.action != ACTION_TIMER_VALUE) return
 
                 val status = intent.getParcelableExtra<TimerValueStatus>("timer_value_status")!!
 //                if (activityHistory != null)
@@ -118,7 +118,7 @@ class TimerViewModel @Inject constructor(
                 _isSaving.value = status is TimerValueStatus.Save
             }
         }
-        context.registerReceiver(timerReceiver, IntentFilter(TIMER_VALUE_ACTION))
+        context.registerReceiver(timerReceiver, IntentFilter(ACTION_TIMER_VALUE))
     }
 
     private fun unRegisterTimerReceiver() {

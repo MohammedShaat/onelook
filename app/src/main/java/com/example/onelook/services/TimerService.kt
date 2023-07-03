@@ -14,7 +14,6 @@ import android.os.Parcelable
 import com.example.onelook.data.Repository
 import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.ui.mainactivity.MainActivity
-import com.example.onelook.ui.timer.TimerFragment
 import com.example.onelook.ui.timer.TimerViewModel
 import com.example.onelook.util.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -117,7 +116,7 @@ class TimerService : Service() {
     private fun registerPlayPauseReceiver() {
         playPauseReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action != TIMER_PLAYING_ACTION) return
+                if (intent?.action != ACTION_TIMER_PLAYING) return
                 when (intent.getParcelableExtra<TimerPlayingStatus>("timer_playing_status")!!) {
                     TimerPlayingStatus.PLAY -> playTimer()
                     TimerPlayingStatus.PAUSE -> pauseTimer()
@@ -128,7 +127,7 @@ class TimerService : Service() {
                 }
             }
         }
-        registerReceiver(playPauseReceiver, IntentFilter(TIMER_PLAYING_ACTION))
+        registerReceiver(playPauseReceiver, IntentFilter(ACTION_TIMER_PLAYING))
     }
 
     private fun unRegisterPlayPauseReceiver() {
@@ -168,8 +167,9 @@ class TimerService : Service() {
 
     private fun sendOnGoingNotification() {
         val mainActivityIntent = Intent(this, MainActivity::class.java).apply {
-            putExtra("fragment_to_open", TimerFragment::class.java.name)
+            action = ACTION_OPEN_TIMER
             putExtra("activity_history", currentActivityHistory)
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
         val pendingIntent = PendingIntent.getActivity(
             this,
@@ -184,7 +184,7 @@ class TimerService : Service() {
     }
 
     private fun notifyFragment(status: TimerViewModel.TimerValueStatus) {
-        val intent = Intent(TIMER_VALUE_ACTION).apply {
+        val intent = Intent(ACTION_TIMER_VALUE).apply {
             putExtra("timer_value", timer)
             putExtra("timer_value_status", status)
         }
