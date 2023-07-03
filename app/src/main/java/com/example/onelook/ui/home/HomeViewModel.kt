@@ -47,6 +47,8 @@ class HomeViewModel @Inject constructor(
     private val _homeEvent = MutableSharedFlow<HomeEvent>()
     val homeEvent = _homeEvent.asSharedFlow()
 
+    val unreadNotifications = appStateManager.getUnreadNotifications()
+
     init {
         // Sync data
         applicationCoroutine.launch {

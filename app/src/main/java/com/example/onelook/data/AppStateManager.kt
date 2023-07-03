@@ -5,12 +5,14 @@ import androidx.datastore.preferences.createDataStore
 import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.emptyPreferences
 import androidx.datastore.preferences.preferencesKey
-import com.example.onelook.GLOBAL_TAG
 import com.example.onelook.util.DATE_SEVENTIES
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
+import java.lang.Integer.max
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,6 +24,7 @@ class AppStateManager @Inject constructor(@ApplicationContext context: Context) 
         preferencesKey<String>("app_state")
     private val accessTokenKey = preferencesKey<String>("access_token")
     private val lastSyncDateKey = preferencesKey<String>("last_sync_date")
+    private val unreadNotifications = preferencesKey<Int>("unread_notifications")
 
     private val preferencesFlow = dataStore.data.catch { exception ->
         Timber.e(exception)
@@ -58,6 +61,30 @@ class AppStateManager @Inject constructor(@ApplicationContext context: Context) 
     suspend fun setLastSyncDate(date: String) {
         dataStore.edit { preferences ->
             preferences[lastSyncDateKey] = date
+        }
+    }
+
+    fun getUnreadNotifications(): Flow<Int> {
+        return preferencesFlow.map { preferences ->
+            preferences[unreadNotifications] ?: 0
+        }
+    }
+
+    suspend fun increaseUnreadNotifications() {
+        dataStore.edit { preferences ->
+            preferences[unreadNotifications] = getUnreadNotifications().first() + 1
+        }
+    }
+
+    suspend fun decreaseUnreadNotifications() {
+        dataStore.edit { preferences ->
+            preferences[unreadNotifications] = max(getUnreadNotifications().first() - 1, 0)
+        }
+    }
+
+    suspend fun clearUnreadNotifications() {
+        dataStore.edit { preferences ->
+            preferences[unreadNotifications] = 0
         }
     }
 }

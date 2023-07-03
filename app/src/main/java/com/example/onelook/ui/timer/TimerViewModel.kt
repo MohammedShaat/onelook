@@ -29,7 +29,7 @@ class TimerViewModel @Inject constructor(
     val timerEvent = _timerEvent.asSharedFlow()
 
     val activityHistory =
-        savedState.get<ActivityHistory>("activityHistory") ?: TimerService.currentActivityHistory
+        TimerService.currentActivityHistory ?: savedState.get<ActivityHistory>("activityHistory")
 
     private val _timer = MutableStateFlow(
         when {

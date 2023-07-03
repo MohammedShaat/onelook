@@ -194,4 +194,6 @@
     <string name="dont_forget_exercise_activity">Don\'t forget to exercise %s</string>
     <string name="time_remaining_for_supplement">%d minutes remaining for %s supplement</string>
     <string name="time_remaining_for_activity">%d minutes remaining for %s activity</string>
+    <string name="notifications_tool_bar_title">Notifications</string>
+    <string name="item_notification_image_view_activity_icon">Image represents the task</string>
 </resources>

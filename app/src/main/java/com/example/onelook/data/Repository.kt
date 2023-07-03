@@ -1,11 +1,16 @@
 package com.example.onelook.data
 
 import android.content.Context
+import com.example.onelook.data.domain.DomainActivity
+import com.example.onelook.data.domain.Supplement
+import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.data.local.activities.ActivityDao
 import com.example.onelook.data.local.activities.LocalActivity
 import com.example.onelook.data.local.activitieshistory.ActivityHistoryDao
 import com.example.onelook.data.local.activitieshistory.LocalActivityHistory
+import com.example.onelook.data.local.notifications.LocalNotification
+import com.example.onelook.data.local.notifications.NotificationDao
 import com.example.onelook.data.local.supplements.LocalSupplement
 import com.example.onelook.data.local.supplements.SupplementDao
 import com.example.onelook.data.local.supplementshistory.LocalSupplementHistory
@@ -51,7 +56,7 @@ class Repository @Inject constructor(
     private val supplementDao: SupplementDao,
     private val supplementHistoryDao: SupplementHistoryDao,
     private val activityHistoryDao: ActivityHistoryDao,
-    @ApplicationContext private val context: Context,
+    private val notificationDao: NotificationDao,
     private val alarmManagerHelper: AlarmManagerHelper
 ) {
 
@@ -502,15 +507,52 @@ class Repository @Inject constructor(
         }
     }
 
-    fun getLocalSupplementsHistory(supplementId: UUID) = flow {
-        supplementHistoryDao.getSupplementsHistory(supplementId).collect {
-            emit(CustomResult.Success(it))
+    fun getSupplementsHistory(supplement: Supplement) = flow {
+        supplementHistoryDao.getSupplementsHistory(supplement.id).collect { list ->
+            emit(CustomResult.Success(list.map { it.toDomainModel(supplement) }))
         }
     }
 
-    fun getLocalActivitiesHistory(activityId: UUID) = flow {
-        activityHistoryDao.getActivitiesHistory(activityId).collect {
-            emit(CustomResult.Success(it))
+    fun getActivitiesHistory(activity: DomainActivity) = flow {
+        activityHistoryDao.getActivitiesHistory(activity.id).collect { list ->
+            emit(CustomResult.Success(list.map { it.toDomainModel(activity) }))
         }
+    }
+
+    fun getNotifications() = flow {
+        emit(CustomResult.Loading())
+        notificationDao.getNotifications().collect { localNotifications ->
+
+            val notifications = localNotifications.map { localNotification ->
+                val history =
+                    if (localNotification.historyType == SupplementHistory::class.java.name) {
+                        val localSupplementHistory =
+                            supplementHistoryDao.getSupplementHistoryById(localNotification.historyId)
+                                .first()
+                        val supplement =
+                            supplementDao.getSupplementById(localSupplementHistory.supplementId)
+                                .first().toDomainModel()
+                        localSupplementHistory.toDomainModel(supplement)
+
+                    } else {
+                        val localActivityHistory =
+                            activityHistoryDao.getActivityHistoryById(localNotification.historyId)
+                                .first()
+                        val activity =
+                            activityDao.getActivityById(localActivityHistory.activityId)
+                                .first().toDomainModel()
+                        localActivityHistory.toDomainModel(activity)
+                    }
+                localNotification.toDomainModel(history)
+            }
+
+            emit(CustomResult.Success(notifications))
+        }
+    }
+
+    fun createNotification(localNotification: LocalNotification) = flow {
+        emit(CustomResult.Loading())
+        notificationDao.insertNotification(localNotification)
+        emit(CustomResult.Success(Unit))
     }
 }

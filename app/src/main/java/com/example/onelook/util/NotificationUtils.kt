@@ -7,7 +7,13 @@ import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.example.onelook.R
 
-fun NotificationManager.sendNotification(context: Context, id: Int, message: String, channelId: String) {
+fun NotificationManager.sendNotification(
+    context: Context,
+    id: Int,
+    message: String,
+    channelId: String,
+    pendingIntent: PendingIntent? = null
+) {
 
     val notificationBuilder = NotificationCompat.Builder(context, channelId)
         .setContentTitle(context.getString(R.string.notification_title))
@@ -15,6 +21,7 @@ fun NotificationManager.sendNotification(context: Context, id: Int, message: Str
         .setContentText(message)
         .setAutoCancel(true)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
+        .setContentIntent(pendingIntent)
 
     notify(id, notificationBuilder.build())
 }
@@ -23,7 +30,7 @@ fun getNotification(
     context: Context,
     message: String,
     channelId: String,
-    intent: PendingIntent? = null
+    pendingIntent: PendingIntent? = null
 ): Notification {
 
     val notificationBuilder = NotificationCompat.Builder(context, channelId)
@@ -31,7 +38,7 @@ fun getNotification(
         .setSmallIcon(R.drawable.ic_brand_logo)
         .setContentText(message)
         .setPriority(NotificationCompat.PRIORITY_LOW)
-        .setContentIntent(intent)
+        .setContentIntent(pendingIntent)
 
     return notificationBuilder.build()
 }

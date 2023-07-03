@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
@@ -14,12 +13,16 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.onelook.R
 import com.example.onelook.data.domain.ActivityHistory
+import com.example.onelook.data.domain.SupplementHistory
+import com.example.onelook.util.ACTION_OPEN_ACTIVITY_NOTIFICATION
+import com.example.onelook.util.ACTION_OPEN_SUPPLEMENT_NOTIFICATION
 import com.example.onelook.util.ACTION_OPEN_TIMER
 import com.example.onelook.util.ACTIVITIES_TIMER_CHANNEL_ID
 import com.example.onelook.util.REMINDERS_CHANNEL_ID
 import com.example.onelook.util.onCollect
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -51,14 +54,14 @@ class MainActivity : AppCompatActivity() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             createNotificationChannel(
-                ACTIVITIES_TIMER_CHANNEL_ID,
-                applicationContext.getString(R.string.activities_timer_channel_name),
-                NotificationManager.IMPORTANCE_LOW
+                id = ACTIVITIES_TIMER_CHANNEL_ID,
+                name = applicationContext.getString(R.string.activities_timer_channel_name),
+                importance = NotificationManager.IMPORTANCE_LOW
             )
             createNotificationChannel(
-                REMINDERS_CHANNEL_ID,
-                applicationContext.getString(R.string.reminders_channel_name),
-                NotificationManager.IMPORTANCE_HIGH
+                id = REMINDERS_CHANNEL_ID,
+                name = applicationContext.getString(R.string.reminders_channel_name),
+                importance = NotificationManager.IMPORTANCE_HIGH,
             )
         }
 
@@ -87,6 +90,13 @@ class MainActivity : AppCompatActivity() {
                     is MainActivityViewModel.MainActivityEvent.NavigateToTimerFragment -> {
                         selectBottomNavigationSettingsItem(event.activityHistory)
                     }//NavigateToTimerFragment
+
+                    is MainActivityViewModel.MainActivityEvent.NavigateToSupplementHistoryDetailsFragment -> {
+                        navController.popBackStack()
+                        val action =
+                            MainActivityDirections.actionGlobalSupplementHistoryDetails(event.supplementHistory)
+                        navController.navigate(action)
+                    }//NavigateToSupplementHistoryDetailsFragment
                 }
             }
         }//Observers
@@ -94,10 +104,24 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if (intent?.action == ACTION_OPEN_TIMER) {
+        if (intent?.action == ACTION_OPEN_ACTIVITY_NOTIFICATION) {
             val intentActivityHistory =
                 intent.getParcelableExtra<ActivityHistory>("activity_history")
             selectBottomNavigationSettingsItem(intentActivityHistory)
+            viewModel.onNotificationTapped()
+            return
+        }
+
+        if (intent?.action == ACTION_OPEN_SUPPLEMENT_NOTIFICATION) {
+            val supplementHistory =
+                intent.getParcelableExtra<SupplementHistory>("supplement_history") ?: return
+            navController.navigate(
+                MainActivityDirections.actionGlobalSupplementHistoryDetails(
+                    supplementHistory
+                )
+            )
+            viewModel.onNotificationTapped()
+            return
         }
     }
 
@@ -125,9 +149,9 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         R.id.action_timer -> {
-                            navController.popBackStack()
                             val action =
                                 MainActivityDirections.actionGlobalTimerFragment(activityHistory)
+                            navController.popBackStack(navController.backQueue.first().destination.id, true)
                             navController.navigate(action)
                             activityHistory = null
                             true

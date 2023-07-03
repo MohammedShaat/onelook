@@ -113,6 +113,9 @@ dependencies {
     //WorkManager
     implementation "androidx.work:work-runtime-ktx:2.8.1"
 
+    //TimeAgo
+    implementation 'com.github.marlonlom:timeago:4.0.3'
+
 
     //Unit Test
     //Hamcrest

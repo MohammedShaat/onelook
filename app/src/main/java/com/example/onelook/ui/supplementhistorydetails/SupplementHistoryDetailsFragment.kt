@@ -10,6 +10,7 @@ import com.example.onelook.R
 import com.example.onelook.databinding.FragmentSupplementHistoryDetailsBinding
 import com.example.onelook.ui.home.supplementIcon
 import com.example.onelook.util.hideBottomNavigation
+import com.example.onelook.util.hideSplashScreen
 import com.example.onelook.util.onCollect
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -75,6 +76,11 @@ class SupplementHistoryDetailsFragment : Fragment(R.layout.fragment_supplement_h
                 }
             }
         }//Observers
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hideSplashScreen()
     }
 
     override fun onDestroyView() {

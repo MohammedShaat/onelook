@@ -10,6 +10,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
+import com.example.onelook.data.SharedData
 import com.example.onelook.databinding.FragmentHomeBinding
 import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.util.*
@@ -86,6 +87,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             // ProgressBar of refreshing
             onCollect(isRefreshing) { isRefreshing ->
                 binding.swipeRefreshLayout.isRefreshing = isRefreshing
+            }
+
+            onCollect(unreadNotifications) { unread ->
+                binding.toolbar.menu.findItem(R.id.action_notifications).setIcon(
+                    if (unread > 0) R.drawable.ic_notifications_active
+                    else R.drawable.ic_notifications_inactive
+                )
             }
 
             // Events
@@ -166,7 +174,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_notifications -> {
-
+                        val action =
+                            HomeFragmentDirections.actionHomeFragmentToNotificationsFragment()
+                        findNavController().navigate(action)
                         true
                     }
 

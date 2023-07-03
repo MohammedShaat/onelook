@@ -173,7 +173,7 @@ class TimerService : Service() {
         }
         val pendingIntent = PendingIntent.getActivity(
             this,
-            TIMER_FRAGMENT_REQ,
+            OPEN_TIMER_REQ,
             mainActivityIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )

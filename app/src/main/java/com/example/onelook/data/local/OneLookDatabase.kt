@@ -6,6 +6,8 @@ import com.example.onelook.data.local.activities.ActivityDao
 import com.example.onelook.data.local.activities.LocalActivity
 import com.example.onelook.data.local.activitieshistory.ActivityHistoryDao
 import com.example.onelook.data.local.activitieshistory.LocalActivityHistory
+import com.example.onelook.data.local.notifications.LocalNotification
+import com.example.onelook.data.local.notifications.NotificationDao
 import com.example.onelook.data.local.supplements.LocalSupplement
 import com.example.onelook.data.local.supplements.SupplementDao
 import com.example.onelook.data.local.supplementshistory.LocalSupplementHistory
@@ -20,7 +22,8 @@ import com.example.onelook.data.local.users.UserDao
         LocalSupplement::class,
         LocalActivity::class,
         LocalSupplementHistory::class,
-        LocalActivityHistory::class
+        LocalActivityHistory::class,
+        LocalNotification::class
     ],
     version = 1
 )
@@ -32,4 +35,5 @@ abstract class OneLookDatabase : RoomDatabase() {
     abstract val supplementHistoryDao: SupplementHistoryDao
     abstract val activityHistoryDao: ActivityHistoryDao
     abstract val todayTaskDao: TodayTaskDao
+    abstract val notificationDao: NotificationDao
 }

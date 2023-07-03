@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.onelook.data.local.OneLookDatabase
 import com.example.onelook.data.local.activities.ActivityDao
 import com.example.onelook.data.local.activitieshistory.ActivityHistoryDao
+import com.example.onelook.data.local.notifications.NotificationDao
 import com.example.onelook.data.local.supplements.SupplementDao
 import com.example.onelook.data.local.supplementshistory.SupplementHistoryDao
 import com.example.onelook.data.local.todaytasks.TodayTaskDao
@@ -66,5 +67,11 @@ object TextDatabaseModules {
     @Named("test")
     fun provideTodayTaskDao(@Named("test") db: OneLookDatabase): TodayTaskDao {
         return db.todayTaskDao
+    }
+
+    @Provides
+    @Named("test")
+    fun provideNotificationDao(@Named("test") db: OneLookDatabase): NotificationDao {
+        return db.notificationDao
     }
 }

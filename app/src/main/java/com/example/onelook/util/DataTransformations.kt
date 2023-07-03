@@ -3,6 +3,7 @@ package com.example.onelook.util
 import com.example.onelook.data.domain.*
 import com.example.onelook.data.local.activities.LocalActivity
 import com.example.onelook.data.local.activitieshistory.LocalActivityHistory
+import com.example.onelook.data.local.notifications.LocalNotification
 import com.example.onelook.data.local.supplements.LocalSupplement
 import com.example.onelook.data.local.supplementshistory.LocalSupplementHistory
 import com.example.onelook.data.local.users.LocalUser
@@ -220,5 +221,45 @@ fun ActivityHistory.toLocalModel(): LocalActivityHistory {
         completed = completed,
         createdAt = createdAt,
         updatedAt = updatedAt,
+    )
+}
+
+fun LocalSupplementHistory.toDomainModel(supplement: Supplement): SupplementHistory {
+    return SupplementHistory(
+        id = id,
+        supplementId = supplementId,
+        progress = progress,
+        completed = completed,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        name = supplement.name,
+        form = supplement.form,
+        dosage = supplement.dosage,
+        timeOfDay = supplement.timeOfDay,
+        takingWithMeals = supplement.takingWithMeals,
+    )
+}
+
+fun LocalActivityHistory.toDomainModel(activity: DomainActivity): ActivityHistory {
+    return ActivityHistory(
+        id = id,
+        activityId = activityId,
+        progress = progress,
+        completed = completed,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        type = activity.type,
+        duration = activity.duration,
+    )
+}
+
+fun LocalNotification.toDomainModel(history: TodayTask): Notification {
+    return Notification(
+        id = id,
+        message = message,
+        historyType = historyType,
+        historyId = historyId,
+        createdAt = createdAt,
+        history = history,
     )
 }
