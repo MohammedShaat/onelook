@@ -1,6 +1,7 @@
 package com.example.onelook.data
 
 import android.content.Context
+import androidx.datastore.preferences.clear
 import androidx.datastore.preferences.createDataStore
 import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.emptyPreferences
@@ -85,6 +86,12 @@ class AppStateManager @Inject constructor(@ApplicationContext context: Context) 
     suspend fun clearUnreadNotifications() {
         dataStore.edit { preferences ->
             preferences[unreadNotifications] = 0
+        }
+    }
+
+    suspend fun clear() {
+        dataStore.edit { preferences ->
+            preferences.clear()
         }
     }
 }

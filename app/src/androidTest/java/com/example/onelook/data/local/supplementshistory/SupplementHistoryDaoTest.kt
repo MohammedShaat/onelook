@@ -181,4 +181,16 @@ class SupplementHistoryDaoTest {
             supplementHistoryDao.getSupplementHistoryById(supplementHistory.id).first()
         assertThat(supplementsHistoryResult, nullValue())
     }
+
+    @Test
+    fun deleteAllSupplementsHistory_deletesAllSupplementsHistory() = runBlocking {
+        supplementHistoryDao.insertSupplementsHistory(supplementsHistory)
+
+        // WHEN call deleteAllSupplementsHistory()
+        supplementHistoryDao.deleteAllSupplementsHistory()
+
+        // THEN all supplementsHistory are deleted
+        val supplementsHistoryResult = supplementHistoryDao.getAllSupplementsHistory().first()
+        assertThat(supplementsHistoryResult, hasSize(0))
+    }
 }

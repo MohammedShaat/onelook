@@ -143,4 +143,16 @@ class ActivityDaoTest {
         val activitiesResult = activityDao.getActivityById(activity.id).first()
         assertThat(activitiesResult, nullValue())
     }
+
+    @Test
+    fun deleteAllActivities_deletesAllActivities() = runBlocking {
+        activityDao.insertActivities(activities)
+
+        // WHEN call deleteAllActivities()
+        activityDao.deleteAllActivities()
+
+        // THEN all activities are deleted
+        val activitiesResult = activityDao.getActivities().first()
+        assertThat(activitiesResult, hasSize(0))
+    }
 }

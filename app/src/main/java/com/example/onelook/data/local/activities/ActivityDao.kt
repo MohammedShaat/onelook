@@ -24,4 +24,7 @@ interface ActivityDao {
 
     @Delete
     suspend fun deleteActivity(activity: LocalActivity)
+
+    @Query("DELETE FROM activities")
+    suspend fun deleteAllActivities()
 }

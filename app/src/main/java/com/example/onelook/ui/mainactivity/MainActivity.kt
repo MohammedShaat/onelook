@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.onelook.R
@@ -22,6 +23,7 @@ import com.example.onelook.util.REMINDERS_CHANNEL_ID
 import com.example.onelook.util.onCollect
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancel
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -76,13 +78,13 @@ class MainActivity : AppCompatActivity() {
             onCollect(checkAppLaunchStateAndSigningFlow) { event ->
                 when (event) {
                     is MainActivityViewModel.MainActivityEvent.NavigateToLoginFragment -> {
-                        navController.popBackStack()
+                        popAllFragmentsFromBackStack()
                         val action = MainActivityDirections.actionGlobalLoginFragment()
                         navController.navigate(action)
                     }//NavigateToLoginFragment
 
                     is MainActivityViewModel.MainActivityEvent.NavigateToHomeFragment -> {
-                        navController.popBackStack()
+                        popAllFragmentsFromBackStack()
                         val action = MainActivityDirections.actionGlobalHomeFragment()
                         navController.navigate(action)
                     }//NavigateToHomeFragment
@@ -92,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                     }//NavigateToTimerFragment
 
                     is MainActivityViewModel.MainActivityEvent.NavigateToSupplementHistoryDetailsFragment -> {
-                        navController.popBackStack()
+                        popAllFragmentsFromBackStack()
                         val action =
                             MainActivityDirections.actionGlobalSupplementHistoryDetails(event.supplementHistory)
                         navController.navigate(action)
@@ -142,7 +144,7 @@ class MainActivity : AppCompatActivity() {
                 setOnItemSelectedListener { item ->
                     when (item.itemId) {
                         R.id.action_home -> {
-                            navController.popBackStack()
+                            popAllFragmentsFromBackStack()
                             val action = MainActivityDirections.actionGlobalHomeFragment()
                             navController.navigate(action)
                             true
@@ -151,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                         R.id.action_timer -> {
                             val action =
                                 MainActivityDirections.actionGlobalTimerFragment(activityHistory)
-                            navController.popBackStack(navController.backQueue.first().destination.id, true)
+                            popAllFragmentsFromBackStack()
                             navController.navigate(action)
                             activityHistory = null
                             true
@@ -162,7 +164,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         R.id.action_settings -> {
-                            navController.popBackStack()
+                            popAllFragmentsFromBackStack()
                             val action = MainActivityDirections.actionGlobalSettingsFragment()
                             navController.navigate(action)
                             true
@@ -200,5 +202,14 @@ class MainActivity : AppCompatActivity() {
 
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         }
+    }
+
+    fun cancelCoroutines() {
+        viewModel.viewModelScope.cancel()
+    }
+
+    fun popAllFragmentsFromBackStack () {
+        val firstFragment = navController.backQueue.first().destination.id
+        navController.popBackStack(firstFragment, true)
     }
 }

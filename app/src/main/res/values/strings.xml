@@ -23,7 +23,7 @@
     <string name="onboarding_3_text_view_title"><![CDATA[Exercise more & breathe better]]></string>
     <string name="onboarding_3_text_view_subtitle">Learn, measure, set daily goals.</string>
     <string name="sign_up_text_view_header">Create an account</string>
-    <string name="sign_up_text_view_name">Full Name</string>
+    <string name="text_view_name_label">Full Name</string>
     <string name="sign_up_text_input_name">Enter your name</string>
     <string name="sign_up_text_view_email">E-mail</string>
     <string name="sign_up_text_input_email">Enter your e-mail</string>
@@ -203,4 +203,15 @@
     <string name="contact_us_tool_bar_title">Contact Us</string>
     <string name="contact_us_text_view_logo">One Look</string>
     <string name="copied_to_clipbaord">%s copied to clipboard</string>
+    <string name="personal_data_tool_bar_title">Personal Data</string>
+    <string name="personal_data_button_change_password">Change Password</string>
+    <string name="personal_data_image_button_edit_name">Edit icon to edit the full name</string>
+    <string name="personal_data_image_button_edit_email">Edit icon to edit the email</string>
+    <string name="personal_data_text_view_email_label">E-mail Address</string>
+    <string name="change_nametext_view_header">Edit Your Full Name</string>
+    <string name="your_name_changed">Your name changed successfully</string>
+    <string name="settings_text_view_log_out">Log Out</string>
+    <string name="dialog_title_log_out">Log out</string>
+    <string name="dialog_message_log_out">Are you sure you want to log out?</string>
+    <string name="dialog_button_positive_log_out">Log out</string>
 </resources>

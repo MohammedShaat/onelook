@@ -27,4 +27,7 @@ interface ActivityHistoryDao {
 
     @Delete
     suspend fun deleteActivityHistory(activityHistory: LocalActivityHistory)
+
+    @Query("DELETE FROM activities_history")
+    suspend fun deleteAllActivitiesHistory()
 }

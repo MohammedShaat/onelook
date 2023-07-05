@@ -15,7 +15,9 @@ import com.example.onelook.R
 import com.example.onelook.databinding.FragmentContactUsBinding
 import com.example.onelook.util.hideBottomNavigation
 import com.example.onelook.util.onCollect
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ContactUsFragment : Fragment(R.layout.fragment_contact_us) {
 
     private val viewModel: ContactUsViewModel by viewModels()

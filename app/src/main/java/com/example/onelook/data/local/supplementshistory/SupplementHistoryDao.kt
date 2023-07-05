@@ -27,4 +27,7 @@ interface SupplementHistoryDao {
 
     @Delete
     suspend fun deleteSupplementHistory(supplementHistory: LocalSupplementHistory)
+
+    @Query("DELETE FROM supplements_history")
+    suspend fun deleteAllSupplementsHistory()
 }

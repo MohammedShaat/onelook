@@ -17,6 +17,12 @@ interface UserDao {
     @Query("SELECT * FROM users WHERE firebase_uid=:firebaseUid")
     suspend fun getUserByFirebaseUid(firebaseUid: String): LocalUser
 
+    @Query("SELECT * FROM users")
+    suspend fun getAllUsers(): List<LocalUser>
+
     @Delete
     suspend fun deleteUser(user: LocalUser)
+
+    @Query("DELETE FROM users")
+    suspend fun deleteAllUsers()
 }

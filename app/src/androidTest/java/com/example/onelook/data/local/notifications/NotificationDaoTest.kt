@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
+import org.hamcrest.Matchers.hasSize
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -223,5 +224,17 @@ class NotificationDaoTest {
         // THEN the notification is deleted
         val notificationsResult = notificationDao.getNotificationById(notification.id).first()
         assertThat(notificationsResult, Matchers.nullValue())
+    }
+
+    @Test
+    fun deleteAllNotifications_deletesAllNotifications() = runBlocking {
+        notificationDao.insertNotifications(notifications)
+
+        // WHEN call deleteAllNotifications()
+        notificationDao.deleteAllNotifications()
+
+        // THEN all notifications are deleted
+        val notificationsResult = notificationDao.getNotifications().first()
+        assertThat(notificationsResult, hasSize(0))
     }
 }

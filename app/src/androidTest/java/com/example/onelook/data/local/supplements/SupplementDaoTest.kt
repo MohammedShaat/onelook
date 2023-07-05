@@ -141,4 +141,16 @@ class SupplementDaoTest {
         val supplementsResult = supplementDao.getSupplementById(supplement.id).first()
         assertThat(supplementsResult, nullValue())
     }
+
+    @Test
+    fun deleteAllSupplements_deletesAllSupplements() = runBlocking {
+        supplementDao.insertSupplements(supplements)
+
+        // WHEN call deleteAllSupplements()
+        supplementDao.deleteAllSupplements()
+
+        // THEN all supplements are deleted
+        val supplementsResult = supplementDao.getSupplements().first()
+        assertThat(supplementsResult, hasSize(0))
+    }
 }

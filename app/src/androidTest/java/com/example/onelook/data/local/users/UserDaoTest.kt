@@ -8,6 +8,7 @@ import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.hasSize
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -75,6 +76,17 @@ class UserDaoTest {
     }
 
     @Test
+    fun getAllUsers_returnsAllUsers() = runBlocking {
+        userDao.insertUser(user)
+
+        // WHEN call getAllUsers()
+        val usersResult = userDao.getAllUsers()
+
+        // THEN all users are retrieved
+        assertThat(usersResult, hasSize(1))
+    }
+
+    @Test
     fun deleteUser_user_deletesUser() = runBlocking {
         userDao.insertUser(user)
 
@@ -84,5 +96,17 @@ class UserDaoTest {
         // THEN the user is deleted
         val userResult = userDao.getUserById(1)
         assertThat(userResult, not(equalTo(user)))
+    }
+
+    @Test
+    fun deleteAllUsers_deletesAllUsers() = runBlocking {
+        userDao.insertUser(user)
+
+        // WHEN call deleteAllUsers()
+        userDao.deleteAllUsers()
+
+        // THEN all users are deleted
+        val userResult = userDao.getAllUsers()
+        assertThat(userResult, hasSize(0))
     }
 }

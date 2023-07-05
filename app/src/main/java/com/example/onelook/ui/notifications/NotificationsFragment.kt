@@ -14,6 +14,7 @@ import com.example.onelook.databinding.FragmentNotificationsBinding
 import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.util.CustomResult
 import com.example.onelook.util.hideBottomNavigation
+import com.example.onelook.util.mainActivity
 import com.example.onelook.util.onCollect
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -95,7 +96,7 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
         } else {
             Timber.i("notification activity clicked")
             val activityHistory = notification.history as ActivityHistory
-            (requireActivity() as MainActivity).selectBottomNavigationSettingsItem(activityHistory)
+            mainActivity.selectBottomNavigationSettingsItem(activityHistory)
         }
     }
 

@@ -10,9 +10,11 @@
         <item name="colorSecondaryVariant">@color/water</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@color/violet</item>
         <!-- Status bar color. -->
         <item name="colorAccent">@color/turquoise</item>
+        <!-- Surface bar color. -->
+        <item name="colorSurface">@color/white</item>
         <!-- Customize your theme here. -->
 
         <!-- Text style-->

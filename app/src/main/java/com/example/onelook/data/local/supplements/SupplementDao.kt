@@ -24,4 +24,7 @@ interface SupplementDao {
 
     @Delete
     suspend fun deleteSupplement(supplement: LocalSupplement)
+
+    @Query("DELETE FROM supplements")
+    suspend fun deleteAllSupplements()
 }

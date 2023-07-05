@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentLoginBinding
 import com.example.onelook.util.PASSWORD_REST_EMAIL_REQ_KEY
+import com.example.onelook.util.hideBottomNavigation
 import com.example.onelook.util.hideSplashScreen
 import com.example.onelook.util.isInternetAvailable
 import com.example.onelook.util.onCollect
@@ -55,6 +56,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        hideBottomNavigation()
         binding = FragmentLoginBinding.bind(view)
         navController = findNavController()
 

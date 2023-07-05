@@ -123,7 +123,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     }//NavigateToSupplementHistoryDetailsFragment
 
                     is HomeViewModel.HomeEvent.NavigateToTimerFragment -> {
-                        (requireActivity() as MainActivity).selectBottomNavigationSettingsItem(event.activityHistory)
+                        mainActivity.selectBottomNavigationSettingsItem(event.activityHistory)
                     }//NavigateToTimerFragment
 
                     HomeViewModel.HomeEvent.ShowThereIsActivityRunningMessage -> {

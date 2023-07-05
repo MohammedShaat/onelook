@@ -20,17 +20,27 @@ class SettingsViewModel @Inject constructor(
         _settingsEvent.emit(SettingsEvent.NavigateToActivityManagerFragment)
     }
 
-    fun onPrivacyPolicyClicked() = viewModelScope.launch {
-        _settingsEvent.emit(SettingsEvent.OpenExternalLinkOfPrivacyPolicy)
+    fun onPersonalDataClicked() = viewModelScope.launch {
+        _settingsEvent.emit(SettingsEvent.NavigateToPersonalDataFragment)
     }
 
     fun onContactUsClicked() = viewModelScope.launch {
         _settingsEvent.emit(SettingsEvent.NavigateToContactUsFragment)
     }
 
+    fun onPrivacyPolicyClicked() = viewModelScope.launch {
+        _settingsEvent.emit(SettingsEvent.OpenExternalLinkOfPrivacyPolicy)
+    }
+
+    fun onLogOutClicked() = viewModelScope.launch {
+        _settingsEvent.emit(SettingsEvent.NavigateToLogOutDialogFragment)
+    }
+
     sealed class SettingsEvent {
         object NavigateToActivityManagerFragment : SettingsEvent()
-        object OpenExternalLinkOfPrivacyPolicy : SettingsEvent()
+        object NavigateToPersonalDataFragment : SettingsEvent()
         object NavigateToContactUsFragment : SettingsEvent()
+        object OpenExternalLinkOfPrivacyPolicy : SettingsEvent()
+        object NavigateToLogOutDialogFragment : SettingsEvent()
     }
 }

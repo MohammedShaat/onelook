@@ -36,7 +36,7 @@ class ActivityHistoryDaoTest {
     @Inject
     @Named("test")
     lateinit var activityHistoryDao: ActivityHistoryDao
-    
+
     private val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"))
 
     private val user = LocalUser(
@@ -181,5 +181,17 @@ class ActivityHistoryDaoTest {
         val activitiesHistoryResult =
             activityHistoryDao.getActivityHistoryById(activityHistory.id).first()
         assertThat(activitiesHistoryResult, nullValue())
+    }
+
+    @Test
+    fun deleteAllActivitiesHistory_deletesAllActivitiesHistory() = runBlocking {
+        activityHistoryDao.insertActivitiesHistory(activitiesHistory)
+
+        // WHEN call deleteAllActivitiesHistory()
+        activityHistoryDao.deleteAllActivitiesHistory()
+
+        // THEN all activitiesHistory are deleted
+        val activitiesHistoryResult = activityHistoryDao.getAllActivitiesHistory().first()
+        assertThat(activitiesHistoryResult, hasSize(0))
     }
 }

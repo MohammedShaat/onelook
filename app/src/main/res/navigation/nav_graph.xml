@@ -112,6 +112,12 @@
         <action
             android:id="@+id/action_settingsFragment_to_contactUsFragment"
             app:destination="@id/contactUsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_personalDataFragment"
+            app:destination="@id/personalDataFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_logOutDialogFragment"
+            app:destination="@id/logOutDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/activityManagerFragment"
@@ -196,4 +202,25 @@
         android:name="com.example.onelook.ui.contactus.ContactUsFragment"
         android:label="fragment_contact_us"
         tools:layout="@layout/fragment_contact_us" />
+    <fragment
+        android:id="@+id/personalDataFragment"
+        android:name="com.example.onelook.ui.personaldata.PersonalDataFragment"
+        android:label="PersonalDataFragment" >
+        <action
+            android:id="@+id/action_personalDataFragment_to_changeNameFragment"
+            app:destination="@id/changeNameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/changeNameFragment"
+        android:name="com.example.onelook.ui.changename.ChangeNameFragment"
+        android:label="fragment_change_name"
+        tools:layout="@layout/fragment_change_name" >
+        <argument
+            android:name="name"
+            app:argType="string" />
+    </fragment>
+    <dialog
+        android:id="@+id/logOutDialogFragment"
+        android:name="com.example.onelook.ui.logout.LogOutDialogFragment"
+        android:label="LogOutDialogFragment" />
 </navigation>

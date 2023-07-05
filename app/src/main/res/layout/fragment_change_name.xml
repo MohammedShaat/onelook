@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?colorSurface"
+        android:paddingHorizontal="@dimen/h_padding"
+        android:paddingBottom="@dimen/h_margin"
+        tools:context=".ui.changename.ChangeNameFragment">
+
+        <TextView
+            android:id="@+id/text_view_header"
+            style="@style/CustomHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xh_margin"
+            android:text="@string/change_nametext_view_header"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <LinearLayout
+            android:id="@+id/linear_layout_text_inputs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/m_margin"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/text_view_header"
+            tools:layout_editor_absoluteX="24dp">
+
+            <TextView
+                android:id="@+id/text_view_name"
+                style="@style/CustomTextInputTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_view_name_label" />
+
+            <EditText
+                android:id="@+id/text_input_name"
+                style="@style/CustomTextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/m_height"
+                android:layout_marginBottom="12dp"
+                android:autofillHints="name"
+                android:drawableStart="@drawable/ic_username"
+                android:hint="@string/sign_up_text_input_name"
+                android:inputType="textPersonName" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_view_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/m_margin"
+            android:drawablePadding="@dimen/s_padding"
+            android:text="@string/text_view_error"
+            android:textColor="@color/alert"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_error"
+            app:layout_constraintTop_toBottomOf="@id/linear_layout_text_inputs"
+            tools:text="Please fill in all the required fields."
+            tools:visibility="visible" />
+
+
+        <Button
+            android:id="@+id/button_confirm_changes"
+            style="@style/CustomPrimaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xxh_margin"
+            android:text="@string/button_confirm_changes"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_message"
+            tools:layout_editor_absoluteX="24dp" />
+
+        <Button
+            android:id="@+id/button_cancel"
+            style="@style/CustomSecondaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/m_margin"
+            android:drawableEnd="@drawable/ic_cancel"
+            android:text="@string/button_cancel"
+            app:layout_constraintTop_toBottomOf="@+id/button_confirm_changes"
+            tools:layout_editor_absoluteX="24dp" />
+
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:indeterminateTint="?colorSecondary"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/button_confirm_changes"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linear_layout_text_inputs"
+            tools:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

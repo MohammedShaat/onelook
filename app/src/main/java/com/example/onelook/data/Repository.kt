@@ -592,4 +592,14 @@ class Repository @Inject constructor(
         }
 
     }
+
+    fun clearDb() = flow {
+        emit(CustomResult.Loading())
+        activityDao.deleteAllActivities()
+        supplementDao.deleteAllSupplements()
+        activityHistoryDao.deleteAllActivitiesHistory()
+        supplementHistoryDao.deleteAllSupplementsHistory()
+        userDao.deleteAllUsers()
+        emit(CustomResult.Success(Unit))
+    }
 }

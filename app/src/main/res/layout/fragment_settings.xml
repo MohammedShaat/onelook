@@ -92,6 +92,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="24dp" />
+
+            <TextView
+                android:id="@+id/text_view_log_out"
+                style="@style/CustomTextViewWithIcon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/alert"
+                android:text="@string/settings_text_view_log_out"
+                app:drawableStartCompat="@drawable/ic_log_out" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="24dp" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

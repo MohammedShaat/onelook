@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentSignUpBinding
+import com.example.onelook.util.hideBottomNavigation
 import com.example.onelook.util.isInternetAvailable
 import com.example.onelook.util.onCollect
 import com.facebook.CallbackManager
@@ -53,6 +54,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        hideBottomNavigation()
         // Setup view binding and navController
         binding = FragmentSignUpBinding.bind(view)
         navController = findNavController()

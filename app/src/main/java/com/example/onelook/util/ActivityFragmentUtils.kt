@@ -53,3 +53,6 @@ fun Fragment.showBottomNavigation() {
 fun Fragment.hideSplashScreen() {
     (requireActivity() as MainActivity).hideSplashScreen()
 }
+
+val Fragment.mainActivity: MainActivity
+    get() = requireActivity() as MainActivity
