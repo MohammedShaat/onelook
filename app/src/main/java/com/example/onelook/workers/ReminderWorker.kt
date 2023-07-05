@@ -9,6 +9,7 @@ import androidx.work.WorkerParameters
 import com.example.onelook.R
 import com.example.onelook.data.AppStateManager
 import com.example.onelook.data.Repository
+import com.example.onelook.data.UserPreferencesManager
 import com.example.onelook.data.domain.DomainActivity
 import com.example.onelook.data.domain.Supplement
 import com.example.onelook.data.local.notifications.LocalNotification
@@ -43,7 +44,8 @@ class ReminderWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val repository: Repository,
     private val alarmManagerHelper: AlarmManagerHelper,
-    private val appStateManager: AppStateManager
+    private val appStateManager: AppStateManager,
+    private val userPreferencesManager: UserPreferencesManager,
 ) :
     CoroutineWorker(context, params) {
 
@@ -64,6 +66,7 @@ class ReminderWorker @AssistedInject constructor(
                 ?.firstOrNull { it.id == UUID.fromString(id) }
             activity = repository.getActivities().first().data
                 ?.firstOrNull { it.id == UUID.fromString(id) }
+            supplement ?: activity ?: return@withContext Result.failure()
 
             sendNotification()
             setNextAlarm()
@@ -74,6 +77,8 @@ class ReminderWorker @AssistedInject constructor(
     }
 
     private suspend fun sendNotification() {
+        if (!areNotificationsEnabled()) return
+
         val supplementHistory = supplement?.let {
             repository.getSupplementsHistory(it).first().data?.firstOrNull()
         }
@@ -81,7 +86,7 @@ class ReminderWorker @AssistedInject constructor(
             repository.getActivitiesHistory(it).first().data?.firstOrNull()
         }
         // Not sending notification if task is completed
-        if ((supplementHistory?.completed ?: activityHistory?.completed) == true)
+        if (supplementHistory?.completed ?: activityHistory!!.completed)
             return
 
         Timber.i("sendNotification() ${supplement?.let { "supplement" } ?: "activity"}")
@@ -111,7 +116,6 @@ class ReminderWorker @AssistedInject constructor(
             taskIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
-
         getNotificationManager(context)?.sendNotification(
             context,
             UUID.fromString(id).hashCode(),
@@ -121,7 +125,6 @@ class ReminderWorker @AssistedInject constructor(
         )
 
         appStateManager.increaseUnreadNotifications()
-
 
         // Stores notification in db
         saveNotification(
@@ -155,5 +158,10 @@ class ReminderWorker @AssistedInject constructor(
             createdAt = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(Date())
         )
         repository.createNotification(localNotification).collect()
+    }
+
+    private suspend fun areNotificationsEnabled(): Boolean {
+        return supplement?.let { userPreferencesManager.getSupplementsNotificationsState().first() }
+            ?: userPreferencesManager.getActivitiesNotificationsState().first()
     }
 }

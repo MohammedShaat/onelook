@@ -214,4 +214,9 @@
     <string name="dialog_title_log_out">Log out</string>
     <string name="dialog_message_log_out">Are you sure you want to log out?</string>
     <string name="dialog_button_positive_log_out">Log out</string>
+    <string name="notifications_settings_tool_bar_title">Notifications Settings</string>
+    <string name="switch_all_notifications">All Notifications</string>
+    <string name="switch_timer">Timer</string>
+    <string name="switch_activities">Activities</string>
+    <string name="switch_supplements">Supplements</string>
 </resources>

@@ -118,6 +118,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_logOutDialogFragment"
             app:destination="@id/logOutDialogFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_notificationsSettingsFragment"
+            app:destination="@id/notificationsSettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/activityManagerFragment"
@@ -223,4 +226,8 @@
         android:id="@+id/logOutDialogFragment"
         android:name="com.example.onelook.ui.logout.LogOutDialogFragment"
         android:label="LogOutDialogFragment" />
+    <fragment
+        android:id="@+id/notificationsSettingsFragment"
+        android:name="com.example.onelook.ui.notificationsettings.NotificationsSettingsFragment"
+        android:label="NotificationsSettingsFragment" />
 </navigation>

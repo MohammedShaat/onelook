@@ -39,6 +39,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 viewModel.onPersonalDataClicked()
             }
 
+            textViewNotificationSettings.setOnClickListener {
+                viewModel.onNotificationsClicked()
+            }
+
             textViewContactUs.setOnClickListener {
                 viewModel.onContactUsClicked()
             }
@@ -67,19 +71,28 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                     }//OpenExternalLinkOfPrivacyPolicy
 
                     SettingsViewModel.SettingsEvent.NavigateToContactUsFragment -> {
-                        val action = SettingsFragmentDirections.actionSettingsFragmentToContactUsFragment()
+                        val action =
+                            SettingsFragmentDirections.actionSettingsFragmentToContactUsFragment()
                         findNavController().navigate(action)
                     }//NavigateToContactUsFragment
 
                     SettingsViewModel.SettingsEvent.NavigateToPersonalDataFragment -> {
-                        val action = SettingsFragmentDirections.actionSettingsFragmentToPersonalDataFragment()
+                        val action =
+                            SettingsFragmentDirections.actionSettingsFragmentToPersonalDataFragment()
                         findNavController().navigate(action)
                     }//NavigateToPersonalDataFragment
 
                     SettingsViewModel.SettingsEvent.NavigateToLogOutDialogFragment -> {
-                        val action = SettingsFragmentDirections.actionSettingsFragmentToLogOutDialogFragment()
+                        val action =
+                            SettingsFragmentDirections.actionSettingsFragmentToLogOutDialogFragment()
                         findNavController().navigate(action)
                     }//NavigateToLogOutDialogFragment
+
+                    SettingsViewModel.SettingsEvent.NavigateToNotificationsSettingsFragment -> {
+                        val action =
+                            SettingsFragmentDirections.actionSettingsFragmentToNotificationsSettingsFragment()
+                        findNavController().navigate(action)
+                    }//NavigateToNotificationsSettingsFragment
                 }
             }
         }//Observers

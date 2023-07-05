@@ -24,6 +24,10 @@ class SettingsViewModel @Inject constructor(
         _settingsEvent.emit(SettingsEvent.NavigateToPersonalDataFragment)
     }
 
+    fun onNotificationsClicked() = viewModelScope.launch {
+        _settingsEvent.emit(SettingsEvent.NavigateToNotificationsSettingsFragment)
+    }
+
     fun onContactUsClicked() = viewModelScope.launch {
         _settingsEvent.emit(SettingsEvent.NavigateToContactUsFragment)
     }
@@ -42,5 +46,6 @@ class SettingsViewModel @Inject constructor(
         object NavigateToContactUsFragment : SettingsEvent()
         object OpenExternalLinkOfPrivacyPolicy : SettingsEvent()
         object NavigateToLogOutDialogFragment : SettingsEvent()
+        object NavigateToNotificationsSettingsFragment : SettingsEvent()
     }
 }

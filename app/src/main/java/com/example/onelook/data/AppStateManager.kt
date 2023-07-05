@@ -21,6 +21,7 @@ import javax.inject.Singleton
 class AppStateManager @Inject constructor(@ApplicationContext context: Context) {
 
     private val dataStore = context.createDataStore("app_state_manager")
+
     private val appStateKey =
         preferencesKey<String>("app_state")
     private val accessTokenKey = preferencesKey<String>("access_token")

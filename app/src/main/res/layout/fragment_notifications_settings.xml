@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.contactus.ContactUsFragment">
+
+    <Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:navigationIcon="@drawable/ic_left_arrow_long"
+        android:title="@string/notifications_settings_tool_bar_title" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/m_margin"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/h_padding">
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_all_notifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/m_margin"
+                android:text="@string/switch_all_notifications"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:thumbTint="@drawable/selector_switch_thumb"
+                app:trackTint="@drawable/selector_switch_track"
+                tools:checked="true" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="24dp" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_activities_notifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/h_margin"
+                android:text="@string/switch_activities"
+                android:textStyle="bold"
+                app:thumbTint="@drawable/selector_switch_thumb"
+                app:trackTint="@drawable/selector_switch_track"
+                tools:checked="true" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/m_margin" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_supplements_notifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/switch_supplements"
+                android:textStyle="bold"
+                app:thumbTint="@drawable/selector_switch_thumb"
+                app:trackTint="@drawable/selector_switch_track"
+                tools:checked="true" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/m_margin" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
