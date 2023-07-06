@@ -11,15 +11,15 @@ import com.example.onelook.data.local.activitieshistory.LocalActivityHistory
 import com.example.onelook.data.local.supplementshistory.LocalSupplementHistory
 import com.example.onelook.util.CustomResult
 import com.example.onelook.util.OperationSource
-import com.example.onelook.util.dateStr
+import com.example.onelook.util.format
 import com.example.onelook.util.isExpired
 import com.example.onelook.util.isToday
-import com.example.onelook.util.parse
+import com.example.onelook.util.parseDate
 import com.example.onelook.util.toLocalModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
+import java.util.Date
 import java.util.UUID
 
 @HiltWorker
@@ -46,7 +46,7 @@ class DailyTasksWorker @AssistedInject constructor(
         var localResult = Result.success()
         supplements.forEach { supplement ->
             // Completes expired supplements
-            if (isExpired(supplement.createdAt.parse, supplement.duration)) {
+            if (isExpired(supplement.createdAt.parseDate, supplement.duration)) {
                 val updatedSupplement = supplement.copy(completed = true).toLocalModel()
                 repository.updateSupplement(updatedSupplement).collect { result ->
                     if (result is CustomResult.Success && result.data == OperationSource.LOCAL_ONLY)
@@ -57,18 +57,18 @@ class DailyTasksWorker @AssistedInject constructor(
 
             // Returns if supplementHistory already exists
             val supplementHistory = repository.getSupplementsHistory(supplement).first().data
-                ?.firstOrNull()?.takeIf { it.createdAt.parse.isToday }
+                ?.firstOrNull()?.takeIf { it.createdAt.parseDate.isToday }
             if (supplementHistory != null)
                 return@forEach
 
-            val dateStr = dateStr()
+            val formattedDate = Date().format
             val localSupplementHistory = LocalSupplementHistory(
                 id = UUID.randomUUID(),
                 supplementId = supplement.id,
                 progress = 0,
                 completed = false,
-                createdAt = dateStr,
-                updatedAt = dateStr
+                createdAt = formattedDate,
+                updatedAt = formattedDate
             )
             repository.createSupplementHistory(localSupplementHistory).collect { result ->
                 if (result is CustomResult.Success && result.data == OperationSource.LOCAL_ONLY)
@@ -84,18 +84,18 @@ class DailyTasksWorker @AssistedInject constructor(
         activities.forEach { activity ->
             // Returns if activityHistory already exists
             val activityHistory = repository.getActivitiesHistory(activity).first().data
-                ?.firstOrNull()?.takeIf { it.createdAt.parse.isToday }
+                ?.firstOrNull()?.takeIf { it.createdAt.parseDate.isToday }
             if (activityHistory != null)
                 return@forEach
 
-            val dateStr = dateStr()
+            val formattedDate = Date().format
             val localActivityHistory = LocalActivityHistory(
                 id = UUID.randomUUID(),
                 activityId = activity.id,
                 progress = "00:00",
                 completed = false,
-                createdAt = dateStr,
-                updatedAt = dateStr
+                createdAt = formattedDate,
+                updatedAt = formattedDate
             )
             repository.createActivityHistory(localActivityHistory).collect { result ->
                 if (result is CustomResult.Success && result.data == OperationSource.LOCAL_ONLY)

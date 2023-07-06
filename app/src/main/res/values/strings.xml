@@ -190,10 +190,10 @@
     <string name="syncing">Syncing</string>
     <string name="activities_timer_channel_name">Activities timer</string>
     <string name="reminders_channel_name">Reminders</string>
-    <string name="dont_forget_take_supplement">Don\'t forget to take %s</string>
-    <string name="dont_forget_exercise_activity">Don\'t forget to exercise %s</string>
-    <string name="time_remaining_for_supplement">%d minutes remaining for %s supplement</string>
-    <string name="time_remaining_for_activity">%d minutes remaining for %s activity</string>
+    <string name="time_remaining_for_activity">%s activity time is approaching. Get ready to nourish yourself.</string>
+    <string name="time_remaining_for_supplement">%s supplement time is approaching. Get ready to nourish yourself.</string>
+    <string name="dont_forget_exercise_activity">%s activity time has passed. Remember to take</string>
+    <string name="dont_forget_take_supplement">%s supplement time has passed. Remember to take</string>
     <string name="notifications_tool_bar_title">Notifications</string>
     <string name="item_notification_image_view_activity_icon">Image represents the task</string>
     <string name="onelook_phone_number">+42 564 342 786</string>

@@ -7,20 +7,10 @@ import androidx.work.WorkerParameters
 import com.example.onelook.data.AppState
 import com.example.onelook.data.AppStateManager
 import com.example.onelook.data.Repository
-import com.example.onelook.data.local.activitieshistory.LocalActivityHistory
-import com.example.onelook.data.local.supplementshistory.LocalSupplementHistory
 import com.example.onelook.util.CustomResult
-import com.example.onelook.util.OperationSource
-import com.example.onelook.util.dateStr
-import com.example.onelook.util.isExpired
-import com.example.onelook.util.isToday
-import com.example.onelook.util.parse
-import com.example.onelook.util.toLocalModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
-import java.util.UUID
 
 @HiltWorker
 class SyncWorker @AssistedInject constructor(

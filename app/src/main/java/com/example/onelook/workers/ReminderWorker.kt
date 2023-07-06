@@ -16,12 +16,11 @@ import com.example.onelook.data.local.notifications.LocalNotification
 import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.util.ACTION_OPEN_ACTIVITY_NOTIFICATION
 import com.example.onelook.util.ACTION_OPEN_SUPPLEMENT_NOTIFICATION
-import com.example.onelook.util.ACTION_OPEN_TIMER
 import com.example.onelook.util.AlarmManagerHelper
-import com.example.onelook.util.DATE_TIME_FORMAT
 import com.example.onelook.util.NOTIFICATION_TASK_REQ
 import com.example.onelook.util.REMINDERS_CHANNEL_ID
 import com.example.onelook.util.REMINDER_TIME_ADDITION
+import com.example.onelook.util.format
 import com.example.onelook.util.getNotificationManager
 import com.example.onelook.util.sendNotification
 import com.example.onelook.util.toLocalModel
@@ -33,9 +32,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.Calendar
 import java.util.UUID
 
 @HiltWorker
@@ -52,6 +49,7 @@ class ReminderWorker @AssistedInject constructor(
     private lateinit var type: String
     private lateinit var id: String
     private lateinit var reminder: String
+    private var supposedTimeMillis: Long = 0
     private var supplement: Supplement? = null
     private var activity: DomainActivity? = null
 
@@ -62,13 +60,15 @@ class ReminderWorker @AssistedInject constructor(
             type = inputData.getString("type") ?: return@withContext Result.failure()
             id = inputData.getString("id") ?: return@withContext Result.failure()
             reminder = inputData.getString("reminder") ?: return@withContext Result.failure()
+            supposedTimeMillis = inputData.getLong("supposedTimeMillis", 0).takeIf { it > 0 }
+                ?: return@withContext Result.failure()
             supplement = repository.getSupplements().first().data
                 ?.firstOrNull { it.id == UUID.fromString(id) }
             activity = repository.getActivities().first().data
                 ?.firstOrNull { it.id == UUID.fromString(id) }
             supplement ?: activity ?: return@withContext Result.failure()
 
-            sendNotification()
+            sendNotificationAndSaveIt()
             setNextAlarm()
 
             Timber.i("doWork() finished")
@@ -76,8 +76,8 @@ class ReminderWorker @AssistedInject constructor(
         }
     }
 
-    private suspend fun sendNotification() {
-        if (!areNotificationsEnabled()) return
+    private suspend fun sendNotificationAndSaveIt() {
+        if (!areNotificationsEnabled() || isNotificationLate()) return
 
         val supplementHistory = supplement?.let {
             repository.getSupplementsHistory(it).first().data?.firstOrNull()
@@ -85,7 +85,7 @@ class ReminderWorker @AssistedInject constructor(
         val activityHistory = activity?.let {
             repository.getActivitiesHistory(it).first().data?.firstOrNull()
         }
-        // Not sending notification if task is completed
+        // Not send or save notification if task completed
         if (supplementHistory?.completed ?: activityHistory!!.completed)
             return
 
@@ -94,7 +94,6 @@ class ReminderWorker @AssistedInject constructor(
             if (reminder == "before") context.getString(
                 supplement?.let { R.string.time_remaining_for_supplement }
                     ?: R.string.time_remaining_for_activity,
-                REMINDER_TIME_ADDITION,
                 supplement?.name ?: activity!!.type
             )
             else context.getString(
@@ -102,7 +101,6 @@ class ReminderWorker @AssistedInject constructor(
                     ?: R.string.dont_forget_exercise_activity,
                 supplement?.name ?: activity!!.type
             )
-
         val taskIntent = Intent(context, MainActivity::class.java).apply {
             action = supplement?.let { ACTION_OPEN_SUPPLEMENT_NOTIFICATION }
                 ?: ACTION_OPEN_ACTIVITY_NOTIFICATION
@@ -125,7 +123,6 @@ class ReminderWorker @AssistedInject constructor(
         )
 
         appStateManager.increaseUnreadNotifications()
-
         // Stores notification in db
         saveNotification(
             message,
@@ -150,12 +147,13 @@ class ReminderWorker @AssistedInject constructor(
     }
 
     private suspend fun saveNotification(message: String, historyId: UUID, historyType: String) {
+        val creationCalendar = Calendar.getInstance().apply { timeInMillis = supposedTimeMillis }
         val localNotification = LocalNotification(
             id = UUID.randomUUID(),
             message = message,
             historyId = historyId,
             historyType = historyType,
-            createdAt = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(Date())
+            createdAt = creationCalendar.time.format
         )
         repository.createNotification(localNotification).collect()
     }
@@ -163,5 +161,13 @@ class ReminderWorker @AssistedInject constructor(
     private suspend fun areNotificationsEnabled(): Boolean {
         return supplement?.let { userPreferencesManager.getSupplementsNotificationsState().first() }
             ?: userPreferencesManager.getActivitiesNotificationsState().first()
+    }
+
+    private fun isNotificationLate(): Boolean {
+        val supposedCalendar = Calendar.getInstance().apply {
+            timeInMillis = supposedTimeMillis
+            set(Calendar.MINUTE, get(Calendar.MINUTE) + 1)
+        }
+        return Calendar.getInstance() > supposedCalendar
     }
 }

@@ -3,7 +3,6 @@ package com.example.onelook.util
 import android.app.NotificationManager
 import android.content.Context
 import androidx.core.content.ContextCompat
-import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -48,13 +47,11 @@ fun getNotificationManager(context: Context): NotificationManager? {
     return ContextCompat.getSystemService(context, NotificationManager::class.java)
 }
 
-val String.parse: Date
+val String.parseDate: Date
     get() = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).parse(this) as Date
 
-fun dateStr(): String {
-    return SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
-        .format(Date())
-}
+val Date.format: String
+    get() = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(this)
 
 fun timeStr(): String {
     return Calendar.getInstance().run {

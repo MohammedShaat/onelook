@@ -9,15 +9,21 @@ import com.example.onelook.R
 import com.example.onelook.data.Repository
 import com.example.onelook.data.domain.DomainActivity
 import com.example.onelook.data.local.activities.LocalActivity
-import com.example.onelook.util.*
+import com.example.onelook.util.CustomResult
 import com.example.onelook.util.adapters.SelectableOvalWithText
 import com.example.onelook.util.adapters.SelectableRectWithText
+import com.example.onelook.util.format
+import com.example.onelook.util.to24Format
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
+import java.util.Date
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -164,7 +170,7 @@ class AddEditActivityViewModel @Inject constructor(
     }
 
     private fun createOrUpdateActivity() = viewModelScope.launch {
-        val dateStr = dateStr()
+        val formattedDate = Date().format
 
         val localActivity = LocalActivity(
             id = _activity.value?.id ?: UUID.randomUUID(),
@@ -178,8 +184,8 @@ class AddEditActivityViewModel @Inject constructor(
                 _reminderAfter.value!! -> "after"
                 else -> null
             },
-            createdAt = _activity.value?.createdAt ?: dateStr,
-            updatedAt = dateStr,
+            createdAt = _activity.value?.createdAt ?: formattedDate,
+            updatedAt = formattedDate,
         )
 
         if (_activity.value == null)

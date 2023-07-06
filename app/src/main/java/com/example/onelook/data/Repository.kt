@@ -25,8 +25,8 @@ import com.example.onelook.data.network.todaytasks.TodayTaskApi
 import com.example.onelook.util.AlarmManagerHelper
 import com.example.onelook.util.CustomResult
 import com.example.onelook.util.OperationSource
-import com.example.onelook.util.dateStr
-import com.example.onelook.util.parse
+import com.example.onelook.util.format
+import com.example.onelook.util.parseDate
 import com.example.onelook.util.toDomainModel
 import com.example.onelook.util.toLocalModel
 import com.example.onelook.util.toNetworkModel
@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.last
 import timber.log.Timber
 import java.lang.Integer.min
+import java.util.Date
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -326,7 +327,7 @@ class Repository @Inject constructor(
         try {
             Timber.i("sync started")
             SharedData.isSyncing.value = true
-            val lastSyncDate = appState.getLastSyncDate().parse
+            val lastSyncDate = appState.getLastSyncDate().parseDate
 
             // Fetches changes after last sync
             // Local data
@@ -358,7 +359,7 @@ class Repository @Inject constructor(
                         }
                     }
                     // Added on local
-                    localActivity.createdAt.parse > lastSyncDate -> {
+                    localActivity.createdAt.parseDate > lastSyncDate -> {
                         activityApi.createActivity(localActivity.toNetworkModel())
                     }
                     // Deleted on network
@@ -386,7 +387,7 @@ class Repository @Inject constructor(
                         return@forEach
                     }
                     // Added on local
-                    localSupplement.createdAt.parse > lastSyncDate -> {
+                    localSupplement.createdAt.parseDate > lastSyncDate -> {
                         supplementApi.createSupplement(localSupplement.toNetworkModel())
                     }
                     // Deleted on network
@@ -411,7 +412,7 @@ class Repository @Inject constructor(
                             activityHistoryDao.updateActivityHistory(networkActivityHistory.toLocalModel())
                     }
                     // Added on local
-                    localActivityHistory.createdAt.parse > lastSyncDate -> {
+                    localActivityHistory.createdAt.parseDate > lastSyncDate -> {
                         activityHistoryApi.createActivityHistory(localActivityHistory.toNetworkModel())
                     }
                     // Deleted on network
@@ -437,7 +438,7 @@ class Repository @Inject constructor(
                             )
                     }
                     // Added on local
-                    localSupplementHistory.createdAt.parse > lastSyncDate -> {
+                    localSupplementHistory.createdAt.parseDate > lastSyncDate -> {
                         supplementHistoryApi.createSupplementHistory(localSupplementHistory.toNetworkModel())
                     }
                     // Deleted on network
@@ -453,7 +454,7 @@ class Repository @Inject constructor(
                 localActivities.firstOrNull { it.id == networkActivity.id }
                     ?:
                     // Added on network
-                    if (networkActivity.createdAt.parse > lastSyncDate) {
+                    if (networkActivity.createdAt.parseDate > lastSyncDate) {
                         activityDao.insertActivity(networkActivity.toLocalModel())
                         alarmManagerHelper.setAlarm(networkActivity.toLocalModel())
                     }
@@ -468,7 +469,7 @@ class Repository @Inject constructor(
                 localSupplements.firstOrNull { it.id == networkSupplement.id }
                     ?:
                     // Added on network
-                    if (networkSupplement.createdAt.parse > lastSyncDate) {
+                    if (networkSupplement.createdAt.parseDate > lastSyncDate) {
                         supplementDao.insertSupplement(networkSupplement.toLocalModel())
                         alarmManagerHelper.setAlarm(networkSupplement.toLocalModel())
                     }
@@ -483,7 +484,7 @@ class Repository @Inject constructor(
                 localActivitiesHistory.firstOrNull { it.id == networkActivityHistory.id }
                     ?:
                     // Added on network
-                    if (networkActivityHistory.createdAt.parse > lastSyncDate)
+                    if (networkActivityHistory.createdAt.parseDate > lastSyncDate)
                         activityHistoryDao.insertActivityHistory(networkActivityHistory.toLocalModel())
                     // Deleted on local
                     else
@@ -496,14 +497,14 @@ class Repository @Inject constructor(
                 localSupplementsHistory.firstOrNull { it.id == networkSupplementHistory.id }
                     ?:
                     // Added on network
-                    if (networkSupplementHistory.createdAt.parse > lastSyncDate)
+                    if (networkSupplementHistory.createdAt.parseDate > lastSyncDate)
                         supplementHistoryDao.insertSupplementHistory(networkSupplementHistory.toLocalModel())
                     // Deleted on local
                     else
                         supplementHistoryApi.deleteSupplementHistory(networkSupplementHistory.id)
             }//networkSupplementsHistory
 
-            appState.setLastSyncDate(dateStr())
+            appState.setLastSyncDate(Date().format)
 
             Timber.i("sync succeeded")
             emit(CustomResult.Success(Unit))

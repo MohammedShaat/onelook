@@ -13,9 +13,9 @@ import com.example.onelook.util.CustomResult
 import com.example.onelook.util.adapters.SelectableOvalNumber
 import com.example.onelook.util.adapters.SelectableRectWithText
 import com.example.onelook.util.capital
-import com.example.onelook.util.dateStr
+import com.example.onelook.util.format
 import com.example.onelook.util.isExpired
-import com.example.onelook.util.parse
+import com.example.onelook.util.parseDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,7 +24,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
+import java.util.Date
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -226,9 +227,9 @@ class AddEditSupplementViewModel @Inject constructor(
     }
 
     private fun createOrUpdateSupplement() = viewModelScope.launch {
-        val dateStr = dateStr()
+        val formattedDate = Date().format
         val isExpired = isExpired(
-            _supplement.value?.createdAt?.parse ?: Date(),
+            _supplement.value?.createdAt?.parseDate ?: Date(),
             durationsList[_selectedDuration.value!!].text.takeIf { _selectedDuration.value != 0 }
         )
 
@@ -249,8 +250,8 @@ class AddEditSupplementViewModel @Inject constructor(
                 else -> null
             },
             completed = isExpired,
-            createdAt = _supplement.value?.createdAt ?: dateStr,
-            updatedAt = dateStr,
+            createdAt = _supplement.value?.createdAt ?: formattedDate,
+            updatedAt = formattedDate,
         )
         Timber.i("local supplement ready")
 

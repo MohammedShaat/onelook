@@ -33,19 +33,20 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
         val targetCalendar = getCalendar(localSupplement) ?: return
         // "Reminder before"
         if (localSupplement.reminder in listOf("before", "both")) {
-            intent.putExtra("reminder", "before")
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                localSupplement.id.hashCode(),
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
             val calendarBefore = (targetCalendar.clone() as Calendar).apply {
                 add(Calendar.MINUTE, -REMINDER_TIME_ADDITION)
             }
 //            val calendarBefore = Calendar.getInstance().apply {
 //                add(Calendar.SECOND, 5)
 //            }
+            intent.putExtra("reminder", "before")
+            intent.putExtra("supposedTimeMillis", calendarBefore.timeInMillis)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                localSupplement.id.hashCode(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
             if (calendarBefore < Calendar.getInstance()) return
             alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
@@ -57,19 +58,20 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
 
         // "Reminder after"
         if (localSupplement.reminder in listOf("after", "both")) {
-            intent.putExtra("reminder", "after")
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                localSupplement.id.hashCode() + 1,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
             val calendarAfter = (targetCalendar.clone() as Calendar).apply {
                 add(Calendar.MINUTE, REMINDER_TIME_ADDITION)
             }
 //            val calendarAfter = Calendar.getInstance().apply {
 //                add(Calendar.SECOND, 10)
 //            }
+            intent.putExtra("reminder", "after")
+            intent.putExtra("supposedTimeMillis", calendarAfter.timeInMillis)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                localSupplement.id.hashCode() + 1,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
             if (calendarAfter < Calendar.getInstance()) return
             alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
@@ -179,7 +181,7 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
 
     private fun getCalendar(localSupplement: LocalSupplement): Calendar? {
         val expirationCalendar =
-            getExpirationCalendar(localSupplement.createdAt.parse, localSupplement.duration)
+            getExpirationCalendar(localSupplement.createdAt.parseDate, localSupplement.duration)
 
         // When target time is today
         val targetTimeStr = when (val it = localSupplement.timeOfDay) {
@@ -202,7 +204,7 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
         // When target time is in next days
         val freq = Regex("""\d+""").find(localSupplement.frequency)?.value?.toInt() ?: 1
         val daysUntilToday =
-            ((Date().time - localSupplement.createdAt.parse.time) / (1000 * 60 * 60 * 24)).toInt()
+            ((Date().time - localSupplement.createdAt.parseDate.time) / (1000 * 60 * 60 * 24)).toInt()
         val addDays = freq - daysUntilToday % freq
         targetCalendar.add(Calendar.DAY_OF_YEAR, addDays)
         if (expirationCalendar == null || targetCalendar <= expirationCalendar)

@@ -11,9 +11,8 @@ import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.databinding.ItemNotificationBinding
 import com.example.onelook.ui.home.activityIcon
 import com.example.onelook.ui.home.supplementIcon
-import com.example.onelook.util.parse
+import com.example.onelook.util.parseDate
 import com.github.marlonlom.utilities.timeago.TimeAgo
-import timber.log.Timber
 
 class NotificationAdapter(private val onClickListener: (Notification) -> Unit) :
     ListAdapter<Notification, NotificationAdapter.NotificationVH>(NotificationDiff()) {
@@ -43,7 +42,7 @@ class NotificationAdapter(private val onClickListener: (Notification) -> Unit) :
                 (notification.history as? SupplementHistory)?.let { imageViewIcon.supplementIcon(it.parsedForm) }
                     ?: imageViewIcon.activityIcon((notification.history as ActivityHistory).parsedType)
                 textViewMessage.text = notification.message
-                textViewTime.text = TimeAgo.using(notification.createdAt.parse.time)
+                textViewTime.text = TimeAgo.using(notification.createdAt.parseDate.time)
             }
         }
     }
