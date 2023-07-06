@@ -17,14 +17,12 @@ import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.util.ACTION_OPEN_ACTIVITY_NOTIFICATION
 import com.example.onelook.util.ACTION_OPEN_SUPPLEMENT_NOTIFICATION
-import com.example.onelook.util.ACTION_OPEN_TIMER
 import com.example.onelook.util.ACTIVITIES_TIMER_CHANNEL_ID
 import com.example.onelook.util.REMINDERS_CHANNEL_ID
 import com.example.onelook.util.onCollect
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.cancel
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -32,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
 
     private lateinit var navController: NavController
-    var keepSplashScreen = true
+    private var keepSplashScreen = true
     private lateinit var bottomNavigationView: BottomNavigationView
 
     private var activityHistory: ActivityHistory? = null
@@ -159,10 +157,6 @@ class MainActivity : AppCompatActivity() {
                             true
                         }
 
-                        R.id.action_progress -> {
-                            true
-                        }
-
                         R.id.action_settings -> {
                             popAllFragmentsFromBackStack()
                             val action = MainActivityDirections.actionGlobalSettingsFragment()
@@ -208,7 +202,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.viewModelScope.cancel()
     }
 
-    fun popAllFragmentsFromBackStack () {
+    fun popAllFragmentsFromBackStack() {
         val firstFragment = navController.backQueue.first().destination.id
         navController.popBackStack(firstFragment, true)
     }

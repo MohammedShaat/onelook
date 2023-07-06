@@ -9,10 +9,6 @@
         android:icon="@drawable/selector_action_timer"
         android:title="@string/menu_bottom_navigation_action_timer" />
     <item
-        android:id="@+id/action_progress"
-        android:icon="@drawable/selector_action_progress"
-        android:title="@string/menu_bottom_navigation_action_progress" />
-    <item
         android:id="@+id/action_settings"
         android:icon="@drawable/selector_action_settings"
         android:title="@string/menu_bottom_navigation_action_settings" />

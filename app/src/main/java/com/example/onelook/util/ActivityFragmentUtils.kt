@@ -5,14 +5,18 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Build.VERSION_CODES
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.onelook.R
 import com.example.onelook.ui.mainactivity.MainActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 fun <T> Fragment.onCollect(flow: Flow<T>, block: (value: T) -> Unit) {
     viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -56,3 +60,22 @@ fun Fragment.hideSplashScreen() {
 
 val Fragment.mainActivity: MainActivity
     get() = requireActivity() as MainActivity
+
+fun Fragment.enableDoubleBackClick() {
+    mainActivity.onBackPressedDispatcher.addCallback(
+        viewLifecycleOwner,
+        object : OnBackPressedCallback(true) {
+            private var lastBackClickMillis = 0L
+            override fun handleOnBackPressed() {
+                val currentTime = Calendar.getInstance().timeInMillis
+                if (currentTime - lastBackClickMillis <= DOUBLE_BACK_INTERVAL) {
+                    isEnabled = false
+                    mainActivity.onBackPressed()
+                } else {
+                    lastBackClickMillis = currentTime
+                    Toast.makeText(context, R.string.click_back_again, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    )
+}

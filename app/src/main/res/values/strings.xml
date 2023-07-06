@@ -219,4 +219,5 @@
     <string name="switch_timer">Timer</string>
     <string name="switch_activities">Activities</string>
     <string name="switch_supplements">Supplements</string>
+    <string name="click_back_again">Click back again to quit</string>
 </resources>

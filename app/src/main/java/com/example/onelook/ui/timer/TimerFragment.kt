@@ -10,6 +10,7 @@ import com.example.onelook.R
 import com.example.onelook.databinding.FragmentTimerBinding
 import com.example.onelook.ui.home.activityIcon
 import com.example.onelook.util.capital
+import com.example.onelook.util.enableDoubleBackClick
 import com.example.onelook.util.hideSplashScreen
 import com.example.onelook.util.onCollect
 import com.example.onelook.util.showBottomNavigation
@@ -27,6 +28,7 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
         super.onViewCreated(view, savedInstanceState)
 
         showBottomNavigation()
+        enableDoubleBackClick()
         _binding = FragmentTimerBinding.bind(view)
 
         // Sets up the icon, text, and timer

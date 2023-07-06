@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentSettingsBinding
+import com.example.onelook.util.enableDoubleBackClick
 import com.example.onelook.util.onCollect
 import com.example.onelook.util.showBottomNavigation
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,6 +27,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         super.onViewCreated(view, savedInstanceState)
 
         showBottomNavigation()
+        enableDoubleBackClick()
         _binding = FragmentSettingsBinding.bind(view)
 
         // Listeners

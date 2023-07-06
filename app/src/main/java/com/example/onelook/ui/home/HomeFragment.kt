@@ -3,6 +3,7 @@ package com.example.onelook.ui.home
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -10,14 +11,14 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
-import com.example.onelook.data.SharedData
 import com.example.onelook.databinding.FragmentHomeBinding
-import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.util.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.net.UnknownHostException
+import java.util.Calendar
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -30,8 +31,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Shows bottom navigation
         showBottomNavigation()
+        enableDoubleBackClick()
         bottomNavigation = requireActivity().findViewById(R.id.bottom_navigation)
 
         // Binding
