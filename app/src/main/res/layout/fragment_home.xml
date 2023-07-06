@@ -66,8 +66,6 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/home_image_button_add_task"
             android:src="@drawable/ic_add"
-            android:textColor="?colorPrimary"
-            android:textSize="@dimen/s_text_size"
             app:layout_constraintBottom_toBottomOf="@+id/text_view_add_task"
             app:layout_constraintEnd_toStartOf="@+id/text_view_add_task"
             app:layout_constraintTop_toTopOf="@+id/text_view_add_task"
@@ -89,17 +87,19 @@
                 tools:listitem="@layout/item_supplement_history" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <ImageView
-            android:id="@+id/image_view_not_data"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:contentDescription="@string/home_image_view_no_data"
-            android:src="@drawable/no_data_"
+        <TextView
+            android:id="@+id/text_view_no_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_view_to_do_list_title"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="@dimen/large_text_size"
+            android:textColor="?colorPrimary"
+            android:textStyle="bold"
+            android:text="@string/home_text_view_no_tasks"
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

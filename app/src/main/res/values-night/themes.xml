@@ -2,20 +2,24 @@
     <!-- Base application theme. -->
     <style name="Theme.OneLook" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorPrimary">@color/purple_plum</item>
+        <item name="colorPrimaryVariant">@color/violet</item>
+        <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorSecondary">@color/turquoise</item>
+        <item name="colorSecondaryVariant">@color/water</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@color/violet</item>
+        <!-- Status bar color. -->
+        <item name="colorAccent">@color/turquoise</item>
         <!-- Customize your theme here. -->
 
         <!-- Text style-->
         <item name="android:fontFamily">@font/noto_sans</item>
         <item name="android:textSize">@dimen/mid_text_size</item>
+
+        <item name="colorBackgroundDisabled">@color/dark_charcoal</item>
     </style>
 
     <style name="Theme.OneLook.SplashScreen" parent="Theme.SplashScreen">

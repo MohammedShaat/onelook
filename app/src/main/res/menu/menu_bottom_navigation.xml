@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_home"
-        android:icon="@drawable/selector_action_home"
+        android:icon="@drawable/bg_action_home"
         android:title="@string/menu_bottom_navigation_action_home" />
     <item
         android:id="@+id/action_timer"
-        android:icon="@drawable/selector_action_timer"
+        android:icon="@drawable/bg_action_timer"
         android:title="@string/menu_bottom_navigation_action_timer" />
     <item
         android:id="@+id/action_settings"
-        android:icon="@drawable/selector_action_settings"
+        android:icon="@drawable/bg_action_settings"
         android:title="@string/menu_bottom_navigation_action_settings" />
 </menu>

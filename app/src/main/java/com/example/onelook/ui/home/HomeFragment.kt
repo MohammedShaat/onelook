@@ -80,8 +80,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 todayTasksAdapter.submitList(result.data)
                 binding.apply {
 //                    recyclerViewTodayTasks.scrollToPosition(0)
-                    imageViewNotData.isVisible = result.data.isNullOrEmpty() &&
-                            (result !is CustomResult.Loading || imageViewNotData.isVisible)
+                    textViewNoData.isVisible = result.data.isNullOrEmpty() &&
+                            (result !is CustomResult.Loading || textViewNoData.isVisible)
                 }
             }
 

@@ -220,4 +220,8 @@
     <string name="switch_activities">Activities</string>
     <string name="switch_supplements">Supplements</string>
     <string name="click_back_again">Click back again to quit</string>
+    <string name="notifications_text_view_no_notifications">No notifications</string>
+    <string name="home_text_view_no_tasks">There are no Tasks</string>
+    <string name="supplements_text_view_no_supplements">There are no supplements</string>
+    <string name="activities_text_view_no_activities">There are no activities</string>
 </resources>

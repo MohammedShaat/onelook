@@ -42,18 +42,19 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />
 
-
-        <ImageView
-            android:id="@+id/image_view_not_data"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:contentDescription="@string/home_image_view_no_data"
-            android:src="@drawable/no_data_"
+        <TextView
+            android:id="@+id/text_view_no_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:textSize="@dimen/large_text_size"
+            android:textColor="?colorPrimary"
+            android:textStyle="bold"
+            android:text="@string/notifications_text_view_no_notifications"
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

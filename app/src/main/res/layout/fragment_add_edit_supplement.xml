@@ -231,8 +231,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:thumbTint="@drawable/selector_switch_thumb"
-                app:trackTint="@drawable/selector_switch_track"
+                app:thumbTint="@drawable/bg_switch_thumb"
+                app:trackTint="@drawable/bg_switch_track"
                 tools:checked="true" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -250,8 +250,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:thumbTint="@drawable/selector_switch_thumb"
-                app:trackTint="@drawable/selector_switch_track" />
+                app:thumbTint="@drawable/bg_switch_thumb"
+                app:trackTint="@drawable/bg_switch_track" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"

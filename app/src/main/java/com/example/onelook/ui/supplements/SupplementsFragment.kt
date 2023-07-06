@@ -63,8 +63,8 @@ class SupplementsFragment : Fragment(R.layout.fragment_supplements) {
             // Supplements list
             onCollect(supplements) { result ->
                 supplementsAdapter.submitList(result.data)
-                binding.imageViewNotData.isVisible = result.data.isNullOrEmpty() &&
-                        (result !is CustomResult.Loading || binding.imageViewNotData.isVisible)
+                binding.textViewNoData.isVisible = result.data.isNullOrEmpty() &&
+                        (result !is CustomResult.Loading || binding.textViewNoData.isVisible)
             }
 
             // Refreshing indicator

@@ -12,7 +12,7 @@
         android:id="@+id/check_box_dosage_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:button="@drawable/selector_secondary_checkbox"
+        android:button="@drawable/bg_secondary_checkbox"
         android:paddingStart="@dimen/s_padding"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"

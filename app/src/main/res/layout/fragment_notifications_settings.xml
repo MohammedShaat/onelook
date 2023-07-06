@@ -33,8 +33,8 @@
                 android:text="@string/switch_all_notifications"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                app:thumbTint="@drawable/selector_switch_thumb"
-                app:trackTint="@drawable/selector_switch_track"
+                app:thumbTint="@drawable/bg_switch_thumb"
+                app:trackTint="@drawable/bg_switch_track"
                 tools:checked="true" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -49,8 +49,8 @@
                 android:layout_marginTop="@dimen/h_margin"
                 android:text="@string/switch_activities"
                 android:textStyle="bold"
-                app:thumbTint="@drawable/selector_switch_thumb"
-                app:trackTint="@drawable/selector_switch_track"
+                app:thumbTint="@drawable/bg_switch_thumb"
+                app:trackTint="@drawable/bg_switch_track"
                 tools:checked="true" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -64,8 +64,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/switch_supplements"
                 android:textStyle="bold"
-                app:thumbTint="@drawable/selector_switch_thumb"
-                app:trackTint="@drawable/selector_switch_track"
+                app:thumbTint="@drawable/bg_switch_thumb"
+                app:trackTint="@drawable/bg_switch_track"
                 tools:checked="true" />
 
             <com.google.android.material.divider.MaterialDivider
