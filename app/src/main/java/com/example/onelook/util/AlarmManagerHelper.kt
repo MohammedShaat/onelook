@@ -45,7 +45,7 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
                 context,
                 localSupplement.id.hashCode(),
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             if (calendarBefore < Calendar.getInstance()) return
             alarmManager.setExact(
@@ -70,7 +70,7 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
                 context,
                 localSupplement.id.hashCode() + 1,
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             if (calendarAfter < Calendar.getInstance()) return
             alarmManager.setExact(
@@ -89,13 +89,13 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
             context,
             localSupplement.id.hashCode(),
             reminderIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val pendingIntentAfter = PendingIntent.getBroadcast(
             context,
             localSupplement.id.hashCode() + 1,
             reminderIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         alarmManager.cancel(pendingIntentBefore)
         alarmManager.cancel(pendingIntentAfter)
@@ -118,7 +118,7 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
                 context,
                 localActivity.id.hashCode(),
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             val calendarBefore = (targetCalendar.clone() as Calendar).apply {
                 add(Calendar.MINUTE, -REMINDER_TIME_ADDITION)
@@ -142,7 +142,7 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
                 context,
                 localActivity.id.hashCode() + 1,
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             val calendarAfter = (targetCalendar.clone() as Calendar).apply {
                 add(Calendar.MINUTE, REMINDER_TIME_ADDITION)
@@ -167,13 +167,13 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
             context,
             localActivity.id.hashCode(),
             reminderIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val pendingIntentAfter = PendingIntent.getBroadcast(
             context,
             localActivity.id.hashCode() + 1,
             reminderIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         alarmManager.cancel(pendingIntentBefore)
         alarmManager.cancel(pendingIntentAfter)
