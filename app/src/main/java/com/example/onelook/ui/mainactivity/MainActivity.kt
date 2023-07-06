@@ -22,7 +22,9 @@ import com.example.onelook.util.REMINDERS_CHANNEL_ID
 import com.example.onelook.util.onCollect
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -198,8 +200,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun cancelCoroutines() {
-        viewModel.viewModelScope.cancel()
+    fun cancelCoroutines(cancellationException: CancellationException) {
+        viewModel.viewModelScope.coroutineContext.cancelChildren(cancellationException)
     }
 
     fun popAllFragmentsFromBackStack() {
