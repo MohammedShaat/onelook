@@ -11,6 +11,7 @@ import com.example.onelook.databinding.DialogConfirmationBinding
 import com.example.onelook.util.mainActivity
 import com.example.onelook.util.onCollect
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CancellationException
 
 @AndroidEntryPoint
 class LogOutDialogFragment : DialogFragment(R.layout.dialog_confirmation) {
@@ -77,7 +78,7 @@ class LogOutDialogFragment : DialogFragment(R.layout.dialog_confirmation) {
                     }//NavigateToSignInFragmentAfterLoggingOut
 
                     LogOutDialogViewModel.LogOutEvent.CancelActivityCoroutines -> {
-                        mainActivity.cancelCoroutines()
+                        mainActivity.cancelCoroutines(CancellationException("Logging Out"))
                     }//CancelActivityCoroutines
                 }
             }

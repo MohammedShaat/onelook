@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -39,7 +40,7 @@ class LogOutDialogViewModel @Inject constructor(
 
     fun onButtonPositiveClicked() = viewModelScope.launch {
         _isLoading.value = true
-        applicationCoroutine.cancel(CancellationException("Logging Out"))
+        applicationCoroutine.coroutineContext.cancelChildren(CancellationException("Logging Out"))
         _logOutEvent.emit(LogOutEvent.CancelActivityCoroutines)
         auth.signOut()
         repository.clearDb().collect()
