@@ -103,11 +103,11 @@ val Date.isToday: Boolean
 
     }
 
-fun getInitialDelay(): Long {
+fun getInitialDelay(hour: Int, minute: Int, tomorrow: Boolean): Long {
     val targetCalendar = Calendar.getInstance().apply {
-        set(Calendar.DAY_OF_YEAR, get(Calendar.DAY_OF_YEAR) + 1)
-        set(Calendar.HOUR_OF_DAY, 0)
-        set(Calendar.MINUTE, 0)
+        if (tomorrow) set(Calendar.DAY_OF_YEAR, get(Calendar.DAY_OF_YEAR) + 1)
+        set(Calendar.HOUR_OF_DAY, hour)
+        set(Calendar.MINUTE, minute)
         set(Calendar.SECOND, 0)
         set(Calendar.MILLISECOND, 0)
     }

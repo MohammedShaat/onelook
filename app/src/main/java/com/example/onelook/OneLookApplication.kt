@@ -12,6 +12,7 @@ import androidx.work.WorkManager
 import com.example.onelook.di.ApplicationCoroutine
 import com.example.onelook.util.getInitialDelay
 import com.example.onelook.workers.DailyTasksWorker
+import com.example.onelook.workers.SyncWorker
 import com.facebook.stetho.Stetho
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
@@ -54,17 +55,30 @@ class OneLookApplication : Application(), Configuration.Provider {
     }
 
     private fun delayInit() = coroutineScope.launch {
+        scheduleSyncWorker()
         scheduleDailyTasksWorker()
     }
 
-    private fun scheduleDailyTasksWorker() {
+    private fun scheduleSyncWorker() {
         val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+            .setRequiredNetworkType(NetworkType.UNMETERED)
             .build()
 
-        val request = PeriodicWorkRequestBuilder<DailyTasksWorker>(1, TimeUnit.DAYS)
+        val request = PeriodicWorkRequestBuilder<SyncWorker>(1, TimeUnit.DAYS)
             .setConstraints(constraints)
-            .setInitialDelay(getInitialDelay(), TimeUnit.MILLISECONDS)
+            .setInitialDelay(getInitialDelay(23, 50, false), TimeUnit.MILLISECONDS)
+            .build()
+
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+            SyncWorker::class.java.name,
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
+    }
+
+    private fun scheduleDailyTasksWorker() {
+        val request = PeriodicWorkRequestBuilder<DailyTasksWorker>(1, TimeUnit.DAYS)
+            .setInitialDelay(getInitialDelay(0, 0, true), TimeUnit.MILLISECONDS)
             .build()
 
         WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(

@@ -34,19 +34,11 @@ class DailyTasksWorker @AssistedInject constructor(
         if (appStateManager.getAppState() != AppState.LOGGED_IN)
             return Result.failure()
 
-        val result1 = sync()
-        val result2 = createTodaySupplementsHistoryAndCheckCompletion()
-        val result3 = createTodayActivitiesHistory()
+        val result1 = createTodaySupplementsHistoryAndCheckCompletion()
+        val result2 = createTodayActivitiesHistory()
 
-
-        return if (Result.retry() in listOf(result1, result2, result3)) Result.retry()
+        return if (Result.retry() in listOf(result1, result2)) Result.retry()
         else Result.success()
-    }
-
-    private suspend fun sync(): Result {
-        val refresh = repository.sync().last()
-        return if (refresh is CustomResult.Success) Result.success()
-        else Result.retry()
     }
 
     private suspend fun createTodaySupplementsHistoryAndCheckCompletion(): Result {
