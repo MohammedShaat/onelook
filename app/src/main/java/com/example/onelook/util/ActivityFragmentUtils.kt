@@ -13,7 +13,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.onelook.R
+import com.example.onelook.ui.home.HomeFragment
 import com.example.onelook.ui.mainactivity.MainActivity
+import com.example.onelook.ui.settings.SettingsFragment
+import com.example.onelook.ui.timer.TimerFragment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -47,11 +50,17 @@ fun Fragment.isInternetAvailable(): Boolean {
 }
 
 fun Fragment.hideBottomNavigation() {
-    (requireActivity() as MainActivity).hideBottomNavigation()
+    mainActivity.hideBottomNavigation()
 }
 
 fun Fragment.showBottomNavigation() {
-    (requireActivity() as MainActivity).showBottomNavigation()
+    mainActivity.showBottomNavigation()
+    val menu = mainActivity.bottomNavigationView.menu
+    when (this) {
+        is HomeFragment -> menu.findItem(R.id.action_home).isChecked = true
+        is TimerFragment -> menu.findItem(R.id.action_timer).isChecked = true
+        is SettingsFragment -> menu.findItem(R.id.action_settings).isChecked = true
+    }
 }
 
 fun Fragment.hideSplashScreen() {

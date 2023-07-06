@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
     private var keepSplashScreen = true
-    private lateinit var bottomNavigationView: BottomNavigationView
+    lateinit var bottomNavigationView: BottomNavigationView
 
     private var activityHistory: ActivityHistory? = null
 
