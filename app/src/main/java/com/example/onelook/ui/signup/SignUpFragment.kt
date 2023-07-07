@@ -61,6 +61,9 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
         viewModel.onSignUpVisited()
 
+        markErrorFields(viewModel.errorFields)
+
+
         // Listeners
         binding.apply {
             sendInputsDataWhenChanged()
@@ -89,6 +92,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
         // Observers
         viewModel.apply {
+
             buttonSignUpEnabled.observe(viewLifecycleOwner) { isEnabled ->
                 binding.buttonSignUp.isEnabled = isEnabled
             }
@@ -121,14 +125,19 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             }
 
             onCollect(singUpEvent) { event ->
-                hideErrors()
                 when (event) {
+
+                    is SignUpViewModel.SignUpEvent.HideErrors -> {
+                        hideErrors()
+                    }//HideErrors
+
                     is SignUpViewModel.SignUpEvent.ShowEmptyFieldsMessage -> {
-                        markErrorFields(event.fields)
+                        markErrorFields(viewModel.errorFields)
                         binding.textViewErrorMessage.apply {
                             setText(R.string.fill_required_fields)
                             isVisible = true
                         }
+                        viewModel.onErrorMessageChanged(binding.textViewErrorMessage.text.toString())
                     }//EmptyFields
 
                     is SignUpViewModel.SignUpEvent.NavigateToLoginFragment -> {
@@ -137,27 +146,32 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     }//NavigateToLoginFragment
 
                     is SignUpViewModel.SignUpEvent.ShowCreationWithEmailFailedMessage -> {
-                        markErrorFields(event.fields)
+                        markErrorFields(viewModel.errorFields)
                         val textViewErrorMessage = binding.textViewErrorMessage
                         textViewErrorMessage.isVisible = true
                         when (event.exception) {
                             SignUpViewModel.CreationWithEmailExceptions.WEAK_PASSWORD -> {
                                 textViewErrorMessage.text = event.message
                             }
+
                             SignUpViewModel.CreationWithEmailExceptions.INVALID_EMAIL -> {
                                 textViewErrorMessage.setText(R.string.invalid_email)
                             }
+
                             SignUpViewModel.CreationWithEmailExceptions.EXISTING_EMAIL -> {
                                 textViewErrorMessage.setText(R.string.existing_email)
                             }
+
                             SignUpViewModel.CreationWithEmailExceptions.NETWORK_ISSUE -> {
                                 textViewErrorMessage.setText(R.string.no_connection)
                             }
+
                             SignUpViewModel.CreationWithEmailExceptions.OTHER_EXCEPTIONS -> {
                                 textViewErrorMessage.text =
                                     event.message ?: getString(R.string.unexpected_error_2)
                             }
                         }
+                        viewModel.onErrorMessageChanged(binding.textViewErrorMessage.text.toString())
                     }//ShowCreationWithEmailFailed
 
                     is SignUpViewModel.SignUpEvent.NavigateToHomeFragment -> {
@@ -177,6 +191,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                         val msg = when (event.exception) {
                             SignUpViewModel.CreationWithProviderExceptions.NETWORK_ISSUE ->
                                 getString(R.string.no_connection)
+
                             SignUpViewModel.CreationWithProviderExceptions.OTHER_EXCEPTIONS ->
                                 event.message ?: getString(R.string.unexpected_error)
                         }
@@ -210,14 +225,20 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 SignUpViewModel.Fields.NAME -> binding.textViewName.setTextColor(
                     resources.getColor(R.color.alert)
                 )
+
                 SignUpViewModel.Fields.EMAIL -> binding.textViewEmail.setTextColor(
                     resources.getColor(R.color.alert)
                 )
+
                 SignUpViewModel.Fields.PASSWORD -> binding.textViewPassword.setTextColor(
                     resources.getColor(R.color.alert)
                 )
-
             }
+            if (fields.isNotEmpty())
+                binding.textViewErrorMessage.apply {
+                    text = viewModel.errorMessage
+                    isVisible = true
+                }
         }
     }
 

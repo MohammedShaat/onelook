@@ -84,7 +84,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 binding.apply {
 //                    recyclerViewTodayTasks.scrollToPosition(0)
                     textViewNoData.isVisible =
-                        result.data.isNullOrEmpty() && result !is CustomResult.Loading && !SharedData.isSyncing.value
+                        result.data.isNullOrEmpty() && (result !is CustomResult.Loading || !SharedData.isSyncing.value)
                 }
             }
 
