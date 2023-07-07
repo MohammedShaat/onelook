@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import com.example.onelook.data.AppState
 import com.example.onelook.data.AppStateManager
 import com.example.onelook.data.Repository
+import com.example.onelook.data.SharedData
 import com.example.onelook.data.local.activitieshistory.LocalActivityHistory
 import com.example.onelook.data.local.supplementshistory.LocalSupplementHistory
 import com.example.onelook.util.CustomResult
@@ -19,6 +20,8 @@ import com.example.onelook.util.toLocalModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
+import timber.log.Timber
 import java.util.Date
 import java.util.UUID
 
@@ -31,15 +34,26 @@ class DailyTasksWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
+        Timber.i("doWork()")
         if (appStateManager.getAppState() != AppState.LOGGED_IN)
             return Result.failure()
 
-        val result1 = createTodaySupplementsHistoryAndCheckCompletion()
-        val result2 = createTodayActivitiesHistory()
+        appStateManager.setLastDailyTasksWorkerDate(Date().format)
 
-        return if (Result.retry() in listOf(result1, result2)) Result.retry()
+        val result1 = sync()
+        val result2 = createTodaySupplementsHistoryAndCheckCompletion()
+        val result3 = createTodayActivitiesHistory()
+
+        return if (Result.retry() in listOf(result1, result2, result3)) Result.retry()
         else Result.success()
     }
+
+    private suspend fun sync(): Result {
+        val refresh = repository.sync().last()
+        return if (refresh is CustomResult.Success) Result.success()
+        else Result.retry()
+    }
+
 
     private suspend fun createTodaySupplementsHistoryAndCheckCompletion(): Result {
         val supplements = repository.getSupplements().first().data ?: return Result.retry()

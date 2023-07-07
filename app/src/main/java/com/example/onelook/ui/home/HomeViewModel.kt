@@ -1,6 +1,5 @@
 package com.example.onelook.ui.home
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.onelook.data.AppStateManager
@@ -12,7 +11,8 @@ import com.example.onelook.data.domain.TodayTask
 import com.example.onelook.di.ApplicationCoroutine
 import com.example.onelook.services.TimerService
 import com.example.onelook.util.CustomResult
-import com.example.onelook.util.DATE_SEVENTIES
+import com.example.onelook.util.isToday
+import com.example.onelook.util.parseDate
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -49,13 +49,10 @@ class HomeViewModel @Inject constructor(
 
     val unreadNotifications = appStateManager.getUnreadNotifications()
 
-    init {
-        // Sync data
-        applicationCoroutine.launch {
-            if (appStateManager.getLastSyncDate() == DATE_SEVENTIES && !SharedData.isSyncing.value)
-                repository.sync().collect()
-        }
+    val enqueueImmediateDailyTasksWorker =
+        appStateManager.getLastDailyTasksWorkerDate().map { !it.parseDate.isToday }
 
+    init {
         fetchTodayTasks()
     }
 
@@ -92,12 +89,11 @@ class HomeViewModel @Inject constructor(
     sealed class HomeEvent {
         data class ShowRefreshFailedMessage(val exception: Exception) : HomeEvent()
         object NavigateToAddTaskDialog : HomeEvent()
-        object ShowThereIsActivityRunningMessage : HomeViewModel.HomeEvent()
-
+        object ShowThereIsActivityRunningMessage : HomeEvent()
         data class NavigateToSupplementHistoryDetailsFragment(val supplementHistory: SupplementHistory) :
             HomeEvent()
 
         data class NavigateToTimerFragment(val activityHistory: ActivityHistory) :
-            HomeViewModel.HomeEvent()
+            HomeEvent()
     }
 }

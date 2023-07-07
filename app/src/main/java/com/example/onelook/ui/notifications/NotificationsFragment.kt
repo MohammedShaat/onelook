@@ -56,8 +56,8 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
             onCollect(notifications) { result ->
                 notificationAdapter.submitList(result.data)
                 binding.apply {
-                    textViewNoData.isVisible = result.data.isNullOrEmpty() &&
-                            (result !is CustomResult.Loading<*> || textViewNoData.isVisible)
+                    textViewNoData.isVisible =
+                        result.data.isNullOrEmpty() && result !is CustomResult.Loading
                 }
             }
 

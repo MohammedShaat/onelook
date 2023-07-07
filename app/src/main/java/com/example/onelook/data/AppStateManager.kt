@@ -27,6 +27,7 @@ class AppStateManager @Inject constructor(@ApplicationContext context: Context) 
     private val accessTokenKey = preferencesKey<String>("access_token")
     private val lastSyncDateKey = preferencesKey<String>("last_sync_date")
     private val unreadNotifications = preferencesKey<Int>("unread_notifications")
+    private val lastDailyTasksWorkerDateKey = preferencesKey<String>("last_daily_tasks_worker_date")
 
     private val preferencesFlow = dataStore.data.catch { exception ->
         Timber.e(exception)
@@ -63,6 +64,18 @@ class AppStateManager @Inject constructor(@ApplicationContext context: Context) 
     suspend fun setLastSyncDate(date: String) {
         dataStore.edit { preferences ->
             preferences[lastSyncDateKey] = date
+        }
+    }
+
+    fun getLastDailyTasksWorkerDate(): Flow<String> {
+        return preferencesFlow.map { preferences ->
+            preferences[lastDailyTasksWorkerDateKey] ?: DATE_SEVENTIES
+        }
+    }
+
+    suspend fun setLastDailyTasksWorkerDate(date: String) {
+        dataStore.edit { preferences ->
+            preferences[lastDailyTasksWorkerDateKey] = date
         }
     }
 
