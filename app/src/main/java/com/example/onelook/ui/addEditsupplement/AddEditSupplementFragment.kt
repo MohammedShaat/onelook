@@ -53,18 +53,20 @@ class AddEditSupplementFragment : Fragment(R.layout.fragment_add_edit_supplement
         }
 
         // Populates forms RecyclerView
-        val formsAdapter = SelectableItemAdapter(viewModel.formsList) { newPosition ->
-            viewModel.onFormSelected(newPosition)
-        }
+        val formsAdapter =
+            SelectableItemAdapter(requireContext(), viewModel.formsList) { newPosition ->
+                viewModel.onFormSelected(newPosition)
+            }
         binding.recyclerViewForms.apply {
             setHasFixedSize(true)
             adapter = formsAdapter
         }
 
         // Populates dosages RecyclerView
-        val dosageAdapter = SelectableItemAdapter(viewModel.dosagesList) { newPosition ->
-            viewModel.onDosageSelected(newPosition)
-        }
+        val dosageAdapter =
+            SelectableItemAdapter(requireContext(), viewModel.dosagesList) { newPosition ->
+                viewModel.onDosageSelected(newPosition)
+            }
         binding.recyclerViewDosages.apply {
             setHasFixedSize(true)
             adapter = dosageAdapter
@@ -87,9 +89,10 @@ class AddEditSupplementFragment : Fragment(R.layout.fragment_add_edit_supplement
         }
 
         // Populates times of day RecyclerView
-        val timesOfDayAdapter = SelectableItemAdapter(viewModel.timesOfDayList) { newPosition ->
-            viewModel.onTimeOfDaySelected(newPosition)
-        }
+        val timesOfDayAdapter =
+            SelectableItemAdapter(requireContext(), viewModel.timesOfDayList) { newPosition ->
+                viewModel.onTimeOfDaySelected(newPosition)
+            }
         binding.recyclerViewTimeOfDay.apply {
             setHasFixedSize(true)
             adapter = timesOfDayAdapter

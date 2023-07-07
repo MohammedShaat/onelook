@@ -8,5 +8,8 @@
         <attr name="total" format="integer"/>
     </declare-styleable>
 
+    <attr name="colorText" format="color"/>
     <attr name="colorBackgroundDisabled" format="color"/>
+    <attr name="colorBoardingBackground" format="color"/>
+    <attr name="colorTextInputBackground" format="color"/>
 </resources>

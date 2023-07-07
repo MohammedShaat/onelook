@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape>
-            <solid android:color="@color/lilac_petals" />
+            <solid android:color="?colorTextInputBackground" />
             <corners android:radius="14dp" />
         </shape>
     </item>

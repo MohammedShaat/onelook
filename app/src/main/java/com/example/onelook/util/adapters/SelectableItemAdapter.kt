@@ -1,8 +1,7 @@
 package com.example.onelook.util.adapters
 
-import android.text.Layout
+import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -15,6 +14,7 @@ import com.example.onelook.databinding.ItemSelectableRectBinding
 import com.example.onelook.util.capital
 
 class SelectableItemAdapter(
+    private val context: Context,
     private val items: List<SelectableItem>,
     private val onClickListener: (Int) -> Unit = { }
 ) :
@@ -30,16 +30,19 @@ class SelectableItemAdapter(
                     ItemSelectableRectBinding.inflate(inflater, parent, false)
                 )
             }
+
             SELECTABLE_OVAL_NUMBER -> {
                 SelectableOvalNumberVH(
                     ItemSelectableNumberBinding.inflate(inflater, parent, false)
                 )
             }
+
             SELECTABLE_OVAL_WITH_TEXT -> {
                 SelectableOvalWithTextVH(
                     ItemSelectableOvalBinding.inflate(inflater, parent, false)
                 )
             }
+
             else -> throw IllegalArgumentException("View type of $viewType is unknown")
         }
     }
@@ -49,12 +52,15 @@ class SelectableItemAdapter(
             is SelectableRectWithTextVH -> {
                 holder.bind(items[position] as SelectableRectWithText)
             }
+
             is SelectableOvalNumberVH -> {
                 holder.bind(items[position] as SelectableOvalNumber)
             }
+
             is SelectableOvalWithTextVH -> {
                 holder.bind(items[position] as SelectableOvalWithText)
             }
+
             else -> throw IllegalArgumentException("${items[position]::class.simpleName} in data set is unknown")
         }
     }
@@ -110,15 +116,16 @@ class SelectableItemAdapter(
                     DrawableCompat.setTint(this.drawable, color)
                 }
 
+                val typedArray =
+                    context.obtainStyledAttributes(null, intArrayOf(R.attr.colorText))
+                val textColor =
+                    if (adapterPosition == selectedItemPosition) typedArray.getColor(0, 0)
+                    else ContextCompat.getColor(context, R.color.dark_grey)
+                typedArray.recycle()
+
                 textViewName.apply {
                     text = item.text.capital
-                    setTextColor(
-                        ContextCompat.getColor(
-                            context,
-                            if (adapterPosition == selectedItemPosition) R.color.deep_blue
-                            else R.color.dark_grey
-                        )
-                    )
+                    setTextColor(textColor)
                 }
             }
         }
@@ -136,15 +143,15 @@ class SelectableItemAdapter(
         fun bind(item: SelectableOvalNumber) {
             binding.apply {
 
+                val textColor = ContextCompat.getColor(
+                    context,
+                    if (adapterPosition == selectedItemPosition) R.color.black
+                    else R.color.dark_grey
+                )
+
                 textViewNumber.apply {
                     text = item.number
-                    setTextColor(
-                        ContextCompat.getColor(
-                            context,
-                            if (adapterPosition == selectedItemPosition) R.color.deep_blue
-                            else R.color.dark_grey
-                        )
-                    )
+                    setTextColor(textColor)
                     setBackgroundResource(
                         if (adapterPosition == selectedItemPosition) R.drawable.bg_ic_oval_selected
                         else R.drawable.bg_ic_oval
@@ -180,15 +187,17 @@ class SelectableItemAdapter(
                     DrawableCompat.setTint(this.drawable, color)
                 }
 
+                val typedArray =
+                    context.obtainStyledAttributes(null, intArrayOf(R.attr.colorText))
+                val textColor =
+                    if (adapterPosition == selectedItemPosition) typedArray.getColor(0, 0)
+                    else ContextCompat.getColor(context, R.color.dark_grey)
+                typedArray.recycle()
+
+
                 textViewName.apply {
                     text = item.text.capital
-                    setTextColor(
-                        ContextCompat.getColor(
-                            context,
-                            if (adapterPosition == selectedItemPosition) R.color.deep_blue
-                            else R.color.dark_grey
-                        )
-                    )
+                    setTextColor(textColor)
                 }
             }
         }
