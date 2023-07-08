@@ -17,6 +17,7 @@ import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.data.domain.SupplementHistory
 import com.example.onelook.util.ACTION_OPEN_ACTIVITY_NOTIFICATION
 import com.example.onelook.util.ACTION_OPEN_SUPPLEMENT_NOTIFICATION
+import com.example.onelook.util.ACTION_OPEN_TIMER
 import com.example.onelook.util.ACTIVITIES_TIMER_CHANNEL_ID
 import com.example.onelook.util.REMINDERS_CHANNEL_ID
 import com.example.onelook.util.onCollect
@@ -106,6 +107,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        if (intent?.action == ACTION_OPEN_TIMER) {
+            val intentActivityHistory =
+                intent.getParcelableExtra<ActivityHistory>("activity_history")
+            selectBottomNavigationSettingsItem(intentActivityHistory)
+            return
+        }
+
         if (intent?.action == ACTION_OPEN_ACTIVITY_NOTIFICATION) {
             val intentActivityHistory =
                 intent.getParcelableExtra<ActivityHistory>("activity_history")

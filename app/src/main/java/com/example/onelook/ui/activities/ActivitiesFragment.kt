@@ -64,7 +64,7 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
             onCollect(activities) { result ->
                 activitiesAdapter.submitList(result.data)
                 binding.textViewNoData.isVisible =
-                    result.data.isNullOrEmpty() && (result !is CustomResult.Loading || !SharedData.isSyncing.value)
+                    result.data.isNullOrEmpty() && (result !is CustomResult.Loading && !SharedData.isSyncing.value)
             }
 
             // Refreshing indicator
