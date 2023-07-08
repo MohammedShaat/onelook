@@ -5,7 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.onelook.data.AppStateManager
 import com.example.onelook.data.Repository
+import com.example.onelook.data.domain.ActivityHistory
 import com.example.onelook.data.domain.Notification
+import com.example.onelook.services.TimerService
+import com.example.onelook.ui.home.HomeViewModel
 import com.example.onelook.ui.mainactivity.MainActivity
 import com.example.onelook.util.ACTION_OPEN_ACTIVITY_NOTIFICATION
 import com.example.onelook.util.ACTION_OPEN_SUPPLEMENT_NOTIFICATION
@@ -37,11 +40,19 @@ class NotificationsViewModel @Inject constructor(
     }
 
     fun onNotificationClicked(notification: Notification) = viewModelScope.launch {
-        _notificationsEvent.emit(NotificationsEvent.OpenTask(notification))
+        if (notification.history is ActivityHistory && TimerService.isRunning &&
+            TimerService.currentActivityHistory?.id != notification.history.id
+        )
+            _notificationsEvent.emit(NotificationsEvent.ShowThereIsActivityRunningMessage)
+        else
+            _notificationsEvent.emit(NotificationsEvent.OpenTask(notification))
+
     }
 
 
     sealed class NotificationsEvent {
+        object ShowThereIsActivityRunningMessage : NotificationsEvent()
+
         data class OpenTask(val notification: Notification) : NotificationsEvent()
     }
 }

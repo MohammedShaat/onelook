@@ -2,6 +2,7 @@ package com.example.onelook.ui.notifications
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -70,6 +71,14 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
                     is NotificationsViewModel.NotificationsEvent.OpenTask -> {
                         openActivityOrSupplement(event.notification)
                     }//OpenTask
+
+                    NotificationsViewModel.NotificationsEvent.ShowThereIsActivityRunningMessage -> {
+                        Toast.makeText(
+                            context,
+                            R.string.there_is_activity_running,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }//ShowThereIsActivityRunningMessage
                 }
             }
         }//Observers
