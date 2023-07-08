@@ -65,7 +65,7 @@ class SupplementsFragment : Fragment(R.layout.fragment_supplements) {
             onCollect(supplements) { result ->
                 supplementsAdapter.submitList(result.data)
                 binding.textViewNoData.isVisible =
-                    result.data.isNullOrEmpty() && (result !is CustomResult.Loading || !SharedData.isSyncing.value)
+                    result.data.isNullOrEmpty() && (result !is CustomResult.Loading && !SharedData.isSyncing.value)
             }
 
             // Refreshing indicator
