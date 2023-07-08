@@ -26,6 +26,7 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -56,12 +57,24 @@ class SignUpViewModel @Inject constructor(
     private val _singUpEvent = MutableSharedFlow<SignUpEvent>()
     val singUpEvent = _singUpEvent.asSharedFlow()
 
+    private var _errorMessage = ""
+    val errorMessage: String
+        get() = _errorMessage
+
+    private var _errorFields = emptyList<Fields>()
+    val errorFields: List<Fields>
+        get() = _errorFields
+
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean>
         get() = _isLoading
 
     fun isLoading(status: Boolean) = viewModelScope.launch {
         _isLoading.value = status
+    }
+
+    fun onErrorMessageChanged(message: String) {
+        _errorMessage = message
     }
 
     // marks that the app has been launched in DataStore
@@ -82,13 +95,15 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onButtonSignUpWithEmailClicked() = viewModelScope.launch {
+        resetErrors()
+        _singUpEvent.emit(SignUpEvent.HideErrors)
         val name = name.value!!
         val email = email.value!!
         val password = password.value!!
 
-        val emptyFields = inputsAreNotEmpty(name, email, password)
-        if (emptyFields.isNotEmpty()) {
-            _singUpEvent.emit(SignUpEvent.ShowEmptyFieldsMessage(emptyFields))
+        _errorFields = inputsAreNotEmpty(name, email, password)
+        if (_errorFields.isNotEmpty()) {
+            _singUpEvent.emit(SignUpEvent.ShowEmptyFieldsMessage)
             return@launch
         }
 
@@ -105,11 +120,15 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onButtonSignUpWithGoogleClicked() = viewModelScope.launch {
+        resetErrors()
+        _singUpEvent.emit(SignUpEvent.HideErrors)
         isLoading(true)
         _singUpEvent.emit(SignUpEvent.SignUpWithGoogle)
     }
 
     fun onButtonSignUpWithFacebookClicked() = viewModelScope.launch {
+        resetErrors()
+        _singUpEvent.emit(SignUpEvent.HideErrors)
         isLoading(true)
         _singUpEvent.emit(SignUpEvent.SignUpWithFacebook)
     }
@@ -118,30 +137,35 @@ class SignUpViewModel @Inject constructor(
         when (exception) {
             is FirebaseAuthWeakPasswordException -> {
                 Timber.e("PasswordWeak: $exception")
+                _errorFields = listOf(Fields.PASSWORD)
                 _singUpEvent.emit(
                     SignUpEvent.ShowCreationWithEmailFailedMessage(
                         CreationWithEmailExceptions.WEAK_PASSWORD,
-                        fields = listOf(Fields.PASSWORD),
                         message = exception.reason
                     )
                 )
             }
+
             is FirebaseAuthInvalidCredentialsException -> {
                 Timber.e("EmailInvalid: $exception")
+                _errorFields = listOf(Fields.EMAIL)
                 _singUpEvent.emit(
                     SignUpEvent.ShowCreationWithEmailFailedMessage(
                         CreationWithEmailExceptions.INVALID_EMAIL
                     )
                 )
             }
+
             is FirebaseAuthUserCollisionException -> {
                 Timber.e("Existing account: $exception")
+                _errorFields = listOf(Fields.EMAIL)
                 _singUpEvent.emit(
                     SignUpEvent.ShowCreationWithEmailFailedMessage(
                         CreationWithEmailExceptions.EXISTING_EMAIL
                     )
                 )
             }
+
             is FirebaseNetworkException -> {
                 Timber.e("network error: $exception")
                 _singUpEvent.emit(
@@ -150,6 +174,7 @@ class SignUpViewModel @Inject constructor(
                     )
                 )
             }
+
             else -> {
                 Timber.e("user creation failed\n $exception")
                 _singUpEvent.emit(
@@ -173,6 +198,7 @@ class SignUpViewModel @Inject constructor(
                     )
                 )
             }
+
             else -> {
                 Timber.e("user creation failed\n $exception")
                 _singUpEvent.emit(
@@ -288,11 +314,17 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
+    private fun resetErrors() {
+        _errorFields = emptyList()
+        _errorMessage = ""
+    }
+
+
     sealed class SignUpEvent {
-        data class ShowEmptyFieldsMessage(val fields: List<Fields>) : SignUpEvent()
+        object HideErrors : SignUpEvent()
+        object ShowEmptyFieldsMessage : SignUpEvent()
         data class ShowCreationWithEmailFailedMessage(
             val exception: CreationWithEmailExceptions,
-            val fields: List<Fields> = emptyList(),
             val message: String? = null,
         ) : SignUpEvent()
 

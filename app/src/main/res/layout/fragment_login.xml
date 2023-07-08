@@ -99,7 +99,7 @@
             <TextView
                 android:id="@+id/text_view_error_message"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/m_margin"
                 android:drawablePadding="@dimen/s_padding"
                 android:text="@string/text_view_error"

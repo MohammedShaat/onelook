@@ -6,10 +6,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:checkable="true"
+    android:checked="true"
     android:textColor="@drawable/bg_chip_text_color"
     app:checkedIconVisible="false"
-    app:chipBackgroundColor="@color/lilac_petals_dark"
+    app:chipBackgroundColor="?colorTextInputBackground"
     app:chipStrokeColor="@drawable/bg_chip_stroke"
     app:chipStrokeWidth="1.5dp"
-    android:checked="true"
     tools:text="Before" />

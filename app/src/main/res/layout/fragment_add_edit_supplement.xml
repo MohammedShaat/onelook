@@ -12,7 +12,7 @@
         android:background="?colorSurface"
         android:paddingHorizontal="@dimen/h_padding"
         android:paddingTop="@dimen/m_padding"
-        tools:scrollY="3000px">
+        tools:scrollY="1000px">
 
         <LinearLayout
             android:layout_width="match_parent"

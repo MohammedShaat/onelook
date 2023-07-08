@@ -49,6 +49,14 @@ class LoginViewModel @Inject constructor(
     private val _loginEvent = MutableSharedFlow<LoginEvent>()
     val singUpEvent = _loginEvent.asSharedFlow()
 
+    private var _errorMessage = ""
+    val errorMessage: String
+        get() = _errorMessage
+
+    private var _errorFields = emptyList<Fields>()
+    val errorFields: List<Fields>
+        get() = _errorFields
+
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean>
         get() = _isLoading
@@ -56,7 +64,11 @@ class LoginViewModel @Inject constructor(
     fun isLoading(status: Boolean) = viewModelScope.launch {
         _isLoading.value = status
     }
-    
+
+    fun onErrorMessageChanged(message: String) {
+        _errorMessage = message
+    }
+
     fun onErrorOccurred(message: String? = null) = viewModelScope.launch {
         _loginEvent.emit(LoginEvent.ErrorOccurred(message))
     }
@@ -74,12 +86,14 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onButtonLoginWithEmailClicked() = viewModelScope.launch {
+        resetErrors()
+        _loginEvent.emit(LoginEvent.HideErrors)
         val email = email.value!!
         val password = password.value!!
 
-        val emptyFields = inputsAreNotEmpty(email, password)
-        if (emptyFields.isNotEmpty()) {
-            _loginEvent.emit(LoginEvent.ShowEmptyFieldsMessage(emptyFields))
+        _errorFields = inputsAreNotEmpty(email, password)
+        if (_errorFields.isNotEmpty()) {
+            _loginEvent.emit(LoginEvent.ShowEmptyFieldsMessage)
             return@launch
         }
 
@@ -96,11 +110,15 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onButtonLoginWithGoogleClicked() = viewModelScope.launch {
+        resetErrors()
+        _loginEvent.emit(LoginEvent.HideErrors)
         isLoading(true)
         _loginEvent.emit(LoginEvent.LoginWithGoogle)
     }
 
     fun onButtonLoginWithFacebookClicked() = viewModelScope.launch {
+        resetErrors()
+        _loginEvent.emit(LoginEvent.HideErrors)
         isLoading(true)
         _loginEvent.emit(LoginEvent.LoginWithFacebook)
     }
@@ -109,22 +127,20 @@ class LoginViewModel @Inject constructor(
         when (exception) {
             is FirebaseAuthInvalidUserException -> {
                 Timber.e("Email not found\n $exception")
+                _errorFields = listOf(Fields.EMAIL)
                 _loginEvent.emit(
-                    LoginEvent.ShowSigningWithEmailFailedMessage(
-                        SigningWithEmailExceptions.NO_EXIST_USER,
-                        listOf(Fields.EMAIL)
-                    )
+                    LoginEvent.ShowSigningWithEmailFailedMessage(SigningWithEmailExceptions.NO_EXIST_USER)
                 )
             }
+
             is FirebaseAuthInvalidCredentialsException -> {
                 Timber.e("Password is wrong\n $exception")
+                _errorFields = listOf(Fields.PASSWORD)
                 _loginEvent.emit(
-                    LoginEvent.ShowSigningWithEmailFailedMessage(
-                        SigningWithEmailExceptions.WRONG_PASSWORD,
-                        listOf(Fields.PASSWORD)
-                    )
+                    LoginEvent.ShowSigningWithEmailFailedMessage(SigningWithEmailExceptions.WRONG_PASSWORD)
                 )
             }
+
             is FirebaseNetworkException -> {
                 Timber.e("network error: $exception")
                 _loginEvent.emit(
@@ -133,6 +149,7 @@ class LoginViewModel @Inject constructor(
                     )
                 )
             }
+
             is FirebaseTooManyRequestsException -> {
                 Timber.e("Too many requests\n $exception")
                 _loginEvent.emit(
@@ -141,6 +158,7 @@ class LoginViewModel @Inject constructor(
                     )
                 )
             }
+
             else -> {
                 Timber.e("Signing failed\n $exception")
                 _loginEvent.emit(
@@ -163,6 +181,7 @@ class LoginViewModel @Inject constructor(
                     )
                 )
             }
+
             else -> {
                 Timber.e("Signing failed\n $exception")
                 _loginEvent.emit(
@@ -244,10 +263,10 @@ class LoginViewModel @Inject constructor(
     }
 
     sealed class LoginEvent {
-        data class ShowEmptyFieldsMessage(val fields: List<Fields>) : LoginEvent()
+        object HideErrors : LoginEvent()
+        object ShowEmptyFieldsMessage : LoginEvent()
         data class ShowSigningWithEmailFailedMessage(
             val exception: SigningWithEmailExceptions,
-            val fields: List<Fields> = emptyList(),
             val message: String? = null,
         ) : LoginEvent()
 
@@ -263,6 +282,11 @@ class LoginViewModel @Inject constructor(
         object LoginWithFacebook : LoginEvent()
         data class ErrorOccurred(val message: String? = null) : LoginEvent()
         object ShowUserNotFoundMessage : LoginEvent()
+    }
+
+    private fun resetErrors() {
+        _errorFields = emptyList()
+        _errorMessage = ""
     }
 
     enum class Fields {

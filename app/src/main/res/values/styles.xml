@@ -2,7 +2,6 @@
 <resources>
 
     <style name="CustomHeader">
-        <item name="android:textColor">@color/deep_blue</item>
         <item name="android:textSize">@dimen/xlarge_text_size</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">center</item>
@@ -44,6 +43,7 @@
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
         <item name="android:textColorHint">@color/dark_grey</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="CustomNumberPickerStyle">

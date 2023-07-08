@@ -53,7 +53,7 @@ class AddEditActivityFragment : Fragment(R.layout.fragment_add_edit_activity) {
 
         // Populates types RecyclerView
         val typesAdapter =
-            SelectableItemAdapter(viewModel.typesList) { newPosition ->
+            SelectableItemAdapter(requireContext(), viewModel.typesList) { newPosition ->
                 viewModel.onTypeSelected(newPosition)
             }
         binding.recyclerViewTypes.apply {
@@ -62,9 +62,10 @@ class AddEditActivityFragment : Fragment(R.layout.fragment_add_edit_activity) {
         }
 
         // Populates time of day RecyclerView
-        val timesOfDayAdapter = SelectableItemAdapter(viewModel.timesOfDayList) { newPosition ->
-            viewModel.onTimeOfDaySelected(newPosition)
-        }
+        val timesOfDayAdapter =
+            SelectableItemAdapter(requireContext(), viewModel.timesOfDayList) { newPosition ->
+                viewModel.onTimeOfDaySelected(newPosition)
+            }
         binding.recyclerViewTimeOfDay.apply {
             setHasFixedSize(true)
             adapter = timesOfDayAdapter

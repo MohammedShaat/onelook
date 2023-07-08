@@ -9,6 +9,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
+import com.example.onelook.data.SharedData
 import com.example.onelook.databinding.FragmentSupplementsBinding
 import com.example.onelook.util.*
 import com.google.android.material.snackbar.Snackbar
@@ -63,8 +64,8 @@ class SupplementsFragment : Fragment(R.layout.fragment_supplements) {
             // Supplements list
             onCollect(supplements) { result ->
                 supplementsAdapter.submitList(result.data)
-                binding.textViewNoData.isVisible = result.data.isNullOrEmpty() &&
-                        (result !is CustomResult.Loading || binding.textViewNoData.isVisible)
+                binding.textViewNoData.isVisible =
+                    result.data.isNullOrEmpty() && (result !is CustomResult.Loading || !SharedData.isSyncing.value)
             }
 
             // Refreshing indicator

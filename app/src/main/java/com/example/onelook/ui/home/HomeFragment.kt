@@ -3,22 +3,25 @@ package com.example.onelook.ui.home
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.onelook.R
+import com.example.onelook.data.SharedData
 import com.example.onelook.databinding.FragmentHomeBinding
 import com.example.onelook.util.*
+import com.example.onelook.workers.DailyTasksWorker
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.net.UnknownHostException
-import java.util.Calendar
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -80,8 +83,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 todayTasksAdapter.submitList(result.data)
                 binding.apply {
 //                    recyclerViewTodayTasks.scrollToPosition(0)
-                    textViewNoData.isVisible = result.data.isNullOrEmpty() &&
-                            (result !is CustomResult.Loading || textViewNoData.isVisible)
+                    textViewNoData.isVisible =
+                        result.data.isNullOrEmpty() && (result !is CustomResult.Loading || !SharedData.isSyncing.value)
                 }
             }
 
@@ -95,6 +98,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     if (unread > 0) R.drawable.ic_notifications_active
                     else R.drawable.ic_notifications_inactive
                 )
+            }
+
+            onCollect(enqueueImmediateDailyTasksWorker) { enqueue ->
+                if (enqueue) {
+                    Timber.i("enqueue")
+                    val workRequest = OneTimeWorkRequestBuilder<DailyTasksWorker>().build()
+                    WorkManager.getInstance(requireContext()).enqueueUniqueWork(
+                        DailyTasksWorker::class.java.name,
+                        ExistingWorkPolicy.REPLACE,
+                        workRequest
+                    )
+                }
             }
 
             // Events

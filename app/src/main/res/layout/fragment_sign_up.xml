@@ -48,7 +48,8 @@
                 android:autofillHints="name"
                 android:drawableStart="@drawable/ic_username"
                 android:hint="@string/sign_up_text_input_name"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                tools:ignore="VisualLintTextFieldSize" />
 
             <TextView
                 android:id="@+id/text_view_email"
@@ -66,7 +67,8 @@
                 android:autofillHints="emailAddress"
                 android:drawableStart="@drawable/ic_email"
                 android:hint="@string/sign_up_text_input_email"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                tools:ignore="VisualLintTextFieldSize" />
 
             <TextView
                 android:id="@+id/text_view_password"
@@ -88,7 +90,8 @@
                     android:drawableStart="@drawable/ic_password"
                     android:hint="@string/sign_up_text_input_password"
                     android:inputType="textPassword"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="VisualLintTextFieldSize" />
 
                 <ImageButton
                     android:id="@+id/image_button_password_visibility"
@@ -142,7 +145,7 @@
             app:layout_constraintTop_toBottomOf="@id/divider"
             app:useMaterialThemeColors="false"
             tools:checked="true"
-            tools:ignore="RtlSymmetry" />
+            tools:ignore="RtlSymmetry,VisualLintButtonSize" />
 
         <Button
             android:id="@+id/button_sign_up"
@@ -152,7 +155,8 @@
             android:layout_marginTop="@dimen/m_margin"
             android:layout_marginBottom="@dimen/xh_margin"
             android:text="@string/sing_up_button_sign_up"
-            app:layout_constraintTop_toBottomOf="@id/checkbox_privacy_policy" />
+            app:layout_constraintTop_toBottomOf="@id/checkbox_privacy_policy"
+            tools:ignore="VisualLintButtonSize" />
 
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/divider_or_left"

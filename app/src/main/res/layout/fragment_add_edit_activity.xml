@@ -12,7 +12,8 @@
         android:background="?colorSurface"
         android:paddingHorizontal="@dimen/h_padding"
         android:paddingTop="@dimen/m_padding"
-        tools:scrollY="3000px">
+        tools:scrollY="3000px"
+        tools:ignore="PxUsage">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -196,7 +197,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:thumbTint="@drawable/bg_switch_thumb"
                 app:trackTint="@drawable/bg_switch_track"
-                tools:checked="true" />
+                tools:checked="true"
+                tools:ignore="VisualLintButtonSize" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -214,7 +216,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:thumbTint="@drawable/bg_switch_thumb"
-                app:trackTint="@drawable/bg_switch_track" />
+                app:trackTint="@drawable/bg_switch_track"
+                tools:ignore="VisualLintButtonSize" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -227,7 +230,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/xh_margin"
-                android:text="@string/button_add_activity" />
+                android:text="@string/button_add_activity"
+                tools:ignore="VisualLintButtonSize" />
 
             <Button
                 android:id="@+id/button_cancel"
@@ -238,7 +242,8 @@
                 android:drawableEnd="@drawable/ic_cancel"
                 android:text="@string/button_cancel"
                 android:visibility="gone"
-                tools:visibility="visible" />
+                tools:visibility="visible"
+                tools:ignore="VisualLintButtonSize" />
 
         </LinearLayout>
     </ScrollView>

@@ -17,6 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.onelook.R
 import com.example.onelook.databinding.FragmentLoginBinding
+import com.example.onelook.ui.signup.SignUpViewModel
 import com.example.onelook.util.PASSWORD_REST_EMAIL_REQ_KEY
 import com.example.onelook.util.hideBottomNavigation
 import com.example.onelook.util.hideSplashScreen
@@ -60,6 +61,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         binding = FragmentLoginBinding.bind(view)
         navController = findNavController()
 
+        markErrorFields(viewModel.errorFields)
+
         // Listeners
         binding.apply {
             sendInputsDataWhenChanged()
@@ -89,8 +92,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
         }//Listeners
 
+
         // Observers
         viewModel.apply {
+
             passwordVisibility.observe(viewLifecycleOwner) { isPasswordVisible ->
                 if (isPasswordVisible) {
                     binding.apply {
@@ -119,14 +124,19 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
 
             onCollect(singUpEvent) { event ->
-                hideErrors()
                 when (event) {
+
+                    is LoginViewModel.LoginEvent.HideErrors -> {
+                        hideErrors()
+                    }//HideErrors
+
                     is LoginViewModel.LoginEvent.ShowEmptyFieldsMessage -> {
-                        markErrorFields(event.fields)
+                        markErrorFields(viewModel.errorFields)
                         binding.textViewErrorMessage.apply {
                             setText(R.string.fill_required_fields)
                             isVisible = true
                         }
+                        viewModel.onErrorMessageChanged(binding.textViewErrorMessage.text.toString())
                     }//ShowEmptyFieldsMessage
 
                     is LoginViewModel.LoginEvent.NavigateToSignUpFragment -> {
@@ -154,27 +164,32 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     }//ErrorOccurred
 
                     is LoginViewModel.LoginEvent.ShowSigningWithEmailFailedMessage -> {
-                        markErrorFields(event.fields)
+                        markErrorFields(viewModel.errorFields)
                         val textViewErrorMessage = binding.textViewErrorMessage
                         textViewErrorMessage.isVisible = true
                         when (event.exception) {
                             LoginViewModel.SigningWithEmailExceptions.NO_EXIST_USER -> {
                                 textViewErrorMessage.setText(R.string.not_exist_email)
                             }
+
                             LoginViewModel.SigningWithEmailExceptions.WRONG_PASSWORD -> {
                                 textViewErrorMessage.setText(R.string.wrong_password)
                             }
+
                             LoginViewModel.SigningWithEmailExceptions.TOO_MANY_REQUESTS -> {
                                 textViewErrorMessage.setText(R.string.too_many_requests)
                             }
+
                             LoginViewModel.SigningWithEmailExceptions.NETWORK_ISSUE -> {
                                 textViewErrorMessage.setText(R.string.no_connection)
                             }
+
                             LoginViewModel.SigningWithEmailExceptions.OTHER_EXCEPTIONS -> {
                                 textViewErrorMessage.text =
                                     event.message ?: getString(R.string.unexpected_error_2)
                             }
                         }
+                        viewModel.onErrorMessageChanged(textViewErrorMessage.text.toString())
                     }//ShowSigningWithEmailFailedMessage
 
                     is LoginViewModel.LoginEvent.ShowSigningWithProviderFailedMessage -> {
@@ -236,11 +251,17 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 LoginViewModel.Fields.EMAIL -> binding.textViewEmail.setTextColor(
                     resources.getColor(R.color.alert)
                 )
+
                 LoginViewModel.Fields.PASSWORD -> binding.textViewPassword.setTextColor(
                     resources.getColor(R.color.alert)
                 )
             }
         }
+        if (fields.isNotEmpty())
+            binding.textViewErrorMessage.apply {
+                text = viewModel.errorMessage
+                isVisible = true
+            }
     }
 
     // Resets labels and hide error message

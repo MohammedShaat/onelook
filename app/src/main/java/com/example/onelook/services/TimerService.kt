@@ -175,7 +175,7 @@ class TimerService : Service() {
             this,
             OPEN_TIMER_REQ,
             mainActivityIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         startForeground(
             TIMER_ONGOING_NOTIFICATION_ID,

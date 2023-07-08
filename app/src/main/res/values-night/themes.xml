@@ -11,15 +11,21 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/violet</item>
-        <!-- Status bar color. -->
+        <!-- Accent color. -->
         <item name="colorAccent">@color/turquoise</item>
+        <!-- On surface color. -->
+        <item name="colorOnSurface">@color/white</item>
         <!-- Customize your theme here. -->
 
         <!-- Text style-->
+        <item name="android:textColor">?colorText</item>
         <item name="android:fontFamily">@font/noto_sans</item>
         <item name="android:textSize">@dimen/mid_text_size</item>
 
+        <item name="colorText">@color/white</item>
         <item name="colorBackgroundDisabled">@color/dark_charcoal</item>
+        <item name="colorBoardingBackground">@color/rhythm</item>
+        <item name="colorTextInputBackground">@color/american_silver</item>
     </style>
 
     <style name="Theme.OneLook.SplashScreen" parent="Theme.SplashScreen">
