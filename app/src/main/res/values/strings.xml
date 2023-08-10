@@ -190,9 +190,9 @@
     <string name="syncing">Syncing</string>
     <string name="activities_timer_channel_name">Activities timer</string>
     <string name="reminders_channel_name">Reminders</string>
-    <string name="time_remaining_for_activity">%s activity time is approaching. Get ready to nourish yourself.</string>
+    <string name="time_remaining_for_activity">%s activity time is approaching. Get ready to exercise.</string>
     <string name="time_remaining_for_supplement">%s supplement time is approaching. Get ready to nourish yourself.</string>
-    <string name="dont_forget_exercise_activity">%s activity time has passed. Remember to take</string>
+    <string name="dont_forget_exercise_activity">%s activity time has passed. Remember to exercise</string>
     <string name="dont_forget_take_supplement">%s supplement time has passed. Remember to take</string>
     <string name="notifications_tool_bar_title">Notifications</string>
     <string name="item_notification_image_view_activity_icon">Image represents the task</string>
