@@ -10,6 +10,7 @@ import com.example.onelook.data.Repository
 import com.example.onelook.data.SharedData
 import com.example.onelook.data.local.activitieshistory.LocalActivityHistory
 import com.example.onelook.data.local.supplementshistory.LocalSupplementHistory
+import com.example.onelook.util.AlarmManagerHelper
 import com.example.onelook.util.CustomResult
 import com.example.onelook.util.OperationSource
 import com.example.onelook.util.format
@@ -31,10 +32,16 @@ class DailyTasksWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val appStateManager: AppStateManager,
     private val repository: Repository,
+    private val alarmManagerHelper: AlarmManagerHelper,
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
         Timber.i("doWork()")
+
+        // Schedule next worker
+        alarmManagerHelper.setAlarmForDailyTasksReceiver(delayHours = 24)
+
+        // Exit if user not logged in
         if (appStateManager.getAppState() != AppState.LOGGED_IN)
             return Result.failure()
 

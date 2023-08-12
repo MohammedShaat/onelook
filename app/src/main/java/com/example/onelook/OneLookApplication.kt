@@ -3,19 +3,16 @@ package com.example.onelook
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import com.example.onelook.data.AppStateManager
 import com.example.onelook.di.ApplicationCoroutine
-import com.example.onelook.util.getInitialDelay
-import com.example.onelook.workers.DailyTasksWorker
+import com.example.onelook.util.AlarmManagerHelper
 import com.facebook.stetho.Stetho
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -24,6 +21,12 @@ class OneLookApplication : Application(), Configuration.Provider {
     @Inject
     @ApplicationCoroutine
     lateinit var coroutineScope: CoroutineScope
+
+    @Inject
+    lateinit var alarmManagerHelper: AlarmManagerHelper
+
+    @Inject
+    lateinit var appStateManager: AppStateManager
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
@@ -50,15 +53,14 @@ class OneLookApplication : Application(), Configuration.Provider {
         scheduleDailyTasksWorker()
     }
 
-    private fun scheduleDailyTasksWorker() {
-        val request = PeriodicWorkRequestBuilder<DailyTasksWorker>(1, TimeUnit.DAYS)
-            .setInitialDelay(getInitialDelay(0, 0, true), TimeUnit.MILLISECONDS)
-            .build()
-
-        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-            DailyTasksWorker::class.java.name,
-            ExistingPeriodicWorkPolicy.KEEP,
-            request
-        )
+    private suspend fun scheduleDailyTasksWorker() {
+        val tomorrowCalendar = Calendar.getInstance().apply {
+            set(Calendar.SECOND, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.HOUR_OF_DAY, 0)
+            add(Calendar.DAY_OF_YEAR, 1)
+        }
+        val milliSeconds = tomorrowCalendar.timeInMillis - Calendar.getInstance().timeInMillis
+        alarmManagerHelper.setAlarmForDailyTasksReceiver(delayMilliSeconds = milliSeconds.toInt())
     }
 }

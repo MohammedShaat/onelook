@@ -5,8 +5,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.ContextCompat
+import com.example.onelook.data.AppStateManager
 import com.example.onelook.data.local.activities.LocalActivity
 import com.example.onelook.data.local.supplements.LocalSupplement
+import com.example.onelook.receivers.DailyTasksBroadcastReceiver
 import com.example.onelook.receivers.ReminderBroadcastReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
@@ -16,7 +18,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AlarmManagerHelper @Inject constructor(@ApplicationContext private val context: Context) {
+class AlarmManagerHelper @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val appStateManager: AppStateManager,
+) {
 
     private val alarmManager =
         ContextCompat.getSystemService(context, AlarmManager::class.java) as AlarmManager
@@ -231,5 +236,36 @@ class AlarmManagerHelper @Inject constructor(@ApplicationContext private val con
         // When target time is tomorrow
         targetCalendar.add(Calendar.DAY_OF_YEAR, 1)
         return targetCalendar
+    }
+
+    suspend fun setAlarmForDailyTasksReceiver(
+        delayMilliSeconds: Int = 0,
+        delaySeconds: Int = 0,
+        delayMinutes: Int = 0,
+        delayHours: Int = 0
+    ) {
+        if (appStateManager.getDailyTasksReceiverAlarmExists())
+            return
+
+        appStateManager.setDailyTasksReceiverAlarmExists(true)
+
+        val calendar = Calendar.getInstance().apply {
+            add(Calendar.MILLISECOND, delayMilliSeconds)
+            add(Calendar.SECOND, delaySeconds)
+            add(Calendar.MINUTE, delayMinutes)
+            add(Calendar.HOUR_OF_DAY, delayHours)
+        }
+        val intent = Intent(context, DailyTasksBroadcastReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            DAILY_TASKS_RECEIVER_PENDING_INTENT_REQ,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        alarmManager.setExact(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            pendingIntent
+        )
     }
 }
