@@ -22,12 +22,15 @@ class AppStateManager @Inject constructor(@ApplicationContext context: Context) 
 
     private val dataStore = context.createDataStore("app_state_manager")
 
-    private val appStateKey =
-        preferencesKey<String>("app_state")
+    private val appStateKey = preferencesKey<String>("app_state")
     private val accessTokenKey = preferencesKey<String>("access_token")
     private val lastSyncDateKey = preferencesKey<String>("last_sync_date")
     private val unreadNotifications = preferencesKey<Int>("unread_notifications")
     private val lastDailyTasksWorkerDateKey = preferencesKey<String>("last_daily_tasks_worker_date")
+    private val dailyTasksReceiverAlarmExists =
+        preferencesKey<Boolean>("daily_tasks_receiver_alarm_exists")
+    private val initialDailyTasksReceiverAlarmExists =
+        preferencesKey<Boolean>("initial_daily_tasks_receiver_alarm_exists")
 
     private val preferencesFlow = dataStore.data.catch { exception ->
         Timber.e(exception)
@@ -100,6 +103,26 @@ class AppStateManager @Inject constructor(@ApplicationContext context: Context) 
     suspend fun clearUnreadNotifications() {
         dataStore.edit { preferences ->
             preferences[unreadNotifications] = 0
+        }
+    }
+
+    suspend fun getDailyTasksReceiverAlarmExists(): Boolean {
+        return preferencesFlow.first()[dailyTasksReceiverAlarmExists] ?: false
+    }
+
+    suspend fun setDailyTasksReceiverAlarmExists(exists: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[dailyTasksReceiverAlarmExists] = exists
+        }
+    }
+
+    suspend fun getInitialDailyTasksReceiverAlarmExists(): Boolean {
+        return preferencesFlow.first()[initialDailyTasksReceiverAlarmExists] ?: false
+    }
+
+    suspend fun setInitialDailyTasksReceiverAlarmExists(exists: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[initialDailyTasksReceiverAlarmExists] = exists
         }
     }
 

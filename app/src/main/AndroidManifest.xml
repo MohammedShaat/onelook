@@ -49,6 +49,10 @@
             android:name=".receivers.ReminderBroadcastReceiver"
             android:enabled="true" />
 
+        <receiver
+            android:name=".receivers.DailyTasksBroadcastReceiver"
+            android:enabled="true" />
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="com.example.onelook.androidx-startup"
