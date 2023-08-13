@@ -61,6 +61,6 @@ class OneLookApplication : Application(), Configuration.Provider {
             add(Calendar.DAY_OF_YEAR, 1)
         }
         val milliSeconds = tomorrowCalendar.timeInMillis - Calendar.getInstance().timeInMillis
-        alarmManagerHelper.setAlarmForDailyTasksReceiver(delayMinutes = milliSeconds.toInt())
+        alarmManagerHelper.setAlarmForDailyTasksReceiver(delayMilliSeconds = milliSeconds.toInt())
     }
 }

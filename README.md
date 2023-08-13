@@ -24,4 +24,10 @@ Since there wasn't a ready API, I built a simple one myself using Laravel. [onel
 ## Installation
 * [apk](/app/release/app-release.apk)
 * Google Play (soon)<br/>
-You can see the deomo [here](https://www.behance.net/gallery/174897871/OneLook).
+
+
+## Demo
+* Video <br/>
+
+* Screenshots
+![screenshots-1](/docs//screens/screenshot-1.png)
