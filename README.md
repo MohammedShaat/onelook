@@ -9,7 +9,7 @@ OneLook app allows the user to track his daily activities and supplements.
 
 
 ## Core Technologies:
-* MVVVM architecture
+* MVVM design pattern
 * Firebase Auth
 * Room
 * Retrofit
@@ -17,6 +17,8 @@ OneLook app allows the user to track his daily activities and supplements.
 * Dagger Hilt
 * Coroutines, Flows, LiveData
 * Custom View
+* WorkManager
+* Notifications
 
 Since there wasn't a ready API, I built a simple one myself using Laravel. [onelook-api](https://onelook-api.fly.dev/api/).
 
