@@ -28,8 +28,9 @@ object RetrofitModule {
     @Named("user")
     fun provideRetrofit(): Retrofit {
         val client = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
+            .connectTimeout(0, TimeUnit.SECONDS)
+            .readTimeout(0, TimeUnit.SECONDS)
+            .writeTimeout(0, TimeUnit.SECONDS)
             .addNetworkInterceptor(StethoInterceptor())
             .build()
 
@@ -52,8 +53,9 @@ object RetrofitModule {
     fun provideTodayTaskRetrofit(headerInterceptor: HeaderInterceptor): Retrofit {
         val client = OkHttpClient.Builder()
             .addInterceptor(headerInterceptor)
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
+            .connectTimeout(0, TimeUnit.SECONDS)
+            .readTimeout(0, TimeUnit.SECONDS)
+            .writeTimeout(0, TimeUnit.SECONDS)
             .addNetworkInterceptor(StethoInterceptor())
             .build()
 

@@ -29,8 +29,9 @@ object TestRetrofitModules {
     fun provideSupplementRetrofit(testHeaderInterceptor: TestHeaderInterceptor): Retrofit {
         val client = OkHttpClient.Builder()
             .addInterceptor(testHeaderInterceptor)
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
+            .connectTimeout(0, TimeUnit.SECONDS)
+            .readTimeout(0, TimeUnit.SECONDS)
+            .writeTimeout(0, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()
