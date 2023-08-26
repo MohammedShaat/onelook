@@ -47,7 +47,7 @@
         app:strokeColor="?colorPrimary"
         tools:visibility="visible" />
 
-    <com.example.onelook.views.CustomActivityProgressView
+    <com.example.onelook.tasks.presentation.home.views.CustomActivityProgressView
         android:id="@+id/custom_activity_progress_view"
         android:layout_width="40dp"
         android:layout_height="40dp"

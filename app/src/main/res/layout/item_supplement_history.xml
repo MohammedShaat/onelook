@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text_view_task_name"
         tools:text="1 sashet before meal" />
 
-    <com.example.onelook.views.CustomSupplementProgressView
+    <com.example.onelook.tasks.presentation.home.views.CustomSupplementProgressView
         android:id="@+id/custom_supplement_progress_view"
         android:layout_width="40dp"
         android:layout_height="40dp"

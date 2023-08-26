@@ -2,8 +2,10 @@ package com.example.onelook.data.local.supplements
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.filters.SmallTest
-import com.example.onelook.data.local.users.LocalUser
-import com.example.onelook.data.local.users.UserDao
+import com.example.onelook.authentication.data.local.UserEntity
+import com.example.onelook.authentication.data.local.UserDao
+import com.example.onelook.tasks.data.local.SupplementDao
+import com.example.onelook.tasks.data.local.SupplementEntity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
@@ -33,22 +35,22 @@ class SupplementDaoTest {
     
     private val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"))
 
-    private val user = LocalUser(
+    private val user = UserEntity(
         1, "Android Test", "firebaseUid",
         date, date
     )
     private val supplements = listOf(
-        LocalSupplement(
+        SupplementEntity(
             UUID.randomUUID(), "Supplement 1", "tablet", 3, "everyday",
             null, "morning", "before", "before", false,
             date, date
         ),
-        LocalSupplement(
+        SupplementEntity(
             UUID.randomUUID(), "Supplement 2", "drops", 2, "every 2 days",
             null, "evening", "after", "after", true,
             date, date
         ),
-        LocalSupplement(
+        SupplementEntity(
             UUID.randomUUID(), "Supplement 3", "spoon", 2, "every 5 days",
             null, "afternoon", "with", "before", false,
             date, date

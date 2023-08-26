@@ -1,10 +1,8 @@
 package com.example.onelook.data.network.supplemetnshistory
 
 import androidx.test.filters.SmallTest
-import com.example.onelook.data.network.supplementshistory.NetworkSupplementHistory
-import com.example.onelook.data.network.supplementshistory.SupplementHistoryApi
-import com.example.onelook.data.network.users.UserApi
-import com.google.firebase.auth.FirebaseAuth
+import com.example.onelook.tasks.data.remote.SupplementHistoryDto
+import com.example.onelook.tasks.data.remote.SupplementHistoryApi
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
@@ -26,7 +24,7 @@ class SupplementHistoryApiTest {
     private val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"))
 
     private val supplementsHistory = listOf(
-        NetworkSupplementHistory(
+        SupplementHistoryDto(
             id = UUID.fromString("f8759a57-1919-4891-8ad9-11d376d89e1b"),
             supplementId = UUID.fromString("1e9602ae-fe11-11ed-be56-0242ac120002"),
             progress = 1,
@@ -34,7 +32,7 @@ class SupplementHistoryApiTest {
             createdAt = date,
             updatedAt = date,
         ),
-        NetworkSupplementHistory(
+        SupplementHistoryDto(
             id = UUID.fromString("d0f698fa-096d-46c8-8489-8f781e25fc83"),
             supplementId = UUID.fromString("2f366824-fe11-11ed-be56-0242ac120002"),
             progress = 5,

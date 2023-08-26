@@ -11,7 +11,7 @@
         android:background="?colorSurface"
         android:paddingHorizontal="@dimen/h_padding"
         android:paddingBottom="@dimen/h_margin"
-        tools:context=".ui.changename.ChangeNameFragment">
+        tools:context=".profile_and_settings.presentation.change_name.ChangeNameFragment">
 
         <TextView
             android:id="@+id/text_view_header"

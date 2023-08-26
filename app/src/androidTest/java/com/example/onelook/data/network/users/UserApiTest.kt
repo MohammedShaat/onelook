@@ -1,6 +1,9 @@
 package com.example.onelook.data.network.users
 
 import androidx.test.filters.SmallTest
+import com.example.onelook.authentication.data.remote.UserApi
+import com.example.onelook.authentication.data.remote.UserLoginRequest
+import com.example.onelook.authentication.data.remote.UserRegisterRequest
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -12,7 +15,6 @@ import org.hamcrest.Matchers.isEmptyString
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidTest
@@ -47,7 +49,7 @@ class UserApiTest {
         val idToken = firebaseIdToken!!
 
         // WHEN call register
-        val response = userApi.register(NetworkUserRegisterRequest(idToken, name))
+        val response = userApi.register(UserRegisterRequest(idToken, name))
 
         // THEN response contains an access token
         assertThat(response.accessToken, not(isEmptyString()))
@@ -59,7 +61,7 @@ class UserApiTest {
         val idToken = firebaseIdToken!!
 
         // WHEN call login
-        val response = userApi.login(NetworkUserLoginRequest(idToken))
+        val response = userApi.login(UserLoginRequest(idToken))
 
         // THEN response contains an access token
         assertThat(response.accessToken, not(isEmptyString()))
@@ -68,7 +70,7 @@ class UserApiTest {
     @Test
     fun deleteUser_idTokenAndName_deletesUserFromApi() = runBlocking {
         // WHEN call deleteUser
-        userApi.deleteUser(NetworkUserLoginRequest(firebaseIdToken!!))
+        userApi.deleteUser(UserLoginRequest(firebaseIdToken!!))
 
         // THEN the user is deleted, and no errors happen
     }

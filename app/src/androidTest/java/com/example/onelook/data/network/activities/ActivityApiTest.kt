@@ -1,6 +1,8 @@
 package com.example.onelook.data.network.activities
 
 import androidx.test.filters.SmallTest
+import com.example.onelook.tasks.data.remote.ActivityApi
+import com.example.onelook.tasks.data.remote.ActivityDto
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
@@ -20,7 +22,7 @@ import javax.inject.Named
 class ActivityApiTest {
 
     private val activities = listOf(
-        NetworkActivity(
+        ActivityDto(
             id = UUID.fromString("f8759a57-1919-4891-8ad9-11d376d89e1b"),
             type = "breathing",
             timeOfDay = "afternoon",
@@ -30,7 +32,7 @@ class ActivityApiTest {
             createdAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss")),
             updatedAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss")),
         ),
-        NetworkActivity(
+        ActivityDto(
             id = UUID.fromString("d0f698fa-096d-46c8-8489-8f781e25fc83"),
             type = "running",
             timeOfDay = "night",
@@ -68,7 +70,7 @@ class ActivityApiTest {
         // WHEN call getActivities()
         val result = activityApi.getActivities()
 
-        // THEN response contains a list of NetworkActivity
+        // THEN response contains a list of ActivityDto
         assertThat(result, hasSize(5))
     }
 
@@ -77,13 +79,13 @@ class ActivityApiTest {
         // Instantiates activities
         instantiateActivities()
 
-        // GIVEN an id of a NetworkActivity
+        // GIVEN an id of a ActivityDto
         val id = activities[0].id
 
         // WHEN call getActivityById()
         val result = activityApi.getActivityById(id)
 
-        // THEN response contains a list of NetworkActivity
+        // THEN response contains a list of ActivityDto
         assertThat(result, notNullValue())
 
         // Cleans up
@@ -92,7 +94,7 @@ class ActivityApiTest {
 
     @Test
     fun createActivity_supplement_createsActivity() = runBlocking {
-        // GIVEN a NetworkActivity
+        // GIVEN a ActivityDto
         val supplement = activities[0]
 
         // WHEN call createActivity()
@@ -124,7 +126,7 @@ class ActivityApiTest {
         // Instantiates activities
         instantiateActivities()
 
-        // GIVEN a NetworkActivity
+        // GIVEN a ActivityDto
         val supplement = activities[0].copy(type = "walking")
 
         // WHEN call updateActivity()
@@ -143,7 +145,7 @@ class ActivityApiTest {
         // Instantiates activities
         instantiateActivities()
 
-        // GIVEN an id of a NetworkActivity
+        // GIVEN an id of a ActivityDto
         val id = activities[0].id
 
         // WHEN call updateActivity()

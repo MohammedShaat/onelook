@@ -1,6 +1,8 @@
 package com.example.onelook.data.network.supplements
 
 import androidx.test.filters.SmallTest
+import com.example.onelook.tasks.data.remote.SupplementApi
+import com.example.onelook.tasks.data.remote.SupplementDto
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
@@ -20,7 +22,7 @@ import javax.inject.Named
 class SupplementApiTest {
 
     private val supplements = listOf(
-        NetworkSupplement(
+        SupplementDto(
             id = UUID.fromString("f8759a57-1919-4891-8ad9-11d376d89e1b"),
             name = "Supplement Test 1",
             form = "pill",
@@ -35,7 +37,7 @@ class SupplementApiTest {
             createdAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss")),
             updatedAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss")),
         ),
-        NetworkSupplement(
+        SupplementDto(
             id = UUID.fromString("d0f698fa-096d-46c8-8489-8f781e25fc83"),
             name = "Supplement Test 2",
             form = "tablet",
@@ -78,7 +80,7 @@ class SupplementApiTest {
         // WHEN call getSupplements()
         val result = supplementApi.getSupplements()
 
-        // THEN response contains a list of NetworkSupplement
+        // THEN response contains a list of SupplementDto
         assertThat(result, hasSize(4))
     }
 
@@ -87,13 +89,13 @@ class SupplementApiTest {
         // Instantiates supplements
         instantiateSupplements()
 
-        // GIVEN a id of a NetworkSupplement
+        // GIVEN a id of a SupplementDto
         val id = supplements[0].id
 
         // WHEN call getSupplementById()
         val result = supplementApi.getSupplementById(id)
 
-        // THEN response contains a list of NetworkSupplement
+        // THEN response contains a list of SupplementDto
         assertThat(result, notNullValue())
 
         // Cleans up
@@ -102,7 +104,7 @@ class SupplementApiTest {
 
     @Test
     fun createSupplement_supplement_createsSupplement() = runBlocking {
-        // GIVEN a NetworkSupplement
+        // GIVEN a SupplementDto
         val supplement = supplements[0]
 
         // WHEN call createSupplement()
@@ -134,7 +136,7 @@ class SupplementApiTest {
         // Instantiates supplements
         instantiateSupplements()
 
-        // GIVEN a NetworkSupplement
+        // GIVEN a SupplementDto
         val supplement = supplements[0].copy(form = "sachet")
 
         // WHEN call updateSupplement()
@@ -153,7 +155,7 @@ class SupplementApiTest {
         // Instantiates supplements
         instantiateSupplements()
 
-        // GIVEN an id of a NetworkSupplement
+        // GIVEN an id of a SupplementDto
         val id = supplements[0].id
 
         // WHEN call updateSupplement()
