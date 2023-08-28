@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.contactus.ContactUsFragment">
+    tools:context=".profile_and_settings.presentation.contactus.ContactUsFragment">
 
     <Toolbar
         android:id="@+id/tool_bar"

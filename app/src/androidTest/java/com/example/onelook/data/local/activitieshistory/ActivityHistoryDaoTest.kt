@@ -2,10 +2,12 @@ package com.example.onelook.data.local.activitieshistory
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.filters.SmallTest
-import com.example.onelook.data.local.activities.ActivityDao
-import com.example.onelook.data.local.activities.LocalActivity
-import com.example.onelook.data.local.users.LocalUser
-import com.example.onelook.data.local.users.UserDao
+import com.example.onelook.tasks.data.local.ActivityDao
+import com.example.onelook.tasks.data.local.ActivityEntity
+import com.example.onelook.authentication.data.local.UserEntity
+import com.example.onelook.authentication.data.local.UserDao
+import com.example.onelook.tasks.data.local.ActivityHistoryDao
+import com.example.onelook.tasks.data.local.ActivityHistoryEntity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
@@ -39,34 +41,34 @@ class ActivityHistoryDaoTest {
 
     private val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"))
 
-    private val user = LocalUser(
+    private val user = UserEntity(
         1, "Android Test", "firebaseUid",
         date, date
     )
     private val activities = listOf(
-        LocalActivity(
+        ActivityEntity(
             UUID.randomUUID(), "breathing", "evening", "00:10", "before",
             date, date
         ),
-        LocalActivity(
+        ActivityEntity(
             UUID.randomUUID(), "waking", "morning", "01:30", "before",
             date, date
         ),
-        LocalActivity(
+        ActivityEntity(
             UUID.randomUUID(), "yoga", "morning", "00:25", "before",
             date, date
         )
     )
     private val activitiesHistory = listOf(
-        LocalActivityHistory(
+        ActivityHistoryEntity(
             UUID.randomUUID(), activities[0].id, "00:05", false,
             date, date
         ),
-        LocalActivityHistory(
+        ActivityHistoryEntity(
             UUID.randomUUID(), activities[0].id, "00:010", true,
             date, date
         ),
-        LocalActivityHistory(
+        ActivityHistoryEntity(
             UUID.randomUUID(), activities[1].id, "01:05", false,
             date, date
         ),

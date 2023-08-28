@@ -2,14 +2,14 @@ package com.example.onelook.di.appmodules
 
 import android.content.Context
 import androidx.room.Room
-import com.example.onelook.data.local.OneLookDatabase
-import com.example.onelook.data.local.activities.ActivityDao
-import com.example.onelook.data.local.activitieshistory.ActivityHistoryDao
-import com.example.onelook.data.local.notifications.NotificationDao
-import com.example.onelook.data.local.supplements.SupplementDao
-import com.example.onelook.data.local.supplementshistory.SupplementHistoryDao
-import com.example.onelook.data.local.todaytasks.TodayTaskDao
-import com.example.onelook.data.local.users.UserDao
+import com.example.onelook.common.data.local.OneLookDatabase
+import com.example.onelook.tasks.data.local.ActivityDao
+import com.example.onelook.tasks.data.local.ActivityHistoryDao
+import com.example.onelook.notifications.data.local.NotificationDao
+import com.example.onelook.tasks.data.local.SupplementDao
+import com.example.onelook.tasks.data.local.SupplementHistoryDao
+import com.example.onelook.tasks.data.local.TodayTaskDao
+import com.example.onelook.authentication.data.local.UserDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

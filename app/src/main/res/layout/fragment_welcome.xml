@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="@dimen/h_padding"
-        tools:context=".ui.welcome.WelcomeFragment">
+        tools:context=".authentication.presentation.welcome.WelcomeFragment">
 
         <LinearLayout
             android:layout_width="wrap_content"

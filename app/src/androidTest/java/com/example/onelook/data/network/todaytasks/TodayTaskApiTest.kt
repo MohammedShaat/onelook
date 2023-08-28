@@ -1,8 +1,7 @@
 package com.example.onelook.data.network.todaytasks
 
 import androidx.test.filters.SmallTest
-import com.example.onelook.data.local.users.UserDao
-import com.google.firebase.auth.FirebaseAuth
+import com.example.onelook.tasks.data.remote.TodayTaskApi
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking

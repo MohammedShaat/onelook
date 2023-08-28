@@ -1,13 +1,11 @@
 package com.example.onelook.di.appmodules
 
-import com.example.onelook.data.network.HeaderInterceptor
 import com.example.onelook.data.network.TestHeaderInterceptor
-import com.example.onelook.data.network.activities.ActivityApi
-import com.example.onelook.data.network.activitieshistory.ActivityHistoryApi
-import com.example.onelook.data.network.supplements.SupplementApi
-import com.example.onelook.data.network.supplementshistory.SupplementHistoryApi
-import com.example.onelook.data.network.todaytasks.TodayTaskApi
-import com.example.onelook.data.network.users.UserApi
+import com.example.onelook.tasks.data.remote.ActivityApi
+import com.example.onelook.tasks.data.remote.ActivityHistoryApi
+import com.example.onelook.tasks.data.remote.SupplementApi
+import com.example.onelook.tasks.data.remote.SupplementHistoryApi
+import com.example.onelook.authentication.data.remote.UserApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,8 +27,9 @@ object TestRetrofitModules {
     fun provideSupplementRetrofit(testHeaderInterceptor: TestHeaderInterceptor): Retrofit {
         val client = OkHttpClient.Builder()
             .addInterceptor(testHeaderInterceptor)
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
+            .connectTimeout(0, TimeUnit.SECONDS)
+            .readTimeout(0, TimeUnit.SECONDS)
+            .writeTimeout(0, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()

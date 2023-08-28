@@ -1,7 +1,5 @@
 package com.example.onelook.data.network
 
-import com.example.onelook.data.AppStateManager
-import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject

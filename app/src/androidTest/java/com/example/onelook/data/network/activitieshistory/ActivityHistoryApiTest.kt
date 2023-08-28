@@ -1,18 +1,13 @@
 package com.example.onelook.data.network.activitieshistory
 
 import androidx.test.filters.SmallTest
-import com.example.onelook.data.network.activities.ActivityApi
-import com.example.onelook.data.network.activities.NetworkActivity
-import com.example.onelook.data.network.users.NetworkUserRegisterRequest
-import com.example.onelook.data.network.users.UserApi
-import com.google.firebase.auth.FirebaseAuth
+import com.example.onelook.tasks.data.remote.ActivityHistoryApi
+import com.example.onelook.tasks.data.remote.ActivityHistoryDto
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -29,7 +24,7 @@ class ActivityHistoryApiTest {
     private val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"))
 
     private val activitiesHistory = listOf(
-        NetworkActivityHistory(
+        ActivityHistoryDto(
             id = UUID.fromString("f8759a57-1919-4891-8ad9-11d376d89e1b"),
             activityId = UUID.fromString("1558412a-fe11-11ed-be56-0242ac120002"),
             progress = "00:03",
@@ -37,7 +32,7 @@ class ActivityHistoryApiTest {
             createdAt = date,
             updatedAt = date,
         ),
-        NetworkActivityHistory(
+        ActivityHistoryDto(
             id = UUID.fromString("d0f698fa-096d-46c8-8489-8f781e25fc83"),
             activityId = UUID.fromString("2f366824-fe11-11ed-be56-0242ac120002"),
             progress = "00:15",

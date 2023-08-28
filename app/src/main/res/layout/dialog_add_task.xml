@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
     android:paddingVertical="@dimen/xh_margin"
-    tools:context=".ui.addtask.AddTaskDialog"
+    tools:context=".tasks.presentation.addtask.AddTaskDialog"
     tools:layout_gravity="center">
 
     <TextView

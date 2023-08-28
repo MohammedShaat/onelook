@@ -2,6 +2,8 @@ package com.example.onelook.data.local.users
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.filters.SmallTest
+import com.example.onelook.authentication.data.local.UserDao
+import com.example.onelook.authentication.data.local.UserEntity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
@@ -27,7 +29,7 @@ class UserDaoTest {
 
     private val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"))
 
-    private val user = LocalUser(
+    private val user = UserEntity(
         1, "Android Test", "firebaseUid",
         date, date
     )
