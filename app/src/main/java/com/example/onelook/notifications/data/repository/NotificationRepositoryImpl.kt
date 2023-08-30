@@ -16,6 +16,7 @@ import com.example.onelook.tasks.doamin.model.SupplementHistory
 import com.example.onelook.common.util.Resource
 import com.example.onelook.notifications.data.mapper.toNotification
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -39,24 +40,24 @@ class NotificationRepositoryImpl @Inject constructor(
         emit(Resource.Loading())
         notificationDao.getNotifications().collect { localNotifications ->
 
-            val notifications = localNotifications.map { localNotification ->
+            val notifications = localNotifications.mapNotNull { localNotification ->
                 val history =
                     if (localNotification.historyType == SupplementHistory::class.java.name) {
                         val localSupplementHistory =
                             supplementHistoryDao.getSupplementHistoryById(localNotification.historyId)
-                                .first()
+                                .firstOrNull() ?: return@mapNotNull null
                         val supplement =
                             supplementDao.getSupplementById(localSupplementHistory.supplementId)
-                                .first().toSupplement()
+                                .firstOrNull()?.toSupplement() ?: return@mapNotNull null
                         localSupplementHistory.toSupplementHistory(supplement)
 
                     } else {
                         val localActivityHistory =
                             activityHistoryDao.getActivityHistoryById(localNotification.historyId)
-                                .first()
+                                .firstOrNull() ?: return@mapNotNull null
                         val activity =
                             activityDao.getActivityById(localActivityHistory.activityId)
-                                .first().toDomainActivity()
+                                .firstOrNull()?.toDomainActivity() ?: return@mapNotNull null
                         localActivityHistory.toActivityHistory(activity)
                     }
                 localNotification.toNotification(history)
